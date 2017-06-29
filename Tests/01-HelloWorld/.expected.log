@@ -1,11 +1,11 @@
 BO_TEST_RUNNER_IMPL
 >>>TEST_IGNORE_LINE:^Time:\s+\d<<<
+>>>TEST_IGNORE_LINE:Test \([\d]+ms\)<<<
 
  RUNS  ...main.js
 [K[1A[K[1A PASS  01-HelloWorld/main.js
 
  RUNS  ...main.js
-[K[1A[K[1A  ✓ Test (5ms)
 
  RUNS  ...main.js
 [K[1A[K[1A
