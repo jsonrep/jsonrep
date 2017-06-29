@@ -10,7 +10,7 @@ depend {
                 "PACKAGE_CIRCLECI_NAMESPACE": "jsonrep/jsonrep",
                 "PACKAGE_NPM_PACKAGE_NAME": "jsonrep",
                 "PACKAGE_NPM_PACKAGE_URL": "https://www.npmjs.com/package/jsonrep",
-                "PACKAGE_WEBSITE_URI": "jsonrep.github.io",
+                "PACKAGE_WEBSITE_URI": "jsonrep.github.io/jsonrep",
                 "PACKAGE_YEAR_CREATED": "2017",
                 "PACKAGE_LICENSE_ALIAS": "MPL",
                 "PACKAGE_SUMMARY": (markdown () >>>
