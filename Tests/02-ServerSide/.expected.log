@@ -3,7 +3,7 @@ BO_TEST_RUNNER_IMPL
 >>>TEST_IGNORE_LINE:Test \([\d]+ms\)<<<
 
  RUNS  ...main.js
-[K[1A[K[1A PASS  01-HelloWorld/main.js
+[K[1A[K[1A PASS  02-ServerSide/main.js
 
  RUNS  ...main.js
 
@@ -14,4 +14,4 @@ BO_TEST_RUNNER_IMPL
 [K[1A[K[1ATest Suites: 1 passed, 1 total
 Tests:       1 passed, 1 total
 Snapshots:   0 total
-Ran all test suites matching "01-HelloWorld/main.js".
+Ran all test suites matching "02-ServerSide/main.js".

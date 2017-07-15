@@ -18,6 +18,13 @@ depend {
 
                     *TODO: Insert demo here*
                 <<<)
+            },
+            "routes": {
+                "/lib/jsonrep.js": {
+                    "@it.pinf.org.browserify#s1": {
+                        "src": "$__DIRNAME__/src/jsonrep.js"
+                    }
+                }
             }
         }
     }
