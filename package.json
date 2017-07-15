@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "BO_ROOT_SCRIPT_PATH=$(pwd)/node_modules/bash.origin/bash.origin ./workspace.sh run",
-    "test": "BO_ROOT_SCRIPT_PATH=$(pwd)/node_modules/bash.origin/bash.origin bash.origin.test Tests",
+    "test": "BO_ROOT_SCRIPT_PATH=$(pwd)/node_modules/bash.origin/bash.origin bash.origin.test tests",
     "publish-website": "BO_ROOT_SCRIPT_PATH=$(pwd)/node_modules/bash.origin/bash.origin ./workspace.sh publish"    
   }
 }
