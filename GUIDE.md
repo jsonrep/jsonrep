@@ -1,5 +1,7 @@
 
-> Present JSON structures beautifully.
+This **Guide** is best viewed at [jsonrep.github.io/jsonrep](https://jsonrep.github.io/jsonrep/) using a *Modern Browser*.
+
+> Use `jsonrep` to present JSON structures beautifully and easily!
 
 `jsonrep` is a JavaScript library for use in the *Browser* and on the *Server*
 (for pre-compiling) to *mark up* **JSON Documents** for **Visualization and Interaction**.
