@@ -15,8 +15,3 @@ BO_TEST_RUNNER_IMPL
 Tests:       1 passed, 1 total
 Snapshots:   0 total
 Ran all test suites matching "02-ServerSide/main.js".
-  console.log 02-ServerSide/main.js:9
-    JSONREP { markupElement: [Function],
-      markupDocument: [Function],
-      markupNode: undefined }
-
