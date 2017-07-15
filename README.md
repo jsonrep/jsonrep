@@ -12,7 +12,7 @@
 
 This **Guide** is best viewed at [jsonrep.github.io/jsonrep](https://jsonrep.github.io/jsonrep/) using a *Modern Browser*.
 
-> Use `jsonrep` to present JSON structures beautifully and easily!
+> Use `jsonrep` to present JSON Documents beautifully and easily!
 
 `jsonrep` is a JavaScript library for use in the *Browser* and on the *Server*
 (for pre-compiling) to *mark up* **JSON Documents** for **Visualization and Interaction**.
@@ -76,7 +76,7 @@ Introduction
 <div renderer="jsonrep">{"message": "Hello World!"}</div>
 ```
 
-The DOM is automatically *marked up* on the `DOMContentLoaded` document event which can be re-triggered using:
+The DOM is automatically *marked up* on the `DOMContentLoaded` document event which can be re-triggered (in case new tags have been added) using:
 
 ```javascript
 JSONREP.markupDocument();
