@@ -35,7 +35,6 @@ nested arbitrarily looks like this:
     }
 }
 ```
-RESULT: <div renderer="jsonrep">&CODE&</div>
 
 Treat this format as a **compile target** capable of holding *just-in-time linked nested data structures*.
 
@@ -74,7 +73,6 @@ Introduction
 ```html
 <div renderer="jsonrep">{"message": "Hello World!"}</div>
 ```
-RESULT: &CODE&
 
 The DOM is automatically *marked up* on the `DOMContentLoaded` document event which can be re-triggered using:
 
