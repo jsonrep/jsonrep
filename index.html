@@ -40,7 +40,68 @@
 <blockquote>
 <p>Present JSON structures beautifully.</p>
 </blockquote>
-<p><em>TODO: Insert demo here</em></p>
+<p><code>jsonrep</code> is a JavaScript library for use in the <em>Browser</em> and on the <em>Server</em>
+(for pre-compiling) to <em>mark up</em> <strong>JSON Documents</strong> for <strong>Visualization and Interaction</strong>.</p>
+<p>An <em>Annotated JSON Document</em> using <em>URL-referenced JavaScript Renderers</em> which may be
+nested arbitrarily looks like this:</p>
+<pre><code class="undefinedjson">{
+    <span class="hljs-attr">"@./dist/div"</span>: {
+        <span class="hljs-attr">"css"</span>: {
+            <span class="hljs-attr">"padding"</span>: <span class="hljs-string">"5px"</span>,
+            <span class="hljs-attr">"border"</span>: <span class="hljs-string">"1px solid black"</span>
+        },
+        <span class="hljs-attr">"innerHTML"</span>: {
+            <span class="hljs-attr">"@./dist/io.shields.img"</span>: {
+                <span class="hljs-attr">"subject"</span>: <span class="hljs-string">"jsonrep"</span>,
+                <span class="hljs-attr">"status"</span>: <span class="hljs-string">"Rocks!"</span>,
+                <span class="hljs-attr">"color"</span>: <span class="hljs-string">"green"</span>
+            }
+        }
+    }
+}
+</code></pre>
+<div class="markdown-block-result"><div class="result-label">Result</div> <div renderer="jsonrep">{
+    "@./dist/div": {
+        "css": {
+            "padding": "5px",
+            "border": "1px solid black"
+        },
+        "innerHTML": {
+            "@./dist/io.shields.img": {
+                "subject": "jsonrep",
+                "status": "Rocks!",
+                "color": "green"
+            }
+        }
+    }
+}</div></div>
+<p>Treat this format as a <strong>compile target</strong> capable of holding <em>just-in-time linked nested data structures</em>.</p>
+<h1 id="undefinedloading">Loading</h1>
+<p>Load the <code>jsonrep</code> library into a HTML page using:</p>
+<pre><code class="undefinedhtml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"./dist/jsonrep.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+    <span class="hljs-keyword">const</span> JSONREP = <span class="hljs-built_in">window</span>.jsonrep;
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
+<p>It can also be loaded into a <em>CommonJS Process</em> using:</p>
+<pre><code class="undefinedjavascript"><span class="hljs-keyword">const</span> JSONREP = <span class="hljs-built_in">require</span>(<span class="hljs-string">"jsonrep"</span>);
+</code></pre>
+<p><script src="./dist/jsonrep.js"></script></p>
+<style>
+    DIV[renderer="jsonrep"] {
+        display: inline-block;
+    }
+</style>
+
+
+<h1 id="undefinedintroduction">Introduction</h1>
+<p><code>jsonrep</code> <strong>marks up</strong> any DOM elements tagged using a <code>renderer=&quot;jsonrep&quot;</code> attribute:</p>
+<pre><code class="undefinedhtml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">renderer</span>=<span class="hljs-string">"jsonrep"</span>&gt;</span>{"message": "Hello World!"}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
+<div class="markdown-block-result"><div class="result-label">Result</div> <div renderer="jsonrep">{"message": "Hello World!"}</div></div>
+<p>The DOM is automatically <em>marked up</em> on the <code>DOMContentLoaded</code> document event which can be re-triggered using:</p>
+<pre><code class="undefinedjavascript">JSONREP.markupDocument();
+</code></pre>
 <h1 id="undefinedprovenance">Provenance</h1>
 <p>Original Source Logic under <a href="https://opensource.org/licenses/MPL-2.0">Mozilla Public License 2.0</a> by <a href="http://christophdorn.com">Christoph Dorn</a> since 2017.</p>
 <pre><code>Mozilla Public License 2.0
