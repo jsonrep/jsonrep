@@ -5,9 +5,7 @@ const JSONREP = require("../..");
 
 test('Test', function () {
 
-
-//console.log("JSONREP", JSONREP);
-
-
-    expect(true).toBe(true);
+    expect(JSONREP.markupNode('{"message":"Hello World!"}')).toBe('[' + JSON.stringify({
+        "message": "Hello World!"
+    }) + ']');
 });

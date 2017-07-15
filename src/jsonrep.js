@@ -1,29 +1,36 @@
 
-const WINDOW = (typeof window !== "undefined") ? window : null;
+function markupNode (config) {
 
-
-exports.renderElement = function (el) {
-
-    el.innerHTML = "[" + el.innerHTML + "]";
-
+    return "[" + config + "]";
 }
 
+((function (WINDOW) {
 
-function main () {
+    exports.markupNode = markupNode;
 
-    function hook () {
+    if (!WINDOW) {
+        return null;
+    }
+
+    exports.markupElement = function (el) {
+        el.innerHTML = exports.markupNode(el.innerHTML);
+    }
+
+    exports.markupDocument = function () {
         var elements = WINDOW.document.querySelectorAll('[renderer="jsonrep"]');
-        elements.forEach(exports.renderElement);
+        elements.forEach(exports.markupElement);
     }
 
     if (WINDOW.document.readyState === "complete") {
-        hook();
+        exports.markupDocument();
     } else {
         if (typeof WINDOW.addEventListener !== "undefined") {
-            WINDOW.addEventListener("DOMContentLoaded", hook, false);
+            WINDOW.addEventListener("DOMContentLoaded", exports.markupDocument, false);
         } else {
-            WINDOW.attachEvent("onload", hook)
+            WINDOW.attachEvent("onload", exports.markupDocument);
         }
     }
-}
-main();
+
+})(
+    (typeof window !== "undefined") ? window : null
+));

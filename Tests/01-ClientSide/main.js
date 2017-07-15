@@ -8,7 +8,7 @@ module.config = {
 }
 */
 
-describe('Hello World', function() {
+describe("Suite", function() {
 
     require('bash.origin.express').runForTestHooks(before, after, {
         "routes": {
@@ -30,6 +30,6 @@ describe('Hello World', function() {
 
         if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
 
-        client.expect.element('body').text.to.contain('<div renderer="jsonrep">[{"message": "Hello World!"}]</div>');
+        client.expect.element('body').text.to.contain('[{"message": "Hello World!"}]');
     });
 });

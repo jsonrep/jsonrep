@@ -1,1 +1,17 @@
-OK
+BO_TEST_RUNNER_IMPL
+>>>TEST_IGNORE_LINE:\d milliseconds.$<<<
+environments: default
+
+
+  Suite
+Adding route: /
+Adding route: /lib/jsonrep.js
+Server: http://localhost:8080/
+[READY]
+127.0.0.1 - "GET / HTTP/1.1" 200 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:53.0) Gecko/20100101 Firefox/53.0"
+127.0.0.1 - "GET /lib/jsonrep.js HTTP/1.1" 200 - "http://localhost:8080/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:53.0) Gecko/20100101 Firefox/53.0"
+    ✓ Test (3644ms)
+
+
+  1 passing (4s)
+
