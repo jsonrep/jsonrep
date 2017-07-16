@@ -48,13 +48,17 @@ It can also be loaded into a *CommonJS Process* using:
 const JSONREP = require("jsonrep");
 ```
 
-
-<script src="./dist/jsonrep.js"></script>
+<!--
+// This code is used when running the rendered guide in a browser.
+INJECT>>>
+<script src="./lib/jsonrep.js"></script>
 <style>
     DIV[renderer="jsonrep"] {
         display: inline-block;
     }
 </style>
+<<<INJECT
+-->
 
 
 Introduction

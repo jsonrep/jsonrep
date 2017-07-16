@@ -1,7 +1,33 @@
 
 function markupNode (config) {
 
-    return "[" + config + "]";
+    if (typeof config === "string") {
+        try {
+            config = JSON.parse(config);
+        } catch (err) {
+            throw new Error("Error parsing config from string! (" + err.message + ")");
+        }
+    }
+
+console.log("config 1", config);
+
+    if (config["@./dist/div"]) {
+
+        return [
+            '<div>',
+            markupNode(config["@./dist/div"].innerHTML),
+            '</div>'
+        ].join("");
+
+    } else
+    if (config["@./dist/io.shields.img"]) {
+
+        var aspects = config["@./dist/io.shields.img"];
+        return '<img src="https://img.shields.io/badge/' + aspects.subject + '-' + aspects.status + '-' + aspects.color + '.svg">';
+
+    } else {
+        return "<pre>" + JSON.stringify(config, null, 4) + "</pre>";
+    }
 }
 
 ((function (WINDOW) {
