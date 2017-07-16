@@ -87,14 +87,17 @@ nested arbitrarily looks like this:</p>
 <p>It can also be loaded into a <em>CommonJS Process</em> using:</p>
 <pre><code class="undefinedjavascript"><span class="hljs-keyword">const</span> JSONREP = <span class="hljs-built_in">require</span>(<span class="hljs-string">"jsonrep"</span>);
 </code></pre>
-<p><script src="./dist/jsonrep.js"></script></p>
+<!--
+// This code is used when running the rendered guide in a browser.
+INJECT>>>
+<script src="./lib/jsonrep.js"></script>
 <style>
     DIV[renderer="jsonrep"] {
         display: inline-block;
     }
 </style>
-
-
+<<<INJECT
+-->
 <h1 id="undefinedintroduction">Introduction</h1>
 <p><code>jsonrep</code> <strong>marks up</strong> any DOM elements tagged using a <code>renderer=&quot;jsonrep&quot;</code> attribute:</p>
 <pre><code class="undefinedhtml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">renderer</span>=<span class="hljs-string">"jsonrep"</span>&gt;</span>{"message": "Hello World!"}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>

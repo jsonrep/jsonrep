@@ -73,19 +73,22 @@ DIV.markdown-block-result {
 }
 
 DIV.markdown-block-result > DIV.result-label {
-    float: right;
-    background-color: #000000;
-    color: #ffffff;
+    float: left;
+    background-color: #f3f3f3;
+    color: #888888;
     padding: 3px;
     padding-left: 10px;
     padding-right: 10px;
     display: inline-block;
     position: relative;
     top: -10px;
+    border: 1px dashed #cccccc;
+    border-top: 0px;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     font-size: 0.8rem;
     z-index: 100;
+    margin-right: 20px;
 }
 
 TABLE {
