@@ -16,10 +16,9 @@ depend {
                 "PACKAGE_SUMMARY": "$__DIRNAME__/GUIDE.md"
             },
             "routes": {
-                "/dist/jsonrep.js": "$__DIRNAME__/dist/jsonrep.js",
                 "/dist/div.ren.js": "div.ren.js",
                 "/dist/io.shields.img.ren.js": "io.shields.img.ren.js",
-                "/lib/jsonrep.js": {
+                "/dist/jsonrep.js": {
                     "@it.pinf.org.browserify#s1": {
                         "src": "$__DIRNAME__/src/jsonrep.js",
                         "dist": "$__DIRNAME__/dist/jsonrep.js"

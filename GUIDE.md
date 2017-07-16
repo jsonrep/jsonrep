@@ -51,7 +51,7 @@ const JSONREP = require("jsonrep");
 ```
 
 <!--ON_RUN>>>
-<script src="./lib/jsonrep.js"></script>
+<script src="./dist/jsonrep.js"></script>
 <style>
     DIV[renderer="jsonrep"] {
         display: inline-block;
