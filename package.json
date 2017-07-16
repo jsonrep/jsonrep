@@ -1,17 +1,17 @@
 {
-  "name": "jsonrep",
-  "version": "0.0.1",
-  "main": "src/jsonrep",
-  "dependencies": {
-    "bash.origin": "^0.1.60",
-    "bash.origin.express": "^0.1.2",
-    "bash.origin.test": "^0.1.31",
-    "insight-for-js": "^0.1.2",
-    "insight.renderers.default": "0.0.1"
-  },
-  "scripts": {
-    "start": "BO_ROOT_SCRIPT_PATH=$(pwd)/node_modules/bash.origin/bash.origin ./workspace.sh run",
-    "test": "BO_ROOT_SCRIPT_PATH=$(pwd)/node_modules/bash.origin/bash.origin bash.origin.test tests",
-    "publish-website": "BO_ROOT_SCRIPT_PATH=$(pwd)/node_modules/bash.origin/bash.origin ./workspace.sh publish"
-  }
+    "name": "jsonrep",
+    "version": "0.0.2",
+    "main": "src/jsonrep",
+    "dependencies": {
+        "bash.origin": "^0.1.60",
+        "bash.origin.express": "^0.1.2",
+        "bash.origin.test": "^0.1.31",
+        "insight-for-js": "^0.1.2",
+        "insight.renderers.default": "0.0.1"
+    },
+    "scripts": {
+        "start": "BO_ROOT_SCRIPT_PATH=$(pwd)/node_modules/bash.origin/bash.origin ./workspace.sh run",
+        "test": "BO_ROOT_SCRIPT_PATH=$(pwd)/node_modules/bash.origin/bash.origin bash.origin.test tests",
+        "publish-website": "BO_ROOT_SCRIPT_PATH=$(pwd)/node_modules/bash.origin/bash.origin ./workspace.sh publish"
+    }
 }
