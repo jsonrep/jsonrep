@@ -26,7 +26,9 @@ nested arbitrarily looks like this:
     }
 }
 ```
+<!--ON_RUN>>>
 RESULT: <div renderer="jsonrep">&CODE&</div>
+<<<ON_RUN-->
 
 Treat this format as a **compile target** capable of holding *just-in-time linked nested data structures*.
 
@@ -48,17 +50,14 @@ It can also be loaded into a *CommonJS Process* using:
 const JSONREP = require("jsonrep");
 ```
 
-<!--
-// This code is used when running the rendered guide in a browser.
-INJECT>>>
+<!--ON_RUN>>>
 <script src="./lib/jsonrep.js"></script>
 <style>
     DIV[renderer="jsonrep"] {
         display: inline-block;
     }
 </style>
-<<<INJECT
--->
+<<<ON_RUN-->
 
 
 Introduction
@@ -69,7 +68,9 @@ Introduction
 ```html
 <div renderer="jsonrep">{"message": "Hello World!"}</div>
 ```
+<!--ON_RUN>>>
 RESULT: &CODE&
+<<<ON_RUN-->
 
 The DOM is automatically *marked up* on the `DOMContentLoaded` document event which can be re-triggered (in case new tags have been added) using:
 
