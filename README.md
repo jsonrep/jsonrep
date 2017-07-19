@@ -23,7 +23,7 @@ nested arbitrarily looks like this:
 ```json
 {
     "@./dist/div": {
-        "css": {
+        "style": {
             "padding": "5px",
             "border": "1px solid black"
         },
@@ -41,8 +41,11 @@ nested arbitrarily looks like this:
 Treat this format as a **compile target** capable of holding *just-in-time linked nested data structures*.
 
 
-Loading
-=======
+Integration
+===========
+
+HTML Page
+---------
 
 Load the `jsonrep` library into a HTML page using:
 ```html
@@ -52,28 +55,68 @@ Load the `jsonrep` library into a HTML page using:
 </script>
 ```
 
-It can also be loaded into a *CommonJS Process* using:
+When used in a HTML page, `jsonrep` **marks up** any DOM elements tagged using a `renderer="jsonrep"` attribute:
+
+```html
+<div renderer="jsonrep">{"message": "Hello World!"}</div>
+```
+
+The DOM is automatically *marked up* on the `DOMContentLoaded` document event. *Marking up* can be re-triggered (in case new tags have been added) using:
+
+```javascript
+JSONREP.markupDocument();
+```
+
+CommonJS Environment
+--------------------
+
+`jsonrep` can also be loaded into a CommonJS Environment using:
 
 ```javascript
 const JSONREP = require("jsonrep");
 ```
 
 
+When loaded into a CommonJS Environment (which has a global **exports** object available) only the `jsonrep`
+API is exported WITHOUT *marking up* a DOM that may also be present in the environment.
 
-Introduction
-============
 
-`jsonrep` **marks up** any DOM elements tagged using a `renderer="jsonrep"` attribute:
+API
+===
+
+HTML
+----
+
+  * **markupDocument()** - Scan the DOM for `renderer="jsonrep"` and *mark up* any found elements.
+
+  * **markupElement( `<DOM_Element>` )** - *Mark up* the specified `<DOM_Element>`.
+
+CommonJS
+--------
+
+  * **markupNode( `<JSON_Node>` )** - Generate the *mark up* for the specified `<JSON_Node>`.
+
+
+Examples
+========
+
+### JavaScript Primitives
 
 ```html
-<div renderer="jsonrep">{"message": "Hello World!"}</div>
+<div renderer="jsonrep">[
+    null,
+    "string",
+    0,
+    1.2,
+    [
+        "item"
+    ],
+    {
+        "key": "value"
+    }
+]</div>
 ```
 
-The DOM is automatically *marked up* on the `DOMContentLoaded` document event which can be re-triggered (in case new tags have been added) using:
-
-```javascript
-JSONREP.markupDocument();
-```
 
 
 Provenance

@@ -1,62 +1,125 @@
 
-function markupNode (config) {
+function makeExports (exports) {
 
-    if (typeof config === "string") {
-        try {
-            config = JSON.parse(config);
-        } catch (err) {
-            throw new Error("Error parsing config from string! (" + err.message + ")");
-        }
+    const DEFAULT_RENDERER = require("./default.rep");
+
+    var reps = {};
+    var repIndex = 0;
+
+    exports.debug = false;
+
+    exports.getRepForId = function (id) {
+        return reps[id] || null;
     }
 
-console.log("config 1", config);
+    exports.makeRep = function (html, rep) {
+        // TODO: Speed this up.
+        html = html.split("\n");
+        // Inject a reference attribute into the HTML so we can attach the event listeners after injection.
+        var match = html[0].match(/^(<\w+)(.+)$/);
+        if (!match) {
+            throw new Error("The 'html' for a rep must begin with a HTML tag!");
+        }
+        html[0] = match[1] + ' _repid="' + (++repIndex) + '" ' + match[2];
+        // TODO: Garbage collect old reps when they are re-rendered.
+        reps["" + repIndex] = rep;
+        return html.join("\n");
+    }
 
-    if (config["@./dist/div"]) {
+    exports.markupNode = function (node) {
 
-        return [
-            '<div>',
-            markupNode(config["@./dist/div"].innerHTML),
-            '</div>'
-        ].join("");
+        if (typeof node === "string") {
+            try {
+                node = JSON.parse(node);
+            } catch (err) {
+                return Promise.reject(new Error("Error parsing node from string! (" + err.message + ")"));
+            }
+        }
 
-    } else
-    if (config["@./dist/io.shields.img"]) {
+		var keys = Object.keys(node);
+		if (
+			keys.length === 1 &&
+			/^@/.test(keys[0])
+		) {
+            var uri = keys[0].replace(/^@/, "") + ".rep";
+            
+            return exports.loadRenderer(uri).then(function (renderer) {
 
-        var aspects = config["@./dist/io.shields.img"];
-        return '<img src="https://img.shields.io/badge/' + aspects.subject + '-' + aspects.status + '-' + aspects.color + '.svg">';
+                return renderer.main(exports, node[keys[0]]);
+            });
 
-    } else {
-        return "<pre>" + JSON.stringify(config, null, 4) + "</pre>";
+        } else {
+
+            return Promise.resolve(DEFAULT_RENDERER.main(exports, node));
+        }
     }
 }
 
 ((function (WINDOW) {
 
-    exports.markupNode = markupNode;
+    var isCommonJS = (typeof exports !== "undefined");
+
+    if (!isCommonJS) {
+        var exports = {};
+    }
+
+    makeExports(exports);
 
     if (!WINDOW) {
+
+        // TODO: Shim 'PINF' loader to enable loading server-side.
+
         return null;
     }
 
-    // TODO: Optionally do not expose.
-    WINDOW.jsonrep = exports;
+    if (!isCommonJS) {
+        WINDOW.jsonrep = exports;
+    }
+
+    if (typeof WINDOW.PINF === "undefined") {
+        WINDOW.PINF = require("pinf-loader-js");
+        WINDOW.PINF.document = WINDOW.document;
+    }
+
+    exports.loadRenderer = function (uri) {
+        return new Promise(function (resolve, reject) {
+            WINDOW.PINF.sandbox(uri, resolve, reject);
+        });
+    }
 
     exports.markupElement = function (el) {
-        el.innerHTML = exports.markupNode(el.innerHTML);
+        return exports.markupNode(el.innerHTML).then(function (htmlCode) {
+
+            el.innerHTML = htmlCode;
+
+            var rep = exports.getRepForId(el.childNodes[0].getAttribute("_repid"));
+            if (
+                rep &&
+                rep.on &&
+                rep.on.mount
+            ) {
+                rep.on.mount(el.childNodes[0]);
+            }
+            return null;
+        });
     }
 
     exports.markupDocument = function () {
-        var elements = WINDOW.document.querySelectorAll('[renderer="jsonrep"]');
-        elements.forEach(exports.markupElement);
+        return Promise.all(Array.from(WINDOW.document.querySelectorAll('[renderer="jsonrep"]')).map(exports.markupElement));
+    }
+
+    function markupDocument () {
+        // TODO: Optionally direct to custom error handler.
+        exports.markupDocument().catch(console.error);
     }
 
     if (WINDOW.document.readyState === "complete") {
-        exports.markupDocument();
+        markupDocument()
     } else {
         if (typeof WINDOW.addEventListener !== "undefined") {
-            WINDOW.addEventListener("DOMContentLoaded", exports.markupDocument, false);
+            WINDOW.addEventListener("DOMContentLoaded", markupDocument, false);
         } else {
-            WINDOW.attachEvent("onload", exports.markupDocument);
+            WINDOW.attachEvent("onload", markupDocument);
         }
     }
 

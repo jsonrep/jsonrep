@@ -3,6 +3,7 @@
 depend {
     "inception": {
         "@com.github/cadorn/Inception#s1": {
+            "readme": "$__DIRNAME__/README.md",
             "variables": {
                 "PACKAGE_NAME": "jsonrep",
                 "PACKAGE_GITHUB_URI": "github.com/jsonrep/jsonrep",
@@ -16,14 +17,17 @@ depend {
                 "PACKAGE_SUMMARY": "$__DIRNAME__/GUIDE.md"
             },
             "routes": {
-                "/dist/div.ren.js": "div.ren.js",
-                "/dist/io.shields.img.ren.js": "io.shields.img.ren.js",
+                "/dist/div.rep.js": "$__DIRNAME__/dist/div.rep.js",
+                "/dist/io.shields.img.rep.js": "$__DIRNAME__/dist/io.shields.img.rep.js",
                 "/dist/jsonrep.js": {
                     "@it.pinf.org.browserify#s1": {
                         "src": "$__DIRNAME__/src/jsonrep.js",
                         "dist": "$__DIRNAME__/dist/jsonrep.js"
                     }
                 }
+            },
+            "files": {
+                "dist/resources/insight.renderers.default": "$__DIRNAME__/node_modules/insight.renderers.default/resources"
             }
         }
     }
@@ -35,8 +39,6 @@ if [ "$ARGS_1" == "publish" ]; then
 
     # TODO: Add option to track files and only publish if changed.
     CALL_inception website publish ${*:2}
-
-    CALL_inception website publishReadme "$__DIRNAME__/README.md" ${*:2}
 
 elif [ "$ARGS_1" == "run" ]; then
 
