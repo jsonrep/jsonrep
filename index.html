@@ -47,7 +47,7 @@
 nested arbitrarily looks like this:</p>
 <pre><code class="undefinedjson">{
     <span class="hljs-attr">"@./dist/div"</span>: {
-        <span class="hljs-attr">"css"</span>: {
+        <span class="hljs-attr">"style"</span>: {
             <span class="hljs-attr">"padding"</span>: <span class="hljs-string">"5px"</span>,
             <span class="hljs-attr">"border"</span>: <span class="hljs-string">"1px solid black"</span>
         },
@@ -63,7 +63,7 @@ nested arbitrarily looks like this:</p>
 </code></pre>
 <div class="markdown-block-result"><div class="result-label">Result</div> <div renderer="jsonrep">{
     "@./dist/div": {
-        "css": {
+        "style": {
             "padding": "5px",
             "border": "1px solid black"
         },
@@ -77,14 +77,23 @@ nested arbitrarily looks like this:</p>
     }
 }</div></div>
 <p>Treat this format as a <strong>compile target</strong> capable of holding <em>just-in-time linked nested data structures</em>.</p>
-<h1 id="undefinedloading">Loading</h1>
+<h1 id="undefinedintegration">Integration</h1>
+<h2 id="undefinedhtml-page">HTML Page</h2>
 <p>Load the <code>jsonrep</code> library into a HTML page using:</p>
 <pre><code class="undefinedhtml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"./dist/jsonrep.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
     <span class="hljs-keyword">const</span> JSONREP = <span class="hljs-built_in">window</span>.jsonrep;
 </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
-<p>It can also be loaded into a <em>CommonJS Process</em> using:</p>
+<p>When used in a HTML page, <code>jsonrep</code> <strong>marks up</strong> any DOM elements tagged using a <code>renderer=&quot;jsonrep&quot;</code> attribute:</p>
+<pre><code class="undefinedhtml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">renderer</span>=<span class="hljs-string">"jsonrep"</span>&gt;</span>{"message": "Hello World!"}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
+<div class="markdown-block-result"><div class="result-label">Result</div> <div renderer="jsonrep">{"message": "Hello World!"}</div></div>
+<p>The DOM is automatically <em>marked up</em> on the <code>DOMContentLoaded</code> document event. <em>Marking up</em> can be re-triggered (in case new tags have been added) using:</p>
+<pre><code class="undefinedjavascript">JSONREP.markupDocument();
+</code></pre>
+<h2 id="undefinedcommonjs-environment">CommonJS Environment</h2>
+<p><code>jsonrep</code> can also be loaded into a CommonJS Environment using:</p>
 <pre><code class="undefinedjavascript"><span class="hljs-keyword">const</span> JSONREP = <span class="hljs-built_in">require</span>(<span class="hljs-string">"jsonrep"</span>);
 </code></pre>
 <p><script src="./dist/jsonrep.js"></script></p>
@@ -95,15 +104,47 @@ nested arbitrarily looks like this:</p>
 </style>
 
 
-
-<h1 id="undefinedintroduction">Introduction</h1>
-<p><code>jsonrep</code> <strong>marks up</strong> any DOM elements tagged using a <code>renderer=&quot;jsonrep&quot;</code> attribute:</p>
-<pre><code class="undefinedhtml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">renderer</span>=<span class="hljs-string">"jsonrep"</span>&gt;</span>{"message": "Hello World!"}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<p>When loaded into a CommonJS Environment (which has a global <strong>exports</strong> object available) only the <code>jsonrep</code>
+API is exported WITHOUT <em>marking up</em> a DOM that may also be present in the environment.</p>
+<h1 id="undefinedapi">API</h1>
+<h2 id="undefinedhtml">HTML</h2>
+<ul>
+<li><p><strong>markupDocument()</strong> - Scan the DOM for <code>renderer=&quot;jsonrep&quot;</code> and <em>mark up</em> any found elements.</p>
+</li>
+<li><p><strong>markupElement( <code>&lt;DOM_Element&gt;</code> )</strong> - <em>Mark up</em> the specified <code>&lt;DOM_Element&gt;</code>.</p>
+</li>
+</ul>
+<h2 id="undefinedcommonjs">CommonJS</h2>
+<ul>
+<li><strong>markupNode( <code>&lt;JSON_Node&gt;</code> )</strong> - Generate the <em>mark up</em> for the specified <code>&lt;JSON_Node&gt;</code>.</li>
+</ul>
+<h1 id="undefinedexamples">Examples</h1>
+<h3 id="undefinedjavascript-primitives">JavaScript Primitives</h3>
+<pre><code class="undefinedhtml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">renderer</span>=<span class="hljs-string">"jsonrep"</span>&gt;</span>[
+    null,
+    "string",
+    0,
+    1.2,
+    [
+        "item"
+    ],
+    {
+        "key": "value"
+    }
+]<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
 </code></pre>
-<div class="markdown-block-result"><div class="result-label">Result</div> <div renderer="jsonrep">{"message": "Hello World!"}</div></div>
-<p>The DOM is automatically <em>marked up</em> on the <code>DOMContentLoaded</code> document event which can be re-triggered (in case new tags have been added) using:</p>
-<pre><code class="undefinedjavascript">JSONREP.markupDocument();
-</code></pre>
+<div class="markdown-block-result"><div class="result-label">Result</div> <div renderer="jsonrep">[
+    null,
+    "string",
+    0,
+    1.2,
+    [
+        "item"
+    ],
+    {
+        "key": "value"
+    }
+]</div></div>
 <h1 id="undefinedprovenance">Provenance</h1>
 <p>Original Source Logic under <a href="https://opensource.org/licenses/MPL-2.0">Mozilla Public License 2.0</a> by <a href="http://christophdorn.com">Christoph Dorn</a> since 2017.</p>
 <pre><code>Mozilla Public License 2.0
