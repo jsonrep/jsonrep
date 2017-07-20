@@ -46,13 +46,13 @@
 <p>An <em>Annotated JSON Document</em> using <em>URL-referenced JavaScript Renderers</em> which may be
 nested arbitrarily looks like this:</p>
 <pre><code class="undefinedjson">{
-    <span class="hljs-attr">"@./dist/div"</span>: {
+    <span class="hljs-attr">"@dist/div"</span>: {
         <span class="hljs-attr">"style"</span>: {
             <span class="hljs-attr">"padding"</span>: <span class="hljs-string">"5px"</span>,
             <span class="hljs-attr">"border"</span>: <span class="hljs-string">"1px solid black"</span>
         },
         <span class="hljs-attr">"innerHTML"</span>: {
-            <span class="hljs-attr">"@./dist/io.shields.img"</span>: {
+            <span class="hljs-attr">"@dist/io.shields.img"</span>: {
                 <span class="hljs-attr">"subject"</span>: <span class="hljs-string">"jsonrep"</span>,
                 <span class="hljs-attr">"status"</span>: <span class="hljs-string">"Rocks!"</span>,
                 <span class="hljs-attr">"color"</span>: <span class="hljs-string">"green"</span>
@@ -62,13 +62,13 @@ nested arbitrarily looks like this:</p>
 }
 </code></pre>
 <div class="markdown-block-result"><div class="result-label">Result</div> <div renderer="jsonrep">{
-    "@./dist/div": {
+    "@dist/div": {
         "style": {
             "padding": "5px",
             "border": "1px solid black"
         },
         "innerHTML": {
-            "@./dist/io.shields.img": {
+            "@dist/io.shields.img": {
                 "subject": "jsonrep",
                 "status": "Rocks!",
                 "color": "green"
