@@ -25,10 +25,10 @@ depend {
                         "dist": "$__DIRNAME__/dist/jsonrep.js"
                     }
                 },
-                "/dist/default.rep.js": {
+                "/dist/insight.rep.js": {
                     "@it.pinf.org.browserify#s1": {
-                        "src": "$__DIRNAME__/src/default.rep.js",
-                        "dist": "$__DIRNAME__/dist/default.rep.js",
+                        "src": "$__DIRNAME__/src/insight.rep.js",
+                        "dist": "$__DIRNAME__/dist/insight.rep.js",
                         "format": "pinf"
                     }
                 }

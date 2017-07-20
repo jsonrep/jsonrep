@@ -43,7 +43,7 @@ function makeExports (exports) {
             uri = keys[0].replace(/^@/, "") + ".rep";
             node = node[keys[0]];
         } else {
-            uri = "./dist/default.rep.js";
+            uri = "./dist/insight.rep.js";
         }
 
         return exports.loadRenderer(uri).then(function (renderer) {
