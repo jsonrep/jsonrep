@@ -11,13 +11,13 @@ nested arbitrarily looks like this:
 
 ```json
 {
-    "@./dist/div": {
+    "@dist/div": {
         "style": {
             "padding": "5px",
             "border": "1px solid black"
         },
         "innerHTML": {
-            "@./dist/io.shields.img": {
+            "@dist/io.shields.img": {
                 "subject": "jsonrep",
                 "status": "Rocks!",
                 "color": "green"
