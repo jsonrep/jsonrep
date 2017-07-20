@@ -1,8 +1,6 @@
 
 function makeExports (exports) {
 
-    const DEFAULT_RENDERER = require("./default.rep");
-
     var reps = {};
     var repIndex = 0;
 
@@ -36,28 +34,28 @@ function makeExports (exports) {
             }
         }
 
+        var uri = null;
 		var keys = Object.keys(node);
 		if (
 			keys.length === 1 &&
 			/^@/.test(keys[0])
 		) {
-            var uri = keys[0].replace(/^@/, "") + ".rep";
-            
-            return exports.loadRenderer(uri).then(function (renderer) {
-
-                return renderer.main(exports, node[keys[0]]);
-            });
-
+            uri = keys[0].replace(/^@/, "") + ".rep";
+            node = node[keys[0]];
         } else {
-
-            return Promise.resolve(DEFAULT_RENDERER.main(exports, node));
+            uri = "./dist/default.rep.js";
         }
+
+        return exports.loadRenderer(uri).then(function (renderer) {
+
+            return renderer.main(exports, node);
+        });
     }
 }
 
 ((function (WINDOW) {
 
-    var isCommonJS = (typeof exports !== "undefined");
+    const isCommonJS = (typeof exports !== "undefined");
 
     if (!isCommonJS) {
         var exports = {};
