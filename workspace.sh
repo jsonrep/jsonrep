@@ -24,6 +24,13 @@ depend {
                         "src": "$__DIRNAME__/src/jsonrep.js",
                         "dist": "$__DIRNAME__/dist/jsonrep.js"
                     }
+                },
+                "/dist/default.rep.js": {
+                    "@it.pinf.org.browserify#s1": {
+                        "src": "$__DIRNAME__/src/default.rep.js",
+                        "dist": "$__DIRNAME__/dist/default.rep.js",
+                        "format": "pinf"
+                    }
                 }
             },
             "files": {

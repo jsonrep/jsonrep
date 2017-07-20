@@ -38,7 +38,13 @@ var commonHelpers = {
     helpers: null,
     // NOTE: This should only be called once or with an ID to replace existing
     importCssString: function(id, css, document) {
-        UTIL.importCssString(css, document, "devcomp-insight-css-" + id);
+        UTIL.importCssString([
+            '[renderer="jsonrep"] {',
+            '   font-family: Lucida Grande, Tahoma, sans-serif;',
+            '   font-size: 11px;',
+            '}',
+            css
+        ].join("\n"), document, "devcomp-insight-css-" + id);
     },
     util: UTIL.copy(DOMPLATE_UTIL),
     getTemplateForId: function(id) {
