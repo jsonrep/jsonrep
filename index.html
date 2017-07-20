@@ -80,7 +80,7 @@ nested arbitrarily looks like this:</p>
 <h1 id="undefinedintegration">Integration</h1>
 <h2 id="undefinedhtml-page">HTML Page</h2>
 <p>Load the <code>jsonrep</code> library into a HTML page using:</p>
-<pre><code class="undefinedhtml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"./dist/jsonrep.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<pre><code class="undefinedhtml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://jsonrep.github.io/jsonrep/dist/jsonrep.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
     <span class="hljs-keyword">const</span> JSONREP = <span class="hljs-built_in">window</span>.jsonrep;
 </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
@@ -96,6 +96,8 @@ nested arbitrarily looks like this:</p>
 <p><code>jsonrep</code> can also be loaded into a CommonJS Environment using:</p>
 <pre><code class="undefinedjavascript"><span class="hljs-keyword">const</span> JSONREP = <span class="hljs-built_in">require</span>(<span class="hljs-string">"jsonrep"</span>);
 </code></pre>
+<p>When loaded into a CommonJS Environment (which has a global <strong>exports</strong> object available) only the <code>jsonrep</code>
+API is exported WITHOUT <em>marking up</em> a DOM that may also be present in the environment.</p>
 <p><script src="./dist/jsonrep.js"></script></p>
 <style>
     DIV[renderer="jsonrep"] {
@@ -104,8 +106,7 @@ nested arbitrarily looks like this:</p>
 </style>
 
 
-<p>When loaded into a CommonJS Environment (which has a global <strong>exports</strong> object available) only the <code>jsonrep</code>
-API is exported WITHOUT <em>marking up</em> a DOM that may also be present in the environment.</p>
+
 <h1 id="undefinedapi">API</h1>
 <h2 id="undefinedhtml">HTML</h2>
 <ul>
