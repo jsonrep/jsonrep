@@ -105,14 +105,17 @@ function makeExports (exports) {
 
             el.innerHTML = htmlCode;
 
-            var rep = exports.getRepForId(el.childNodes[0].getAttribute("_repid"));
-            if (
-                rep &&
-                rep.on &&
-                rep.on.mount
-            ) {
-                rep.on.mount(el.childNodes[0]);
-            }
+            Array.from(el.querySelectorAll('[_repid]')).forEach(function (el) {
+
+                var rep = exports.getRepForId(el.getAttribute("_repid"));
+                if (
+                    rep &&
+                    rep.on &&
+                    rep.on.mount
+                ) {
+                    rep.on.mount(el);
+                }
+            });
             return null;
         });
     }
