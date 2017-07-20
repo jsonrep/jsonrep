@@ -6,6 +6,16 @@ function makeExports(exports) {
     var reps = {};
     var repIndex = 0;
 
+    var baseUri = Array.from(document.querySelectorAll('SCRIPT[src]')).filter(function (tag) {
+        return (/\/jsonrep(\.min)?\.js$/.test(tag.getAttribute("src"))
+        );
+    });
+    if (!baseUri.length) {
+        baseUri = "";
+    } else {
+        baseUri = baseUri[0].getAttribute("src").split("/").slice(0, -2).join("/");
+    }
+
     exports.debug = false;
 
     exports.getRepForId = function (id) {
@@ -43,6 +53,10 @@ function makeExports(exports) {
             node = node[keys[0]];
         } else {
             uri = "./dist/insight.rep.js";
+        }
+
+        if (/^\.\//.test(uri)) {
+            uri = baseUri + uri.replace(/^\./, "");
         }
 
         return exports.loadRenderer(uri).then(function (renderer) {
