@@ -49,7 +49,7 @@ HTML Page
 
 Load the `jsonrep` library into a HTML page using:
 ```html
-<script src="./dist/jsonrep.js"></script>
+<script src="https://jsonrep.github.io/jsonrep/dist/jsonrep.js"></script>
 <script>
     const JSONREP = window.jsonrep;
 </script>
@@ -76,9 +76,9 @@ CommonJS Environment
 const JSONREP = require("jsonrep");
 ```
 
-
 When loaded into a CommonJS Environment (which has a global **exports** object available) only the `jsonrep`
 API is exported WITHOUT *marking up* a DOM that may also be present in the environment.
+
 
 
 API
