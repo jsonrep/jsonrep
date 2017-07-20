@@ -52,7 +52,7 @@ function makeExports(exports) {
             uri = keys[0].replace(/^@/, "") + ".rep";
             node = node[keys[0]];
         } else {
-            uri = "./dist/insight.rep.js";
+            uri = "dist/insight.rep.js";
         }
 
         if (/^dist\//.test(uri)) {
