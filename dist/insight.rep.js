@@ -9980,7 +9980,9 @@ var UTIL = {
         doc = doc || document;
 
         if (typeof id !== "undefined") {
-            if (doc.getElementById(id)) return;
+            if (doc.getElementById(id)) {
+                return;
+            }
         }
 
         if (doc.createStyleSheet) {

@@ -4,7 +4,8 @@ This **Guide** is best viewed at [jsonrep.github.io/jsonrep](https://jsonrep.git
 > Use `jsonrep` to present JSON Documents beautifully and easily!
 
 `jsonrep` is a JavaScript library for use in the *Browser* and on the *Server*
-(for pre-compiling) to *mark up* **JSON Documents** for **Visualization and Interaction**.
+(for pre-compiling) to *mark up* **JSON Documents** for **Visualization and Interaction**
+using *JavaScript Representations* (**rep[s]**).
 
 An *Annotated JSON Document* using *URL-referenced JavaScript Renderers* which may be
 nested arbitrarily looks like this:
@@ -105,21 +106,60 @@ Examples
 
 ### JavaScript Primitives
 
+The default *reps* for [JavaScript Primitives](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures).
+
 ```html
-<div renderer="jsonrep">[
+[
     null,
     "string",
     0,
     1.2,
-    [
-        "item"
-    ],
-    {
-        "key": "value"
-    }
-]</div>
+    [ "item" ],
+    { "key": "value" }
+]
 ```
 <!--ON_RUN>>>
-RESULT: &CODE&
+RESULT: <div renderer="jsonrep">&CODE&</div>
 <<<ON_RUN-->
 
+### Golden Layout
+
+A *rep* for the [golden-layout.com](http://golden-layout.com/) multi-screen layout manager.
+
+```html
+{
+    "@dist/golden-layout": {
+        "content": [ {
+            "type": "row",
+            "content": [
+                {
+                    "type": "component",
+                    "componentName": "example",
+                    "title": "Default Rendering",
+                    "componentState": { "text": "Component 1" }
+                }, {
+                    "type": "component",
+                    "componentName": "example",
+                    "title": "Custom Rep",
+                    "componentState": {
+                        "@dist/io.shields.img": {
+                            "subject": "jsonrep",
+                            "status": "Rocks!",
+                            "color": "blue"
+                        }                        
+                    }
+                }
+            ]
+        } ]
+    }
+}
+```
+<!--ON_RUN>>>
+<style>
+.lm_goldenlayout .lm_content > DIV {
+    padding: 10px;
+}
+</style>
+
+RESULT: <div renderer="jsonrep" style="width: 100%; height:100px;">&CODE&</div>
+<<<ON_RUN-->

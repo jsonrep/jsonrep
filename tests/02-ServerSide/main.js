@@ -1,11 +1,18 @@
-#!/usr/bin/env bash.origin.test via github.com/facebook/jest
+#!/usr/bin/env bash.origin.test via github.com/mochajs/mocha
 
+const ASSERT = require('assert');
 const JSONREP = require("../..");
 
 
-test('Test', function () {
+it('Test', function (done) {
 
-    expect(JSONREP.markupNode('{"message":"Hello World!"}')).toBe('[' + JSON.stringify({
-        "message": "Hello World!"
-    }) + ']');
+    JSONREP.markupNode('{"message":"Hello World!"}').then(function (code) {
+
+        ASSERT.equal(code, JSON.stringify({
+            "message": "Hello World!"
+        }, null, 4));
+
+        done();
+        return null;
+    }).catch(done);
 });

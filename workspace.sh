@@ -19,6 +19,7 @@ depend {
             "routes": {
                 "/dist/div.rep.js": "$__DIRNAME__/dist/div.rep.js",
                 "/dist/io.shields.img.rep.js": "$__DIRNAME__/dist/io.shields.img.rep.js",
+                "/dist/golden-layout.rep.js": "$__DIRNAME__/dist/golden-layout.rep.js",
                 "/dist/jsonrep.js": {
                     "@it.pinf.org.browserify#s1": {
                         "src": "$__DIRNAME__/src/jsonrep.js",

@@ -10,20 +10,19 @@ const UTIL = {
         doc = doc || document;
         
         if (typeof id !== "undefined") {
-            if (doc.getElementById(id))
+            if (doc.getElementById(id)) {
                 return;
+            }
         }
 
         if (doc.createStyleSheet) {
             var sheet = doc.createStyleSheet();
             sheet.cssText = cssText;
-        }
-        else {
+        } else {
             var style = doc.createElementNS ?
                         doc.createElementNS("http://www.w3.org/1999/xhtml", "style") :
                         doc.createElement("style");
-            if (typeof id !== "undefined")
-            {
+            if (typeof id !== "undefined") {
                 style.setAttribute("id", id);
             }
             style.appendChild(doc.createTextNode(cssText));
