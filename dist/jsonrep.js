@@ -6,18 +6,6 @@ function makeExports(exports) {
     var reps = {};
     var repIndex = 0;
 
-    var ourBaseUri = Array.from(document.querySelectorAll('SCRIPT[src]')).filter(function (tag) {
-        return (/\/jsonrep(\.min)?\.js$/.test(tag.getAttribute("src"))
-        );
-    });
-    if (!ourBaseUri.length) {
-        ourBaseUri = "";
-    } else {
-        ourBaseUri = ourBaseUri[0].getAttribute("src").split("/").slice(0, -2).join("/");
-    }
-
-    exports.debug = false;
-
     exports.getRepForId = function (id) {
         return reps[id] || null;
     };
@@ -42,6 +30,7 @@ function makeExports(exports) {
             try {
                 node = JSON.parse(node);
             } catch (err) {
+                console.error("This should be JSON:", node);
                 return Promise.reject(new Error("Error parsing node from string! (" + err.message + ")"));
             }
         }
@@ -52,11 +41,26 @@ function makeExports(exports) {
             uri = keys[0].replace(/^@/, "") + ".rep";
             node = node[keys[0]];
         } else {
-            uri = "dist/insight.rep.js";
+            if (exports.options.defaultRenderer) {
+                return new Promise(function (resolve, reject) {
+                    try {
+                        var ret = exports.options.defaultRenderer(exports, node);
+                        if (typeof ret.then === "function") {
+                            ret.then(resolve, reject);
+                        } else {
+                            resolve(ret);
+                        }
+                    } catch (err) {
+                        reject(err);
+                    }
+                });
+            } else {
+                uri = "dist/insight.rep.js";
+            }
         }
 
         if (/^dist\//.test(uri)) {
-            uri = ourBaseUri + "/" + uri;
+            uri = exports.options.ourBaseUri + "/" + uri;
         }
 
         return exports.loadRenderer(uri).then(function (renderer) {
@@ -68,69 +72,94 @@ function makeExports(exports) {
 
 (function (WINDOW) {
 
-    var isCommonJS = typeof exports !== "undefined";
+    function init(exports) {
 
-    if (!isCommonJS) {
-        var exports = {};
-    }
+        exports.options = exports.options || {};
 
-    makeExports(exports);
+        exports.PINF = require("pinf-loader-js");
 
-    if (!WINDOW) {
+        if (WINDOW) {
 
-        // TODO: Shim 'PINF' loader to enable loading server-side.
-
-        return null;
-    }
-
-    if (!isCommonJS) {
-        WINDOW.jsonrep = exports;
-    }
-
-    if (typeof WINDOW.PINF === "undefined") {
-        WINDOW.PINF = require("pinf-loader-js");
-        WINDOW.PINF.document = WINDOW.document;
-    }
-
-    exports.loadRenderer = function (uri) {
-        return new Promise(function (resolve, reject) {
-            WINDOW.PINF.sandbox(uri, resolve, reject);
-        });
-    };
-
-    exports.markupElement = function (el) {
-        return exports.markupNode(el.innerHTML).then(function (htmlCode) {
-
-            el.innerHTML = htmlCode;
-
-            Array.from(el.querySelectorAll('[_repid]')).forEach(function (el) {
-
-                var rep = exports.getRepForId(el.getAttribute("_repid"));
-                if (rep && rep.on && rep.on.mount) {
-                    rep.on.mount(el);
+            if (!exports.options.ourBaseUri) {
+                var ourBaseUri = Array.from(WINDOW.document.querySelectorAll('SCRIPT[src]')).filter(function (tag) {
+                    return (/\/jsonrep(\.min)?\.js$/.test(tag.getAttribute("src"))
+                    );
+                });
+                if (!ourBaseUri.length) {
+                    exports.options.ourBaseUri = "";
+                } else {
+                    exports.options.ourBaseUri = ourBaseUri[0].getAttribute("src").split("/").slice(0, -2).join("/");
                 }
+            }
+
+            if (typeof WINDOW.PINF === "undefined") {
+                WINDOW.PINF = exports.PINF;
+                WINDOW.PINF.document = WINDOW.document;
+            }
+        }
+
+        exports.loadRenderer = function (uri) {
+            return new Promise(function (resolve, reject) {
+                exports.PINF.sandbox(uri, resolve, reject);
             });
+        };
+
+        makeExports(exports);
+
+        if (!WINDOW) {
             return null;
-        });
-    };
+        }
 
-    exports.markupDocument = function () {
-        return Promise.all(Array.from(WINDOW.document.querySelectorAll('[renderer="jsonrep"]')).map(exports.markupElement));
-    };
+        // ############################################################
+        // # Browser/DOM Environment
+        // ############################################################
 
-    function markupDocument() {
-        // TODO: Optionally direct to custom error handler.
-        exports.markupDocument().catch(console.error);
+        exports.markupElement = function (el) {
+            return exports.markupNode(el.innerHTML).then(function (htmlCode) {
+
+                console.log("htmlCode", htmlCode);
+
+                el.innerHTML = htmlCode;
+
+                Array.from(el.querySelectorAll('[_repid]')).forEach(function (el) {
+
+                    var rep = exports.getRepForId(el.getAttribute("_repid"));
+                    if (rep && rep.on && rep.on.mount) {
+                        rep.on.mount(el);
+                    }
+                });
+                return null;
+            });
+        };
+
+        exports.markupDocument = function () {
+            return Promise.all(Array.from(WINDOW.document.querySelectorAll('[renderer="jsonrep"]')).map(exports.markupElement));
+        };
+
+        function markupDocument() {
+            // TODO: Optionally direct to custom error handler.
+            exports.markupDocument().catch(console.error);
+        }
+
+        if (WINDOW.document.readyState === "complete") {
+            markupDocument();
+        } else {
+            if (typeof WINDOW.addEventListener !== "undefined") {
+                WINDOW.addEventListener("DOMContentLoaded", markupDocument, false);
+            } else {
+                WINDOW.attachEvent("onload", markupDocument);
+            }
+        }
+
+        return exports;
     }
 
-    if (WINDOW.document.readyState === "complete") {
-        markupDocument();
+    // Detect environemnt
+    var isCommonJS = typeof exports !== "undefined";
+    if (isCommonJS) {
+        init(exports);
     } else {
-        if (typeof WINDOW.addEventListener !== "undefined") {
-            WINDOW.addEventListener("DOMContentLoaded", markupDocument, false);
-        } else {
-            WINDOW.attachEvent("onload", markupDocument);
-        }
+        WINDOW.jsonrep = init({});
     }
 })(typeof window !== "undefined" ? window : null);
 
@@ -204,7 +233,7 @@ function makeExports(exports) {
 				uri = location.protocol + "//" + location.host + uri.replace(/^\/?\{host\}/, "");
 			} else
 			if (/^\/\//.test(uri)) {
-				uri = location.protocol + "/" + uri;
+				uri = location.protocol + uri;
 			}
 			if (!headTag) {
 				headTag = document.getElementsByTagName("head")[0];
@@ -826,15 +855,14 @@ function makeExports(exports) {
 		/*DEBUG*/ require.getReport = function() {
 		/*DEBUG*/ 	var report = {
 		/*DEBUG*/ 			sandboxes: {}
-		/*DEBUG*/ 		},
-		/*DEBUG*/ 		key;
-		/*DEBUG*/ 	for (key in sandboxes) {
+		/*DEBUG*/ 		};
+		/*DEBUG*/ 	for (var key in sandboxes) {
 		/*DEBUG*/ 		report.sandboxes[key] = sandboxes[key].getReport();
 		/*DEBUG*/ 	}
 		/*DEBUG*/ 	return report;
 		/*DEBUG*/ }
 		/*DEBUG*/ require.reset = function() {
-		/*DEBUG*/ 	for (key in sandboxes) {
+		/*DEBUG*/ 	for (var key in sandboxes) {
 		/*DEBUG*/ 		sandboxes[key].reset();
 		/*DEBUG*/ 	}
 		/*DEBUG*/ 	sandboxes = {};
