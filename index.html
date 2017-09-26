@@ -42,7 +42,8 @@
 <p>Use <code>jsonrep</code> to present JSON Documents beautifully and easily!</p>
 </blockquote>
 <p><code>jsonrep</code> is a JavaScript library for use in the <em>Browser</em> and on the <em>Server</em>
-(for pre-compiling) to <em>mark up</em> <strong>JSON Documents</strong> for <strong>Visualization and Interaction</strong>.</p>
+(for pre-compiling) to <em>mark up</em> <strong>JSON Documents</strong> for <strong>Visualization and Interaction</strong>
+using <em>JavaScript Representations</em> (<strong>rep[s]</strong>).</p>
 <p>An <em>Annotated JSON Document</em> using <em>URL-referenced JavaScript Renderers</em> which may be
 nested arbitrarily looks like this:</p>
 <pre><code class="undefinedjson">{
@@ -121,31 +122,85 @@ API is exported WITHOUT <em>marking up</em> a DOM that may also be present in th
 </ul>
 <h1 id="undefinedexamples">Examples</h1>
 <h3 id="undefinedjavascript-primitives">JavaScript Primitives</h3>
-<pre><code class="undefinedhtml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">renderer</span>=<span class="hljs-string">"jsonrep"</span>&gt;</span>[
+<p>The default <em>reps</em> for <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures">JavaScript Primitives</a>.</p>
+<pre><code class="undefinedhtml">[
     null,
-    "string",
+    &quot;string&quot;,
     0,
     1.2,
-    [
-        "item"
-    ],
-    {
-        "key": "value"
-    }
-]<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    [ &quot;item&quot; ],
+    { &quot;key&quot;: &quot;value&quot; }
+]
 </code></pre>
 <div class="markdown-block-result"><div class="result-label">Result</div> <div renderer="jsonrep">[
     null,
     "string",
     0,
     1.2,
-    [
-        "item"
-    ],
-    {
-        "key": "value"
-    }
+    [ "item" ],
+    { "key": "value" }
 ]</div></div>
+<h3 id="undefinedgolden-layout">Golden Layout</h3>
+<p>A <em>rep</em> for the <a href="http://golden-layout.com/">golden-layout.com</a> multi-screen layout manager.</p>
+<pre><code class="undefinedhtml">{
+    &quot;@dist/golden-layout&quot;: {
+        &quot;content&quot;: [ {
+            &quot;type&quot;: &quot;row&quot;,
+            &quot;content&quot;: [
+                {
+                    &quot;type&quot;: &quot;component&quot;,
+                    &quot;componentName&quot;: &quot;example&quot;,
+                    &quot;title&quot;: &quot;Default Rendering&quot;,
+                    &quot;componentState&quot;: { &quot;text&quot;: &quot;Component 1&quot; }
+                }, {
+                    &quot;type&quot;: &quot;component&quot;,
+                    &quot;componentName&quot;: &quot;example&quot;,
+                    &quot;title&quot;: &quot;Custom Rep&quot;,
+                    &quot;componentState&quot;: {
+                        &quot;@dist/io.shields.img&quot;: {
+                            &quot;subject&quot;: &quot;jsonrep&quot;,
+                            &quot;status&quot;: &quot;Rocks!&quot;,
+                            &quot;color&quot;: &quot;blue&quot;
+                        }                        
+                    }
+                }
+            ]
+        } ]
+    }
+}
+</code></pre>
+<style>
+.lm_goldenlayout .lm_content > DIV {
+    padding: 10px;
+}
+</style>
+
+<div class="markdown-block-result"><div class="result-label">Result</div> <div renderer="jsonrep" style="width: 100%; height:100px;">{
+    "@dist/golden-layout": {
+        "content": [ {
+            "type": "row",
+            "content": [
+                {
+                    "type": "component",
+                    "componentName": "example",
+                    "title": "Default Rendering",
+                    "componentState": { "text": "Component 1" }
+                }, {
+                    "type": "component",
+                    "componentName": "example",
+                    "title": "Custom Rep",
+                    "componentState": {
+                        "@dist/io.shields.img": {
+                            "subject": "jsonrep",
+                            "status": "Rocks!",
+                            "color": "blue"
+                        }                        
+                    }
+                }
+            ]
+        } ]
+    }
+}</div></div>
 <h1 id="undefinedprovenance">Provenance</h1>
 <p>Original Source Logic under <a href="https://opensource.org/licenses/MPL-2.0">Mozilla Public License 2.0</a> by <a href="http://christophdorn.com">Christoph Dorn</a> since 2017.</p>
 <pre><code>Mozilla Public License 2.0

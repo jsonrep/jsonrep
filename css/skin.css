@@ -23,19 +23,19 @@ A:visited {
     border-bottom: 1px solid #ffffff;
 }
 
-H1 {
+BODY > H1 {
     border-bottom: 3px solid #1f75af;
     padding-bottom: 10px;
     padding-left: 10px;
 }
 
-H2 {
+BODY > H2 {
     border-bottom: 2px solid rgba(31,117,175,0.6);
     padding-bottom: 5px;
     padding-left: 10px;
 }
 
-H3 {
+BODY > H3 {
     border-bottom: 1px solid rgba(32,117,175,0.4);
     padding-left: 10px;
 }
