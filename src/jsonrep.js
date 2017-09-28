@@ -77,9 +77,14 @@ function makeExports (exports) {
 
         exports.options = exports.options || {};
 
+        // TODO: Only re-inject loader if not already present (build two versions of JS file).
         exports.PINF = require("pinf-loader-js");
 
         if (WINDOW) {
+
+            if (!exports.PINF.document) {
+                exports.PINF.document = WINDOW.document;
+            }
 
             if (!exports.options.ourBaseUri) {
                 var ourBaseUri = Array.from(WINDOW.document.querySelectorAll('SCRIPT[src]')).filter(function (tag) {
@@ -99,6 +104,20 @@ function makeExports (exports) {
         }
 
         exports.loadRenderer = function (uri) {
+
+            // Adjust base path depending on the environment.
+            if (
+                WINDOW &&
+                typeof WINDOW.pmodule !== "undefined" &&
+                !/^\//.test(uri)
+            ) {
+                uri = [
+                    WINDOW.location.href.replace(/\/([^\/]*)$/, ""),
+                    WINDOW.pmodule.filename.replace(/\/([^\/]*)$/, ""),
+                    uri
+                ].join("/").replace(/\/\.?\//g, "/").replace(/^([^:]+:\/)/, "$1/");
+            }
+
             return new Promise(function (resolve, reject) {
                 exports.PINF.sandbox(uri, resolve, reject);
             });
@@ -116,11 +135,9 @@ function makeExports (exports) {
     
         exports.markupElement = function (el) {
             return exports.markupNode(el.innerHTML).then(function (htmlCode) {
-    
-                console.log("htmlCode", htmlCode);
-                            
+
                 el.innerHTML = htmlCode;
-    
+
                 Array.from(el.querySelectorAll('[_repid]')).forEach(function (el) {
     
                     var rep = exports.getRepForId(el.getAttribute("_repid"));
@@ -145,14 +162,14 @@ function makeExports (exports) {
             exports.markupDocument().catch(console.error);
         }
     
-        if (WINDOW.document.readyState === "complete") {
-            markupDocument()
-        } else {
+        if (WINDOW.document.readyState === "loading") {
             if (typeof WINDOW.addEventListener !== "undefined") {
                 WINDOW.addEventListener("DOMContentLoaded", markupDocument, false);
             } else {
                 WINDOW.attachEvent("onload", markupDocument);
             }
+        } else {
+            markupDocument();
         }
 
         return exports;

@@ -8,6 +8,8 @@
     "bash.origin": "^0.1.60",
     "bash.origin.express": "^0.1.2",
     "bash.origin.test": "^0.1.31",
+    "codeblock": "^0.3.4",
+    "fs-extra": "^4.0.2",
     "insight-for-js": "^0.1.2",
     "insight.renderers.default": "0.0.1",
     "lodash": "^4.17.4",

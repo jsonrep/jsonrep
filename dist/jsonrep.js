@@ -76,9 +76,14 @@ function makeExports(exports) {
 
         exports.options = exports.options || {};
 
+        // TODO: Only re-inject loader if not already present (build two versions of JS file).
         exports.PINF = require("pinf-loader-js");
 
         if (WINDOW) {
+
+            if (!exports.PINF.document) {
+                exports.PINF.document = WINDOW.document;
+            }
 
             if (!exports.options.ourBaseUri) {
                 var ourBaseUri = Array.from(WINDOW.document.querySelectorAll('SCRIPT[src]')).filter(function (tag) {
@@ -99,6 +104,12 @@ function makeExports(exports) {
         }
 
         exports.loadRenderer = function (uri) {
+
+            // Adjust base path depending on the environment.
+            if (WINDOW && typeof WINDOW.pmodule !== "undefined" && !/^\//.test(uri)) {
+                uri = [WINDOW.location.href.replace(/\/([^\/]*)$/, ""), WINDOW.pmodule.filename.replace(/\/([^\/]*)$/, ""), uri].join("/").replace(/\/\.?\//g, "/").replace(/^([^:]+:\/)/, "$1/");
+            }
+
             return new Promise(function (resolve, reject) {
                 exports.PINF.sandbox(uri, resolve, reject);
             });
@@ -116,8 +127,6 @@ function makeExports(exports) {
 
         exports.markupElement = function (el) {
             return exports.markupNode(el.innerHTML).then(function (htmlCode) {
-
-                console.log("htmlCode", htmlCode);
 
                 el.innerHTML = htmlCode;
 
@@ -141,14 +150,14 @@ function makeExports(exports) {
             exports.markupDocument().catch(console.error);
         }
 
-        if (WINDOW.document.readyState === "complete") {
-            markupDocument();
-        } else {
+        if (WINDOW.document.readyState === "loading") {
             if (typeof WINDOW.addEventListener !== "undefined") {
                 WINDOW.addEventListener("DOMContentLoaded", markupDocument, false);
             } else {
                 WINDOW.attachEvent("onload", markupDocument);
             }
+        } else {
+            markupDocument();
         }
 
         return exports;
@@ -227,7 +236,10 @@ function makeExports(exports) {
 				importScripts(uri.replace(/^\/?\{host\}/, ""));
 				return loadedCallback(null);
 			}
-			var document = global.document;
+			var document = global.document || PINF.document;
+			/*DEBUG*/ if (!document) {
+			/*DEBUG*/ 	throw new Error("Unable to get reference to 'document'!");
+			/*DEBUG*/ }
 			var location = document.location;
 			if (/^\/?\{host\}\//.test(uri)) {
 				uri = location.protocol + "//" + location.host + uri.replace(/^\/?\{host\}/, "");
@@ -293,6 +305,13 @@ function makeExports(exports) {
 		/*DEBUG*/ 	}
 		/*DEBUG*/ }
 
+		function rebaseUri (uri) {
+			if (!sandboxOptions.baseUrl) {
+				return uri;
+			}
+			return sandboxOptions.baseUrl + "/" + uri;
+		}
+
 		function load(bundleIdentifier, packageIdentifier, bundleSubPath, loadedCallback) {
 			try {
 	            if (packageIdentifier !== "") {
@@ -311,17 +330,20 @@ function makeExports(exports) {
 						loadingBundles[bundleIdentifier] = [];
 						bundleIdentifier = sandboxIdentifier + bundleSubPath + bundleIdentifier;
 						// Default to our script-injection browser loader.
-						(sandboxOptions.rootBundleLoader || sandboxOptions.load || loadInBrowser)(bundleIdentifier, function(err, cleanupCallback) {
-							if (err) return loadedCallback(err);
-						    // The rootBundleLoader is only applicable for the first load.
-	                        delete sandboxOptions.rootBundleLoader;
-							finalizeLoad(bundleIdentifier, function () {
-                loadedCallback(null, sandbox);
-  							if (cleanupCallback) {
-  								cleanupCallback();
-  							}
-							});
-						});
+						(sandboxOptions.rootBundleLoader || sandboxOptions.load || loadInBrowser)(
+							rebaseUri(bundleIdentifier),
+							function(err, cleanupCallback) {
+								if (err) return loadedCallback(err);
+								// The rootBundleLoader is only applicable for the first load.
+								delete sandboxOptions.rootBundleLoader;
+								finalizeLoad(bundleIdentifier, function () {
+									loadedCallback(null, sandbox);
+									if (cleanupCallback) {
+										cleanupCallback();
+									}
+								});
+							}
+						);
 					}
 				}
 			} catch(err) {
@@ -334,15 +356,15 @@ function makeExports(exports) {
 		function finalizeLoad(bundleIdentifier, loadFinalized)
 		{
 
-      var pending = 0;
-      function finalize () {
-        if (pending !== 0) {
-          return;
-        }
-        if (loadFinalized) loadFinalized();
-      }
+			var pending = 0;
+			function finalize () {
+				if (pending !== 0) {
+					return;
+				}
+				if (loadFinalized) loadFinalized();
+			}
 
-      pending += 1;
+			pending += 1;
 
 			// Assume a consistent statically linked set of modules has been memoized.
 			/*DEBUG*/ bundleIdentifiers[bundleIdentifier] = loadedBundles[0][0];
@@ -351,19 +373,22 @@ function makeExports(exports) {
 				// If we have a package descriptor add it or merge it on top.
 				if (/^[^\/]*\/package.json$/.test(key)) {
 
-          // Load all dependent resources
-          if (loadedBundles[0][1][key][0].mappings) {
-            for (var alias in loadedBundles[0][1][key][0].mappings) {
-              if (!/^\/\//.test(loadedBundles[0][1][key][0].mappings[alias])) {
-                continue;
-              }
-              pending += 1;
-              loadInBrowser(loadedBundles[0][1][key][0].mappings[alias], function () {
-                  pending -= 1;
-                  finalize();
-              });
-            }
-          }
+					// Load all dependent resources
+					if (loadedBundles[0][1][key][0].mappings) {
+						for (var alias in loadedBundles[0][1][key][0].mappings) {
+							if (!/^\/\//.test(loadedBundles[0][1][key][0].mappings[alias])) {
+								continue;
+							}
+							pending += 1;
+							loadInBrowser(
+								rebaseUri(loadedBundles[0][1][key][0].mappings[alias]),
+								function () {
+									pending -= 1;
+									finalize();
+								}
+							);
+						}
+					}
 
 					// NOTE: Not quite sure if we should allow agumenting package descriptors.
 					//       When doing nested requires using same package we can either add all
@@ -406,10 +431,10 @@ function makeExports(exports) {
 			}
 			loadedBundles.shift();
 
-      pending -= 1;
-      finalize();
+			pending -= 1;
+			finalize();
 
-      return;
+			return;
 		}
 
 		var Package = function(packageIdentifier) {
@@ -878,6 +903,7 @@ function makeExports(exports) {
 
 	// Export `require` for CommonJS if `module` and `exports` globals exists.
 	if (typeof module === "object" && typeof exports === "object") {
+		PINF.document = global.document;
 		module.exports = global = PINF;
 	}
 
