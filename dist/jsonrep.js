@@ -1,5 +1,82 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+
+function linesForEscapedNewline (rawCode) {
+    var lines = [];
+    var segments = rawCode.split(/([\\]*\\n)/);
+    for (var i=0; i<segments.length ; i++) {
+        if (i % 2 === 0) {
+            lines.push(segments[i]);
+        } else
+        if (segments[i] !== "\\n") {
+            lines[lines.length - 1] += segments[i].replace(/\\\\/g, "\\") + segments[i + 1];
+            i++;
+        }
+    }
+    lines = lines.map(function (line) {
+        return line.replace(/\\\n/g, "\\n");        
+    });
+    return lines;
+}
+
+const Codeblock = exports.Codeblock = function (code, format, args) {
+    if (
+        typeof code === "object" &&
+        code.hasOwnProperty("raw") &&
+        Object.keys(code).length === 1
+    ) {
+        this._code = code.raw;
+    } else {
+        if (code) {
+            this.setCode(code);
+        } else {
+            this._code = "";
+        }
+    }
+    this._format = format;
+    this._args = args;
+    this._compiled = false;
+}
+Codeblock.prototype.setCode = function (code) {
+    this._code = ("" + code).replace(/\\n/g, "___NeWlInE_KeEp_OrIgInAl___")
+        .replace(/\n/g, "\\n")
+        .replace(/(___NeWlInE_KeEp_OrIgInAl___)/g, "\\$1");
+}
+Codeblock.FromJSON = function (doc) {
+    if (typeof doc === "string") {
+        try {
+            doc = JSON.parse(doc);
+        } catch (err) {
+            console.error("doc", doc);
+            throw new Error("Error parsing JSON!");
+        }
+    }
+    if (doc[".@"] !== "github.com~0ink~codeblock/codeblock:Codeblock") {
+        throw new Error("JSON is not a frozen codeblock!");
+    }
+    var codeblock = new Codeblock({
+        raw: doc._code
+    }, doc._format, doc._args);
+    codeblock._compiled = doc._compiled;
+    return codeblock;
+}
+Codeblock.prototype.compile = function (variables) {
+    variables = variables || {};
+    var code = this.getCode();
+
+console.log("COMPILE", code, "with variables", variables);
+
+    var codeblock = new Codeblock(code, this._format, this._args);
+    codeblock._compiled = true;
+    return codeblock;
+}
+Codeblock.prototype.getCode = function () {
+    return linesForEscapedNewline(this._code).join("\n");
+}
+
+},{}],2:[function(require,module,exports){
 "use strict";
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 function makeExports(exports) {
 
@@ -12,6 +89,20 @@ function makeExports(exports) {
 
     exports.makeRep = function (html, rep) {
         // TODO: Speed this up.
+        if ((typeof html === "undefined" ? "undefined" : _typeof(html)) === "object" && typeof html.code !== "undefined" &&
+        //typeof html.code.html !== "undefined" &&
+        typeof rep === "undefined") {
+            // TODO: Replace variables
+            rep = html.code;
+            if (typeof rep === "function") {
+                rep = rep(html);
+            }
+            html = rep.html;
+            delete rep.html;
+        } else if ((typeof html === "undefined" ? "undefined" : _typeof(html)) === "object" && html[".@"] === "github.com~0ink~codeblock/codeblock:Codeblock") {
+            html = exports.Codeblock.FromJSON(html).getCode().replace(/^\n|\n$/g, "");
+        }
+
         html = html.split("\n");
         // Inject a reference attribute into the HTML so we can attach the event listeners after injection.
         var match = html[0].match(/^(<\w+)(.+)$/);
@@ -78,6 +169,7 @@ function makeExports(exports) {
 
         // TODO: Only re-inject loader if not already present (build two versions of JS file).
         exports.PINF = require("pinf-loader-js");
+        exports.Codeblock = require("codeblock/codeblock.rt0").Codeblock;
 
         if (WINDOW) {
 
@@ -133,13 +225,31 @@ function makeExports(exports) {
 
                 el.innerHTML = htmlCode;
 
+                var allCss = [];
                 Array.from(el.querySelectorAll('[_repid]')).forEach(function (el) {
 
                     var rep = exports.getRepForId(el.getAttribute("_repid"));
+
+                    if (rep.css) {
+
+                        var css = exports.Codeblock.FromJSON(rep.css).getCode();
+
+                        // TODO: Optionally warn if no ':scope' keywords are found to remind user to scope css.
+                        css = css.replace(/:scope/g, '[_repid="' + el.getAttribute("_repid") + '"]');
+
+                        allCss.push(css);
+                    }
+
                     if (rep && rep.on && rep.on.mount) {
                         rep.on.mount(el);
                     }
                 });
+
+                if (allCss.length > 0) {
+                    var style = WINDOW.document.createElement('style');
+                    style.innerHTML = allCss.join("\n");
+                    WINDOW.document.body.appendChild(style);
+                }
 
                 el.style.visibility = "unset";
 
@@ -178,7 +288,7 @@ function makeExports(exports) {
     }
 })(typeof window !== "undefined" ? window : null);
 
-},{"pinf-loader-js":2}],2:[function(require,module,exports){
+},{"codeblock/codeblock.rt0":1,"pinf-loader-js":3}],3:[function(require,module,exports){
 /**
  * Author: Christoph Dorn <christoph@christophdorn.com>
  * [Free Public License 1.0.0](https://opensource.org/licenses/FPL-1.0.0)
@@ -956,4 +1066,4 @@ function makeExports(exports) {
 			undefined
 ));
 
-},{}]},{},[1]);
+},{}]},{},[2]);
