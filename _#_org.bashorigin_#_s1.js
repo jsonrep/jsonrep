@@ -29,7 +29,7 @@ exports.forConfig = function (CONFIG) {
                 "src": PATH.join(__dirname, "src/jsonrep.js")
             }, "lib/jsonrep.js")
         },
-        "/lib/riot.js": PATH.join(__dirname, "src/nodejs/processors/node_modules/riot/riot.min.js"),
+        "/dist/riot.js": PATH.join(__dirname, "src/nodejs/processors/node_modules/riot/riot.min.js"),
         "/dist/insight.rep.js": {
             "@it.pinf.org.browserify#s1": augmentConfig({
                 "src": PATH.join(__dirname, "src/insight.rep.js"),
@@ -37,6 +37,12 @@ exports.forConfig = function (CONFIG) {
             }, "dist/insight.rep.js")
         }
     });
+    if (baseDistPath) {
+        FS.copySync(
+            PATH.join(__dirname, "src/nodejs/processors/node_modules/riot/riot.min.js"),
+            PATH.join(baseDistPath, "dist/riot.js")
+        );
+    }
 
     const repRoutes = {};
     Object.keys(CONFIG.reps).forEach(function (uri) {
@@ -126,7 +132,7 @@ exports.forConfig = function (CONFIG) {
                         'var pmodule = { "filename": (baseUrl + "/") };',
                         'var script = document.createElement("script");',
                         'script.type = "text/javascript";',
-                        'script.src = baseUrl + "/lib/riot.js";',
+                        'script.src = baseUrl + "/dist/riot.js";',
                         'document.getElementsByTagName("head")[0].appendChild(script);',
                         'script = document.createElement("script");',
                         'script.type = "text/javascript";',
@@ -188,7 +194,7 @@ exports.forConfig = function (CONFIG) {
                         res.end([
                             // TODO: Make base URL format configurable
                             '<head>',
-                                '<script src="' + (req.mountAt + "/lib/riot.js").replace(/\/\//g, "/") + '"></script>',
+                                '<script src="' + (req.mountAt + "/dist/riot.js").replace(/\/\//g, "/") + '"></script>',
                                 '<script src="' + (req.mountAt + "/lib/jsonrep.js").replace(/\/\//g, "/") + '"></script>',
                                 '<script>var pmodule = { "filename": "' + (req.mountAt + req.url).replace(/\/\//g, "/") + '" };</script>',
                             '</head>',
