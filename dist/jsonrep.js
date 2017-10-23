@@ -59,7 +59,7 @@ function makeExports(exports) {
             }
         }
 
-        if (/^dist\//.test(uri)) {
+        if (/^dist\//.test(uri) && exports.options.ourBaseUri) {
             uri = exports.options.ourBaseUri + "/" + uri;
         }
 
@@ -81,6 +81,14 @@ function makeExports(exports) {
 
         if (WINDOW) {
 
+            if (typeof WINDOW.PINF === "undefined") {
+                WINDOW.PINF = exports.PINF;
+            } else {
+                // TODO: Instead of re-using loader here allow attachment
+                //       if a sub loader to the parent loader?
+                exports.PINF = WINDOW.PINF;
+            }
+
             if (!exports.PINF.document) {
                 exports.PINF.document = WINDOW.document;
             }
@@ -96,18 +104,13 @@ function makeExports(exports) {
                     exports.options.ourBaseUri = ourBaseUri[0].getAttribute("src").split("/").slice(0, -2).join("/");
                 }
             }
-
-            if (typeof WINDOW.PINF === "undefined") {
-                WINDOW.PINF = exports.PINF;
-                WINDOW.PINF.document = WINDOW.document;
-            }
         }
 
         exports.loadRenderer = function (uri) {
 
             // Adjust base path depending on the environment.
             if (WINDOW && typeof WINDOW.pmodule !== "undefined" && !/^\//.test(uri)) {
-                uri = [WINDOW.location.href.replace(/\/([^\/]*)$/, ""), WINDOW.pmodule.filename.replace(/\/([^\/]*)$/, ""), uri].join("/").replace(/\/\.?\//g, "/").replace(/^([^:]+:\/)/, "$1/");
+                uri = [WINDOW.pmodule.filename.replace(/\/([^\/]*)$/, ""), uri].join("/").replace(/\/\.?\//g, "/");
             }
 
             return new Promise(function (resolve, reject) {
@@ -137,6 +140,9 @@ function makeExports(exports) {
                         rep.on.mount(el);
                     }
                 });
+
+                el.style.visibility = "unset";
+
                 return null;
             });
         };
@@ -157,7 +163,7 @@ function makeExports(exports) {
                 WINDOW.attachEvent("onload", markupDocument);
             }
         } else {
-            markupDocument();
+            setTimeout(markupDocument, 0);
         }
 
         return exports;
@@ -367,6 +373,9 @@ function makeExports(exports) {
 			pending += 1;
 
 			// Assume a consistent statically linked set of modules has been memoized.
+			/*DEBUG*/ if (!loadedBundles[0]) {
+			/*DEBUG*/     throw new Error("No bundle memoized for '" + bundleIdentifier + "'! Check the file to ensure it contains JavaScript and that a bundle is memoized against the correct loader instance.");
+			/*DEBUG*/ }
 			/*DEBUG*/ bundleIdentifiers[bundleIdentifier] = loadedBundles[0][0];
 			var key;
 			for (key in loadedBundles[0][1]) {

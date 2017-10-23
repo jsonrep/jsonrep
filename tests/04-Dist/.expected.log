@@ -1,0 +1,43 @@
+>>>TEST_IGNORE_LINE:\d milliseconds.$<<<
+>>>TEST_IGNORE_LINE:\d+\spassing\s\([^\)]+\)<<<
+environments: default
+
+
+  Suite
+[bash.origin.express] Adding route: /lib/jsonrep.js
+[bash.origin.express] Adding route: /dist/insight.rep.js
+[bash.origin.express] Adding route: /announcer.rep.js
+[bash.origin.express] Adding route: /page.js
+[bash.origin.express] Adding route: /^\/jsonrep\/page/
+[bash.origin.express] Adding route: /lib/jsonrep.js
+[bash.origin.express] Adding route: /dist/insight.rep.js
+[bash.origin.express] Adding route: /announcer.rep.js
+[bash.origin.express] Adding route: /page.js
+[bash.origin.express] Adding route: /^\/jsonrep\/bundle/
+[bash.origin.express] Adding route: /lib/loader.js
+[bash.origin.express] Adding route: /page.html
+[bash.origin.express] Adding route: /^\/dist\//
+[bash.origin.express] Adding route: /dist_bundle_page.html
+Server: http://localhost:8080/
+[READY]
+127.0.0.1 - "GET /jsonrep/page.html HTTP/1.1" 200 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /jsonrep/page/lib/jsonrep.js HTTP/1.1" 200 - "http://localhost:8080/jsonrep/page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /jsonrep/page/announcer.rep.js HTTP/1.1" 200 - "http://localhost:8080/jsonrep/page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /jsonrep/page/dist/insight.rep.js HTTP/1.1" 200 - "http://localhost:8080/jsonrep/page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /page.html HTTP/1.1" 200 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /lib/loader.js HTTP/1.1" 200 - "http://localhost:8080/page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /jsonrep/bundle.js HTTP/1.1" 200 - "http://localhost:8080/page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /jsonrep/bundle/announcer.rep.js HTTP/1.1" 200 - "http://localhost:8080/page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /jsonrep/bundle/dist/insight.rep.js HTTP/1.1" 200 - "http://localhost:8080/page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /dist/page.html HTTP/1.1" 200 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /dist/page/lib/jsonrep.js HTTP/1.1" 200 - "http://localhost:8080/dist/page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /dist/page/announcer.rep.js HTTP/1.1" 200 - "http://localhost:8080/dist/page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /dist/page/dist/insight.rep.js HTTP/1.1" 200 - "http://localhost:8080/dist/page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /dist_bundle_page.html HTTP/1.1" 200 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /lib/loader.js HTTP/1.1" 200 - "http://localhost:8080/dist_bundle_page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /dist/bundle.js HTTP/1.1" 200 - "http://localhost:8080/dist_bundle_page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /dist/bundle/announcer.rep.js HTTP/1.1" 200 - "http://localhost:8080/dist_bundle_page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+127.0.0.1 - "GET /dist/bundle/dist/insight.rep.js HTTP/1.1" 200 - "http://localhost:8080/dist_bundle_page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
+
+
+
