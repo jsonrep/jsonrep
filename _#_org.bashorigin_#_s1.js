@@ -2,6 +2,7 @@
 const PATH = require("path");
 const FS = require("fs-extra");
 const CODEBLOCK = require("codeblock");
+const BO = require('bash.origin');
 
 
 exports.forConfig = function (CONFIG) {
@@ -37,65 +38,73 @@ exports.forConfig = function (CONFIG) {
             }, "dist/insight.rep.js")
         }
     });
-    if (baseDistPath) {
-        FS.copySync(
-            PATH.join(__dirname, "src/nodejs/processors/node_modules/riot/riot.min.js"),
-            PATH.join(baseDistPath, "dist/riot.js")
-        );
-    }
 
     const repRoutes = {};
     Object.keys(CONFIG.reps).forEach(function (uri) {
 
-        function getBundleCode () {
-            var repCode = CONFIG.reps[uri];
-            if (/^\//.test(repCode)) {
-                repCode = FS.readFileSync(repCode, "utf8");
-                repCode = CODEBLOCK.purifyCode(repCode, {
-                    freezeToJavaScript: true,
-                    on: {
-                        codeblock: function (codeblock) {
+        function getBundleCode (callback) {
+            try {
+                var repCode = CONFIG.reps[uri];
+                if (/^\//.test(repCode)) {
+                    repCode = FS.readFileSync(repCode, "utf8");
+                    repCode = CODEBLOCK.purifyCode(repCode, {
+                        freezeToJavaScript: true,
+                        on: {
+                            codeblock: function (codeblock) {
 
-                            if (codeblock.getFormat() === "riotjs:makeRep") {
+                                if (codeblock.getFormat() === "riotjs:makeRep") {
 
-                                var processor = require("./src/nodejs/processors/" + codeblock.getFormat().replace(/:/g, "_") + ".js");
+                                    var processor = require("./src/nodejs/processors/" + codeblock.getFormat().replace(/:/g, "_") + ".js");
 
-                                var result = processor.processSync(codeblock);
-                                codeblock._format = "javascript";
-                                codeblock.setCode(result);
+                                    var result = processor.processSync(codeblock);
+                                    codeblock._format = "javascript";
+                                    codeblock.setCode(result);
+                                }
                             }
                         }
-                    }
+                    });
+
+                } else
+                if (repCode[".@"] === "github.com~0ink~codeblock/codeblock:Codeblock") {
+                    repCode = CODEBLOCK.thawFromJSON(repCode).getCode();
+                } else
+                if (typeof repCode === "function") {
+                    repCode = repCode.toString().replace(/^function \(\) \{\n([\s\S]+)\n\s*\}$/, "$1");
+                } else {
+                    throw new Error("Unknown code format!");
+                }
+
+
+                // Browserify code.                
+                var implMod = BO.depend("it.pinf.org.browserify#s1", {
+                    code: repCode,
+                    format: "pinf"
+                });
+                implMod["#io.pinf/process~s1"]({}, function (err, repCode) {
+                    if (err) return callback(err);
+
+                    return callback(null, repCode);
                 });
 
-            } else
-            if (repCode[".@"] === "github.com~0ink~codeblock/codeblock:Codeblock") {
-                repCode = CODEBLOCK.thawFromJSON(repCode).getCode();
-            } else
-            if (typeof repCode === "function") {
-                repCode = repCode.toString().replace(/^function \(\) \{\n([\s\S]+)\n\s*\}$/, "$1");
-            } else {
-                throw new Error("Unknown code format!");
+            } catch (err) {
+                return callback(err);
             }
-    
-            // TODO: Browserify code.
-    
-            return [
-                'PINF.bundle("", function(require) {',
-                    'require.memoize("/main.js", function(require, exports, module) {',
-                    repCode,
-                    '});',
-                '});'
-            ].join("\n");
         }
-
-        var bundleCode = getBundleCode();
 
         if (
             baseDistPath &&
             CONFIG.prime
         ) {
-            FS.outputFileSync(PATH.join(baseDistPath, selfSubpath, uri + ".rep.js"), bundleCode, "utf8");
+            getBundleCode(function (err, bundleCode) {
+                if (err) return console.error(err);
+
+                FS.outputFileSync(PATH.join(baseDistPath, selfSubpath, uri + ".rep.js"), bundleCode, "utf8");
+
+                FS.copySync(
+                    PATH.join(__dirname, "src/nodejs/processors/node_modules/riot/riot.min.js"),
+                    PATH.join(baseDistPath, "dist/riot.js")
+                );
+            });
         }
 
         repRoutes["/" + uri + ".rep.js"] = function () {
@@ -104,8 +113,11 @@ exports.forConfig = function (CONFIG) {
                 res.writeHead(200, {
                     "Content-Type": "application/javascript"
                 });
-                var bundleCode = getBundleCode();
-                res.end(bundleCode);
+                getBundleCode(function (err, bundleCode) {
+                    if (err) return next(err);
+
+                    res.end(bundleCode);                    
+                });
             };
         };
     });
