@@ -45,8 +45,10 @@ exports.forConfig = function (CONFIG) {
         function getBundleCode (callback) {
             try {
                 var repCode = CONFIG.reps[uri];
+                var repCodeSrcPath = false;
                 if (/^\//.test(repCode)) {
-                    repCode = FS.readFileSync(repCode, "utf8");
+                    repCodeSrcPath = repCode;
+                    repCode = FS.readFileSync(repCodeSrcPath, "utf8");
                     repCode = CODEBLOCK.purifyCode(repCode, {
                         freezeToJavaScript: true,
                         on: {
@@ -75,11 +77,18 @@ exports.forConfig = function (CONFIG) {
                 }
 
 
-                // Browserify code.                
-                var implMod = BO.depend("it.pinf.org.browserify#s1", {
-                    code: repCode,
+                // Browserify code.
+                var implConfig = {
                     format: "pinf"
-                });
+                };
+                if (repCodeSrcPath) {
+                    //FS.outputFileSync(repCodeSrcPath + "~.compiled.js", repCode, "utf8");
+                    implConfig.code = repCode;//repCodeSrcPath + "~.compiled.js";
+                    implConfig.basedir = PATH.dirname(repCodeSrcPath);
+                } else {
+                    implConfig.code = repCode;
+                }
+                var implMod = BO.depend("it.pinf.org.browserify#s1", implConfig);
                 implMod["#io.pinf/process~s1"]({}, function (err, repCode) {
                     if (err) return callback(err);
 
