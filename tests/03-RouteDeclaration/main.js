@@ -12,7 +12,7 @@ describe("Suite", function() {
 
     require('bash.origin.express').runForTestHooks(before, after, {
         "routes": {
-            "^/": {
+            "^/jsonrep": {
                 "@github.com~jsonrep~jsonrep#s1": {
                     "page": {
                         "@announcer": {
@@ -29,16 +29,36 @@ describe("Suite", function() {
                         }
                     }
                 }
-            }
+            },
+            "/lib/loader.js": __dirname + "/../../node_modules/pinf-loader-js/loader.js",
+            "/page.html": (
+                '<head>' +
+                    '<script src="/lib/loader.js"></script>' +
+                    '<script>' +
+                        'window.PINF.sandbox("/jsonrep.js", function (sandbox) {' +
+                            'sandbox.main();' +
+                        '}, console.error);' +
+                    '</script>' +
+                '</head>' +
+                '<body></body>'
+            )
         }
     });
 
     it('Test', function (client) {
 
-        client.url('http://localhost:' + process.env.PORT + '/').pause(500);
-
+        // Run as page
+        client.url('http://localhost:' + process.env.PORT + '/jsonrep.html').pause(500);
         client.waitForElementPresent('BODY', 3000);
+        client.expect.element('BODY').text.to.contain([
+            '[',
+            'Hello World!',
+            ']'
+        ].join(""));
 
+        // Run by requiring as PINF bundle into empty body
+        client.url('http://localhost:' + process.env.PORT + '/page.html').pause(500);        
+        client.waitForElementPresent('BODY', 3000);
         client.expect.element('BODY').text.to.contain([
             '[',
             'Hello World!',
@@ -46,6 +66,5 @@ describe("Suite", function() {
         ].join(""));
 
         if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
-        
     });
 });

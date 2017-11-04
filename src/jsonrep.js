@@ -10,6 +10,27 @@ function makeExports (exports) {
 
     exports.makeRep = function (html, rep) {
         // TODO: Speed this up.
+        if (
+            typeof html === "object" &&
+            typeof html.code !== "undefined" &&
+            //typeof html.code.html !== "undefined" &&
+            typeof rep === "undefined"
+        ) {
+            // TODO: Replace variables
+            rep = html.code;
+            if (typeof rep === "function") {
+                rep = rep(html);
+            }
+            html = rep.html;
+            delete rep.html;
+        } else
+        if (
+            typeof html === "object" &&
+            html[".@"] === "github.com~0ink~codeblock/codeblock:Codeblock"
+        ) {
+            html = exports.Codeblock.FromJSON(html).getCode().replace(/^\n|\n$/g, "");
+        }
+
         html = html.split("\n");
         // Inject a reference attribute into the HTML so we can attach the event listeners after injection.
         var match = html[0].match(/^(<\w+)(.+)$/);
@@ -60,7 +81,10 @@ function makeExports (exports) {
             }
         }
 
-        if (/^dist\//.test(uri)) {
+        if (
+            /^dist\//.test(uri) &&
+            exports.options.ourBaseUri
+        ) {
             uri = exports.options.ourBaseUri + "/" + uri;
         }
 
@@ -77,9 +101,23 @@ function makeExports (exports) {
 
         exports.options = exports.options || {};
 
+        // TODO: Only re-inject loader if not already present (build two versions of JS file).
         exports.PINF = require("pinf-loader-js");
+        exports.Codeblock = require("codeblock/codeblock.rt0").Codeblock;
 
         if (WINDOW) {
+
+            if (typeof WINDOW.PINF === "undefined") {
+                WINDOW.PINF = exports.PINF;
+            } else {
+                // TODO: Instead of re-using loader here allow attachment
+                //       if a sub loader to the parent loader?
+                exports.PINF = WINDOW.PINF;
+            }
+
+            if (!exports.PINF.document) {
+                exports.PINF.document = WINDOW.document;
+            }
 
             if (!exports.options.ourBaseUri) {
                 var ourBaseUri = Array.from(WINDOW.document.querySelectorAll('SCRIPT[src]')).filter(function (tag) {
@@ -91,14 +129,22 @@ function makeExports (exports) {
                     exports.options.ourBaseUri = ourBaseUri[0].getAttribute("src").split("/").slice(0, -2).join("/");
                 }
             }
-
-            if (typeof WINDOW.PINF === "undefined") {
-                WINDOW.PINF = exports.PINF;
-                WINDOW.PINF.document = WINDOW.document;
-            }
         }
 
         exports.loadRenderer = function (uri) {
+
+            // Adjust base path depending on the environment.
+            if (
+                WINDOW &&
+                typeof WINDOW.pmodule !== "undefined" &&
+                !/^\//.test(uri)
+            ) {
+                uri = [
+                    WINDOW.pmodule.filename.replace(/\/([^\/]*)$/, ""),
+                    uri
+                ].join("/").replace(/\/\.?\//g, "/");
+            }
+            
             return new Promise(function (resolve, reject) {
                 exports.PINF.sandbox(uri, resolve, reject);
             });
@@ -116,14 +162,24 @@ function makeExports (exports) {
     
         exports.markupElement = function (el) {
             return exports.markupNode(el.innerHTML).then(function (htmlCode) {
-    
-                console.log("htmlCode", htmlCode);
-                            
+
                 el.innerHTML = htmlCode;
-    
+
+                var allCss = [];
                 Array.from(el.querySelectorAll('[_repid]')).forEach(function (el) {
-    
+
                     var rep = exports.getRepForId(el.getAttribute("_repid"));
+
+                    if (rep.css) {
+
+                        var css = exports.Codeblock.FromJSON(rep.css).getCode();
+
+                        // TODO: Optionally warn if no ':scope' keywords are found to remind user to scope css.
+                        css = css.replace(/:scope/g, '[_repid="' + el.getAttribute("_repid") + '"]');
+
+                        allCss.push(css);
+                    }
+
                     if (
                         rep &&
                         rep.on &&
@@ -132,6 +188,15 @@ function makeExports (exports) {
                         rep.on.mount(el);
                     }
                 });
+
+                if (allCss.length > 0) {
+                    var style = WINDOW.document.createElement('style');
+                    style.innerHTML = allCss.join("\n");
+                    WINDOW.document.body.appendChild(style);
+                }
+
+                el.style.visibility = "unset";
+
                 return null;
             });
         }
@@ -145,14 +210,14 @@ function makeExports (exports) {
             exports.markupDocument().catch(console.error);
         }
     
-        if (WINDOW.document.readyState === "complete") {
-            markupDocument()
-        } else {
+        if (WINDOW.document.readyState === "loading") {
             if (typeof WINDOW.addEventListener !== "undefined") {
                 WINDOW.addEventListener("DOMContentLoaded", markupDocument, false);
             } else {
                 WINDOW.attachEvent("onload", markupDocument);
             }
+        } else {
+            setTimeout(markupDocument, 0);
         }
 
         return exports;
