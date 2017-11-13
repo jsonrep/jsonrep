@@ -12,6 +12,15 @@ function makeExports (exports) {
         // TODO: Speed this up.
         if (
             typeof html === "object" &&
+            typeof html.html !== "undefined" &&
+            typeof rep === "undefined"
+        ) {
+            rep = html;
+            html = rep.html;
+            delete rep.html;
+        } else
+        if (
+            typeof html === "object" &&
             typeof html.code !== "undefined" &&
             //typeof html.code.html !== "undefined" &&
             typeof rep === "undefined"
@@ -23,12 +32,13 @@ function makeExports (exports) {
             }
             html = rep.html;
             delete rep.html;
-        } else
+        }
+
         if (
             typeof html === "object" &&
             html[".@"] === "github.com~0ink~codeblock/codeblock:Codeblock"
         ) {
-            html = exports.Codeblock.FromJSON(html).getCode().replace(/^\n|\n$/g, "");
+            html = exports.Codeblock.FromJSON(html).compile(rep).getCode().replace(/^\n|\n$/g, "");
         }
 
         html = html.split("\n");
@@ -45,7 +55,10 @@ function makeExports (exports) {
 
     exports.markupNode = function (node) {
 
-        if (typeof node === "string") {
+        if (
+            typeof node === "string" &&
+            /^\{/.test(node)
+        ) {
             try {
                 node = JSON.parse(node);
             } catch (err) {
@@ -159,43 +172,49 @@ function makeExports (exports) {
         // ############################################################
         // # Browser/DOM Environment
         // ############################################################
-    
+
+        exports.mountElement = function (el) {
+
+            var allCss = [];
+            Array.from(el.querySelectorAll('[_repid]')).forEach(function (el) {
+
+                var rep = exports.getRepForId(el.getAttribute("_repid"));
+
+                if (rep.css) {
+
+                    var css = exports.Codeblock.FromJSON(rep.css).getCode();
+
+                    // TODO: Optionally warn if no ':scope' keywords are found to remind user to scope css.
+                    css = css.replace(/:scope/g, '[_repid="' + el.getAttribute("_repid") + '"]');
+
+                    allCss.push(css);
+                }
+
+                if (
+                    rep &&
+                    rep.on &&
+                    rep.on.mount
+                ) {
+                    rep.on.mount(el);
+                }
+            });
+
+            if (allCss.length > 0) {
+                var style = WINDOW.document.createElement('style');
+                style.innerHTML = allCss.join("\n");
+                WINDOW.document.body.appendChild(style);
+            }
+
+            el.style.visibility = "unset";                
+        }
+            
         exports.markupElement = function (el) {
+
             return exports.markupNode(el.innerHTML).then(function (htmlCode) {
 
                 el.innerHTML = htmlCode;
 
-                var allCss = [];
-                Array.from(el.querySelectorAll('[_repid]')).forEach(function (el) {
-
-                    var rep = exports.getRepForId(el.getAttribute("_repid"));
-
-                    if (rep.css) {
-
-                        var css = exports.Codeblock.FromJSON(rep.css).getCode();
-
-                        // TODO: Optionally warn if no ':scope' keywords are found to remind user to scope css.
-                        css = css.replace(/:scope/g, '[_repid="' + el.getAttribute("_repid") + '"]');
-
-                        allCss.push(css);
-                    }
-
-                    if (
-                        rep &&
-                        rep.on &&
-                        rep.on.mount
-                    ) {
-                        rep.on.mount(el);
-                    }
-                });
-
-                if (allCss.length > 0) {
-                    var style = WINDOW.document.createElement('style');
-                    style.innerHTML = allCss.join("\n");
-                    WINDOW.document.body.appendChild(style);
-                }
-
-                el.style.visibility = "unset";
+                exports.mountElement(el);
 
                 return null;
             });
