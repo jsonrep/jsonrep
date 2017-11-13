@@ -30,7 +30,7 @@ exports.forConfig = function (CONFIG) {
                 "src": PATH.join(__dirname, "src/jsonrep.js")
             }, "lib/jsonrep.js")
         },
-        "/dist/riot.js": PATH.join(__dirname, "src/nodejs/processors/node_modules/riot/riot.min.js"),
+        "/dist/riot.js": PATH.join(__dirname, "src/nodejs/processors/node_modules/riot/riot.js"),
         "/dist/insight.rep.js": {
             "@it.pinf.org.browserify#s1": augmentConfig({
                 "src": PATH.join(__dirname, "src/insight.rep.js"),
