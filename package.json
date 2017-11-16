@@ -1,6 +1,6 @@
 {
     "name": "jsonrep",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "main": "src/nodejs/jsonrep",
     "dependencies": {
         "babel-core": "^6.26.0",
