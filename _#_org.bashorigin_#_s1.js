@@ -1,8 +1,10 @@
 
-const PATH = require("path");
-const FS = require("fs-extra");
-const CODEBLOCK = require("codeblock");
-const BO = require('bash.origin');
+const LIB = require("bash.origin.workspace").forPackage(__dirname).LIB;
+
+const PATH = LIB.PATH;
+const FS = LIB.FS_EXTRA;
+const CODEBLOCK = LIB.CODEBLOCK;
+const BO = LIB.BASH_ORIGIN;
 
 
 exports.forConfig = function (CONFIG) {
@@ -24,7 +26,7 @@ exports.forConfig = function (CONFIG) {
     }
 
 
-    const libApp = require('bash.origin.express').hookRoutes({
+    const libApp = LIB.BASH_ORIGIN_EXPRESS.hookRoutes({
         "/lib/jsonrep.js": {
             "@it.pinf.org.browserify#s1": augmentConfig({
                 "src": PATH.join(__dirname, "src/jsonrep.js")
@@ -178,7 +180,7 @@ exports.forConfig = function (CONFIG) {
         }
     }
 
-    const repsApp = require('bash.origin.express').hookRoutes(repRoutes);
+    const repsApp = LIB.BASH_ORIGIN_EXPRESS.hookRoutes(repRoutes);
 
 
     return {
