@@ -30,7 +30,7 @@ exports.forConfig = function (CONFIG) {
                 "src": PATH.join(__dirname, "src/jsonrep.js")
             }, "lib/jsonrep.js")
         },
-        "/dist/riot.js": PATH.join(__dirname, "src/nodejs/processors/node_modules/riot/riot.min.js"),
+        "/dist/riot.js": PATH.join(__dirname, "src/nodejs/processors/node_modules/riot/riot.js"),
         "/dist/insight.rep.js": {
             "@it.pinf.org.browserify#s1": augmentConfig({
                 "src": PATH.join(__dirname, "src/insight.rep.js"),
@@ -160,6 +160,12 @@ exports.forConfig = function (CONFIG) {
                         'script.src = baseUrl + "/lib/jsonrep.js";',
                         'document.getElementsByTagName("head")[0].appendChild(script);',
                     '</script>',
+                    '<style>',
+                        'HTML, BODY {',
+                            'padding: 0px;',
+                            'margin: 0px;',
+                        '}',
+                    '</style>',
                 '</head>',
                 '<body renderer="jsonrep" style="visibility:hidden;">' + JSON.stringify(CONFIG.page) + '</body>'
             ].join("\n"), "utf8");
@@ -218,6 +224,12 @@ exports.forConfig = function (CONFIG) {
                                 '<script src="' + (req.mountAt + "/dist/riot.js").replace(/\/\//g, "/") + '"></script>',
                                 '<script src="' + (req.mountAt + "/lib/jsonrep.js").replace(/\/\//g, "/") + '"></script>',
                                 '<script>var pmodule = { "filename": "' + (req.mountAt + req.url).replace(/\/\//g, "/") + '" };</script>',
+                                '<style>',
+                                    'HTML, BODY {',
+                                        'padding: 0px;',
+                                        'margin: 0px;',
+                                    '}',
+                                '</style>',
                             '</head>',
                             '<body renderer="jsonrep" style="visibility:hidden;">' + JSON.stringify(CONFIG.page) + '</body>'
                         ].join("\n"));
