@@ -1,7 +1,9 @@
 
-const FS = require("fs");
+const LIB = require("bash.origin.workspace").forPackage(__dirname + "/../..").LIB;
+
+const FS = LIB.FS;
 const VM = require("vm");
-const LOADER = require("pinf-loader-js");
+const LOADER = LIB.PINF_LOADER_JS;
 
 
 exports.sandbox = function (sandboxIdentifier, sandboxOptions, loadedCallback, errorCallback) {
@@ -36,7 +38,7 @@ exports.sandbox = function (sandboxIdentifier, sandboxOptions, loadedCallback, e
 
         function loadCode(uri, callback) {
             if (/:\/\//.test(uri)) {
-                return require("request")(uri, function(err, result) {
+                return LIB.REQUEST(uri, function(err, result) {
                     if (err) return callback(err);
                     return callback(null, result.body);
                 });
@@ -116,10 +118,10 @@ exports.sandbox = function (sandboxIdentifier, sandboxOptions, loadedCallback, e
 
         // Remove ES6 features so we can still use nodejs vm to exec code until it fully supports ES6.
         try {
-            const BABEL = require("babel-core");
+            const BABEL = LIB.BABEL_CORE;
             var result = BABEL.transform(code, {
                 "presets": [
-                    require.resolve("babel-preset-es2015")
+                    LIB.resolve("babel-preset-es2015")
 //					[require.resolve("babel-preset-es2015"), { "modules": false }]
                 ]
             });

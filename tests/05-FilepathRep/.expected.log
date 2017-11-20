@@ -4,9 +4,9 @@ environments: default
 
 
   Suite
+[bash.origin.express] Adding route: /dist/insight.rep.js
 [bash.origin.express] Adding route: /lib/jsonrep.js
 [bash.origin.express] Adding route: /dist/riot.js
-[bash.origin.express] Adding route: /dist/insight.rep.js
 [bash.origin.express] Adding route: /announcer.rep.js
 [bash.origin.express] Adding route: /page.js
 [bash.origin.express] Adding route: /^\//

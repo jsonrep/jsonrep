@@ -8,8 +8,10 @@ module.config = {
 }
 */
 
-const PATH = require("path");
-const FS = require("fs-extra");
+const LIB = require('bash.origin.workspace').LIB;
+
+const PATH = LIB.PATH;
+const FS = LIB.FS_EXTRA;
 
 const DIST_BASE_PATH = PATH.join(__dirname, ".dist");
 
@@ -20,7 +22,7 @@ describe("Suite", function() {
         FS.removeSync(DIST_BASE_PATH);
     }
 
-    require('bash.origin.express').runForTestHooks(before, after, {
+    LIB.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {
         "routes": {
             "^/jsonrep/page": {
                 "@github.com~jsonrep~jsonrep#s1": {

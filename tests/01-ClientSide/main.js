@@ -10,7 +10,7 @@ module.config = {
 
 describe("Suite", function() {
 
-    require('bash.origin.express').runForTestHooks(before, after, {
+    require('bash.origin.workspace').LIB.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {
         "routes": {
             "/": (
                 '<head><script src="/lib/jsonrep.js"></script></head>' +
