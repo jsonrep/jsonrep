@@ -51,6 +51,12 @@ exports.forConfig = function (CONFIG) {
                 if (/^\//.test(repCode)) {
                     repCodeSrcPath = repCode;
                     repCode = FS.readFileSync(repCodeSrcPath, "utf8");
+
+                    if (/(^|\n)PINF\.bundle\(/.test(repCode)) {
+                        // Already bundled
+                        return callback(null, repCode);
+                    }
+
                     repCode = CODEBLOCK.purifyCode(repCode, {
                         freezeToJavaScript: true,
                         on: {
