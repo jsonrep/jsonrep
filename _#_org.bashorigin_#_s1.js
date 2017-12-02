@@ -32,7 +32,7 @@ exports.forConfig = function (CONFIG) {
                 "src": PATH.join(__dirname, "src/jsonrep.js")
             }, "lib/jsonrep.js")
         },
-        "/dist/riot.js": PATH.join(__dirname, "src/nodejs/processors/node_modules/riot/riot.js"),
+        "/dist/riot.js": PATH.join(LIB.resolve("riot/package.json"), "../riot.js"),
         "/dist/insight.rep.js": {
             "@it.pinf.org.browserify#s1": augmentConfig({
                 "src": PATH.join(__dirname, "src/insight.rep.js"),
@@ -118,7 +118,7 @@ exports.forConfig = function (CONFIG) {
                 FS.outputFileSync(PATH.join(baseDistPath, selfSubpath, uri + ".rep.js"), bundleCode, "utf8");
 
                 FS.copySync(
-                    PATH.join(__dirname, "src/nodejs/processors/node_modules/riot/riot.min.js"),
+                    PATH.join(LIB.resolve("riot/package.json"), "../riot.min.js"),
                     PATH.join(baseDistPath, "dist/riot.js")
                 );
             });
