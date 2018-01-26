@@ -1,4 +1,4 @@
-/.installed.*
+/.installed*
 .tmp~*
 *~.compiled.bash
 .actual.*
