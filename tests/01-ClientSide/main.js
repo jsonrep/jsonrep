@@ -37,6 +37,8 @@ describe("Suite", function() {
 
         client.waitForElementPresent('BODY > DIV[renderer="jsonrep"]', 3000);
 
+//if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
+        
         client.expect.element('BODY > DIV[renderer="jsonrep"]').text.to.contain([
             'map(',
             'message=>Hello World!',

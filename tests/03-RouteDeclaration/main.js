@@ -47,6 +47,8 @@ describe("Suite", function() {
 
     it('Test', function (client) {
 
+        console.log('TEST_MATCH_IGNORE>>>');
+
         // Run as page
         client.url('http://localhost:' + process.env.PORT + '/jsonrep.html').pause(500);
         client.waitForElementPresent('BODY', 3000);
@@ -64,6 +66,10 @@ describe("Suite", function() {
             'Hello World!',
             ']'
         ].join(""));
+
+        client.perform(function () {
+            console.log('<<<TEST_MATCH_IGNORE');
+        });
 
         if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
     });

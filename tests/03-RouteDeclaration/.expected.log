@@ -14,14 +14,6 @@ environments: default
 [bash.origin.express] Adding route: /^\/jsonrep/
 Server: http://localhost:8080/
 [READY]
-127.0.0.1 - "GET /jsonrep.html HTTP/1.1" 200 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
-127.0.0.1 - "GET /jsonrep/dist/riot.js HTTP/1.1" 200 - "http://localhost:8080/jsonrep.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
-127.0.0.1 - "GET /jsonrep/lib/jsonrep.js HTTP/1.1" 200 - "http://localhost:8080/jsonrep.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
-127.0.0.1 - "GET /jsonrep/announcer.rep.js HTTP/1.1" 200 - "http://localhost:8080/jsonrep.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
-127.0.0.1 - "GET /page.html HTTP/1.1" 200 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
-127.0.0.1 - "GET /lib/loader.js HTTP/1.1" 200 - "http://localhost:8080/page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
-127.0.0.1 - "GET /jsonrep.js HTTP/1.1" 200 - "http://localhost:8080/page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
-127.0.0.1 - "GET /jsonrep/announcer.rep.js HTTP/1.1" 200 - "http://localhost:8080/page.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36"
 
 
 
