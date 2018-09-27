@@ -128,18 +128,21 @@ function makeExports (exports) {
                 exports.PINF = WINDOW.PINF;
             }
 
-            if (!exports.PINF.document) {
-                exports.PINF.document = WINDOW.document;
-            }
+            if (WINDOW.document) {
 
-            if (!exports.options.ourBaseUri) {
-                var ourBaseUri = Array.from(WINDOW.document.querySelectorAll('SCRIPT[src]')).filter(function (tag) {
-                    return /\/jsonrep(\.min)?\.js$/.test(tag.getAttribute("src"));
-                });
-                if (!ourBaseUri.length) {
-                    exports.options.ourBaseUri = "";
-                } else {
-                    exports.options.ourBaseUri = ourBaseUri[0].getAttribute("src").split("/").slice(0, -2).join("/");
+                if (!exports.PINF.document) {
+                    exports.PINF.document = WINDOW.document;
+                }
+
+                if (!exports.options.ourBaseUri) {
+                    var ourBaseUri = Array.from(WINDOW.document.querySelectorAll('SCRIPT[src]')).filter(function (tag) {
+                        return /\/jsonrep(\.min)?\.js$/.test(tag.getAttribute("src"));
+                    });
+                    if (!ourBaseUri.length) {
+                        exports.options.ourBaseUri = "";
+                    } else {
+                        exports.options.ourBaseUri = ourBaseUri[0].getAttribute("src").split("/").slice(0, -2).join("/");
+                    }
                 }
             }
         }
@@ -165,8 +168,8 @@ function makeExports (exports) {
 
         makeExports(exports);
 
-        if (!WINDOW) {                
-            return null;
+        if (!WINDOW || !WINDOW.document) {                
+            return exports;
         }
 
         // ############################################################
@@ -219,35 +222,45 @@ function makeExports (exports) {
                 return null;
             });
         }
-    
+
         exports.markupDocument = function () {
             return Promise.all(Array.from(WINDOW.document.querySelectorAll('[renderer="jsonrep"]')).map(exports.markupElement));
         }
-    
+
         function markupDocument () {
             // TODO: Optionally direct to custom error handler.
             exports.markupDocument().catch(console.error);
         }
-    
-        if (WINDOW.document.readyState === "loading") {
-            if (typeof WINDOW.addEventListener !== "undefined") {
-                WINDOW.addEventListener("DOMContentLoaded", markupDocument, false);
+
+        if (
+            !WINDOW.jsonrep_options ||
+            WINDOW.jsonrep_options.markupDocument !== false
+        ) {
+            if (WINDOW.document.readyState === "loading") {
+                if (typeof WINDOW.addEventListener !== "undefined") {
+                    WINDOW.addEventListener("DOMContentLoaded", markupDocument, false);
+                } else {
+                    WINDOW.attachEvent("onload", markupDocument);
+                }
             } else {
-                WINDOW.attachEvent("onload", markupDocument);
+                setTimeout(markupDocument, 0);
             }
-        } else {
-            setTimeout(markupDocument, 0);
         }
 
         return exports;
     }
 
     // Detect environemnt
-    const isCommonJS = (typeof exports !== "undefined");
-    if (isCommonJS) {
+    if (typeof sandbox !== "undefined") {
+        init(sandbox);
+    } else
+    if (WINDOW) {
+        WINDOW.jsonrep = init({});
+    } else
+    if (typeof exports !== "undefined") {
         init(exports);
     } else {
-        WINDOW.jsonrep = init({});
+        throw new Error("Cannot detect environment!");
     }
 
 })(
