@@ -1,8 +1,8 @@
 
-const LIB = require("bash.origin.workspace").forPackage(__dirname + "/../..").LIB;
+const LIB = require("bash.origin.lib").forPackage(__dirname).js;
 
-const FS = LIB.FS;
-const VM = require("vm");
+const FS = LIB.fs;
+const VM = LIB.vm;
 const LOADER = LIB.PINF_LOADER_JS;
 
 

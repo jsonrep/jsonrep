@@ -1,7 +1,7 @@
 
-const LIB = require("bash.origin.workspace").forPackage(__dirname).LIB;
+const LIB = require("bash.origin.lib").forPackage(__dirname).js;
 
-const PATH = LIB.PATH;
+const PATH = LIB.path;
 const FS = LIB.FS_EXTRA;
 const CODEBLOCK = LIB.CODEBLOCK;
 const BO = LIB.BASH_ORIGIN;

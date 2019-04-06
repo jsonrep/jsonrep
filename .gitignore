@@ -6,3 +6,5 @@ node_modules/
 .rt/
 /npm-debug.log
 *~.rt_*
+
+.~*
