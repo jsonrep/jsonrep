@@ -1,6 +1,6 @@
 
 
-| License | Source | &#8212;&raquo; | [Website](https://github.com/jsonrep/jsonrep/tree/master/workspace.sh) | [npm](https://github.com/npm/npm) |
+| License | Source | &#8212;&raquo; | [Website](https://github.com/jsonrep/jsonrep/tree/master/workspace.sh) | [npm](https://github.com/npm/cli) |
 | :---: | :---: | :---: | :---: | :---: |
 | [MPL](https://opensource.org/licenses/MPL-2.0) | [github.com/jsonrep/jsonrep](https://github.com/jsonrep/jsonrep) | [![CircleCI](https://circleci.com/gh/jsonrep/jsonrep.svg?style=svg)](https://circleci.com/gh/jsonrep/jsonrep) | [jsonrep.github.io/jsonrep](https://jsonrep.github.io/jsonrep) | [jsonrep](https://www.npmjs.com/package/jsonrep)
 
