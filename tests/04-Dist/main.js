@@ -8,9 +8,9 @@ module.config = {
 }
 */
 
-const LIB = require('bash.origin.workspace').LIB;
+const LIB = require('bash.origin.lib').js;
 
-const PATH = LIB.PATH;
+const PATH = LIB.path;
 const FS = LIB.FS_EXTRA;
 
 const DIST_BASE_PATH = PATH.join(__dirname, ".dist");
@@ -64,10 +64,10 @@ describe("Suite", function() {
                     }
                 }
             },
-            "/lib/loader.js": __dirname + "/../../node_modules/pinf-loader-js/loader.js",
+            "/lib/loader-core.browser.js": require.resolve("pinf-loader-js/dist/loader-core.browser.js"),
             "/page.html": (
                 '<head>' +
-                    '<script src="/lib/loader.js"></script>' +
+                    '<script src="/lib/loader-core.browser.js"></script>' +
                     '<script>' +
                         'window.PINF.sandbox("/jsonrep/bundle.js", function (sandbox) {' +
                             'sandbox.main();' +
@@ -79,7 +79,7 @@ describe("Suite", function() {
             "^/dist/": DIST_BASE_PATH,
             "/dist_bundle_page.html": (
                 '<head>' +
-                    '<script src="/lib/loader.js"></script>' +
+                    '<script src="/lib/loader-core.browser.js"></script>' +
                     '<script>' +
                         'window.PINF.sandbox("/dist/bundle.js", function (sandbox) {' +
                             'sandbox.main();' +
@@ -94,7 +94,10 @@ describe("Suite", function() {
     it('Test', function (client) {
 
         // Run as page
-        client.url('http://localhost:' + process.env.PORT + '/jsonrep/page.html').pause(500);        
+        client.url('http://localhost:' + process.env.PORT + '/jsonrep/page.html').pause(500);
+
+if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
+
         client.waitForElementPresent('BODY', 3000);
         client.expect.element('BODY').text.to.contain([
             'map(',
@@ -113,7 +116,7 @@ describe("Suite", function() {
 
         // Now test dist files
 
-        client.url('http://localhost:' + process.env.PORT + '/dist/page.html').pause(500);        
+        client.url('http://localhost:' + process.env.PORT + '/dist/page.html').pause(500);
         client.waitForElementPresent('BODY', 3000);
         client.expect.element('BODY').text.to.contain([
             'map(',
@@ -121,7 +124,7 @@ describe("Suite", function() {
             ')'
         ].join("\n"));
 
-        client.url('http://localhost:' + process.env.PORT + '/dist_bundle_page.html').pause(500);        
+        client.url('http://localhost:' + process.env.PORT + '/dist_bundle_page.html').pause(500);
         client.waitForElementPresent('BODY', 3000);
         client.expect.element('BODY').text.to.contain([
             'map(',
@@ -129,8 +132,8 @@ describe("Suite", function() {
             ')'
         ].join("\n"));
 
-        if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
-        
+//        if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
+
     });
 });
 

@@ -33,6 +33,13 @@ exports.forConfig = function (CONFIG) {
             }, "lib/jsonrep.js")
         },
         "/dist/riot.js": PATH.join(LIB.resolve("riot/package.json"), "../riot.js"),
+        "/dist/domplate.browser.js": LIB.resolve("domplate/dist/domplate.browser.js"),
+        "/dist/insight.domplate.reps/*": PATH.join(LIB.resolve("insight.domplate.reps/package.json"), "../dist/reps"),
+        "/dist/regenerator-runtime.js": {
+            "@it.pinf.org.browserify#s1": augmentConfig({
+                "src": LIB.resolve("regenerator-runtime")
+            }, "dist/regenerator-runtime.js")
+        },
         "/dist/insight.rep.js": {
             "@it.pinf.org.browserify#s1": augmentConfig({
                 "src": PATH.join(__dirname, "src/insight.rep.js"),
@@ -121,6 +128,16 @@ exports.forConfig = function (CONFIG) {
                     PATH.join(LIB.resolve("riot/package.json"), "../riot.min.js"),
                     PATH.join(baseDistPath, "dist/riot.js")
                 );
+
+                FS.copySync(
+                    PATH.join(LIB.resolve("insight.domplate.reps/package.json"), "../dist/reps/domplate.browser.js"),
+                    PATH.join(baseDistPath, "dist/domplate.browser.js")
+                );
+
+                FS.copySync(
+                    PATH.join(LIB.resolve("insight.domplate.reps/package.json"), "../dist/reps"),
+                    PATH.join(baseDistPath, "dist/insight.domplate.reps")
+                );
             });
         }
 
@@ -159,10 +176,17 @@ exports.forConfig = function (CONFIG) {
                     '<script>',
                         'var baseUrl = window.location.pathname.replace(/\.[^\.]+$/, "");',
                         'var pmodule = { "filename": (baseUrl + "/") };',
+
                         'var script = document.createElement("script");',
                         'script.type = "text/javascript";',
                         'script.src = baseUrl + "/dist/riot.js";',
                         'document.getElementsByTagName("head")[0].appendChild(script);',
+
+                        'script = document.createElement("script");',
+                        'script.type = "text/javascript";',
+                        'script.src = baseUrl + "/dist/regenerator-runtime.js";',
+                        'document.getElementsByTagName("head")[0].appendChild(script);',
+
                         'script = document.createElement("script");',
                         'script.type = "text/javascript";',
                         'script.src = baseUrl + "/lib/jsonrep.js";',
@@ -230,6 +254,7 @@ exports.forConfig = function (CONFIG) {
                             // TODO: Make base URL format configurable
                             '<head>',
                                 '<script src="' + (req.mountAt + "/dist/riot.js").replace(/\/\//g, "/") + '"></script>',
+                                '<script src="' + (req.mountAt + "/dist/regenerator-runtime.js").replace(/\/\//g, "/") + '"></script>',
                                 '<script src="' + (req.mountAt + "/lib/jsonrep.js").replace(/\/\//g, "/") + '"></script>',
                                 '<script>var pmodule = { "filename": "' + (req.mountAt + req.url).replace(/\/\//g, "/") + '" };</script>',
                                 '<style>',

@@ -34,59 +34,62 @@ PINF.bundle("", function(require) {
 
         exports.main = function (JSONREP, node) {
 
-            return JSONREP.makeRep(
-                '<div style="width: 100%; height: 100%; color: #ffffff;"></div>',
-                {
-                    on: {
-                        mount: function (el) {
+            return JSONREP.makeRep({
+                html: '<div style="width: 100%; height: 100%; color: #ffffff;"></div>',
+                css: [
+                    '[__dbid][__dtid="insight.domplate.reps/default/string"] {',
+                    '    color: inherit;',
+                    '}'
+                ].join("\n"),                    
+                on: {
+                    mount: function (el) {
 
-                            ensureDependencies(function () {
+                        ensureDependencies(function () {
 
-                                var myLayout = new window.GoldenLayout(node, el);
+                            var myLayout = new window.GoldenLayout(node, el);
 
-                                myLayout.registerComponent('example', function (container, state) {
+                            myLayout.registerComponent('example', function (container, state) {
 
-                                    var node = {};
-                                    var key = Object.keys(state).filter(function (key) {
-                                        return /^@/.test(key);
-                                    });
-                                    if (key.length === 1) {
-                                        node[key] = state[key];
-                                    } else
-                                    if (key.length > 1) {
-                                        console.error("state", state);
-                                        throw new Error("You need one, and only one, key prefixed by '@'!");
-                                    } else {
-                                        node = state;
-                                    }
-
-                                    JSONREP.markupNode(node).then(function (html) {
-
-                                        container.getElement().html('<div>' + html + '</div>');
-
-
-                                        var el = container.getElement().get(0);
-
-                                        Array.from(el.querySelectorAll('[_repid]')).forEach(function (el) {
-
-                                            var rep = JSONREP.getRepForId(el.getAttribute("_repid"));
-                                            if (
-                                                rep &&
-                                                rep.on &&
-                                                rep.on.mount
-                                            ) {
-                                                rep.on.mount(el);
-                                            }
-                                        });
-                                    });        
+                                var node = {};
+                                var key = Object.keys(state).filter(function (key) {
+                                    return /^@/.test(key);
                                 });
+                                if (key.length === 1) {
+                                    node[key] = state[key];
+                                } else
+                                if (key.length > 1) {
+                                    console.error("state", state);
+                                    throw new Error("You need one, and only one, key prefixed by '@'!");
+                                } else {
+                                    node = state;
+                                }
 
-                                myLayout.init();
+                                JSONREP.markupNode(node).then(function (html) {
+
+                                    container.getElement().html('<div>' + html + '</div>');
+
+
+                                    var el = container.getElement().get(0);
+
+                                    Array.from(el.querySelectorAll('[_repid]')).forEach(function (el) {
+
+                                        var rep = JSONREP.getRepForId(el.getAttribute("_repid"));
+                                        if (
+                                            rep &&
+                                            rep.on &&
+                                            rep.on.mount
+                                        ) {
+                                            rep.on.mount(el);
+                                        }
+                                    });
+                                });        
                             });
-                        }
+
+                            myLayout.init();
+                        });
                     }
                 }
-            );
+            });
         }
     });
 

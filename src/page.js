@@ -13,14 +13,11 @@ if (WINDOW.document.body.innerHTML.replace(/[\s\n]*/g, "")) {
     WINDOW.document.body.style.visibility = "hidden";
 
     // TODO: Use a better sandbox context variable.
+    // TODO: Use 'bundle'.
     WINDOW.pmodule = pmodule;
-    
+
     try {
-        const JSONREP = require("./jsonrep");
-        
-        // TOOO: Allow multiple PINF loader instances to coordinate loading bundles.
-        WINDOW.PINF = JSONREP.PINF;
-        
+        const JSONREP = require("./jsonrep");        
     } catch (err) {
         console.error(err);
         throw err;

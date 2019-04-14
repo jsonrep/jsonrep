@@ -8,9 +8,12 @@ module.config = {
 }
 */
 
+console.log('>>>TEST_IGNORE_LINE:GET /pure.rep.js<<<');
+console.log('>>>TEST_IGNORE_LINE:GET /variables.rep.js<<<');
+
 describe("Suite", function() {
 
-    require('bash.origin.workspace').LIB.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {
+    require('bash.origin.lib').js.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {
         "routes": {
             "^/": {
                 "@github.com~jsonrep~jsonrep#s1": {

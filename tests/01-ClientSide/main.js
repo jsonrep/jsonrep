@@ -8,12 +8,16 @@ module.config = {
 }
 */
 
+const PATH = require("path");
+
 describe("Suite", function() {
 
-    require('bash.origin.workspace').LIB.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {
+    require('bash.origin.lib').js.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {
         "routes": {
             "/": (
-                '<head><script src="/lib/jsonrep.js"></script></head>' +
+                '<head>' +
+                    '<script src="/lib/jsonrep.js"></script>' +
+                '</head>' +
                 '<body><div renderer="jsonrep">{"message": "Hello World!"}</div></body>'
             ),
             "/lib/jsonrep.js": {
@@ -27,7 +31,8 @@ describe("Suite", function() {
                     "dist": __dirname + "/../../dist/insight.rep.js",
                     "format": "pinf"
                 }
-            }
+            },
+            "/dist/insight.domplate.reps/*": PATH.join(require.resolve("insight.domplate.reps/package.json"), "../dist/reps")
         }
     });
 
@@ -37,7 +42,7 @@ describe("Suite", function() {
 
         client.waitForElementPresent('BODY > DIV[renderer="jsonrep"]', 3000);
 
-//if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
+if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
         
         client.expect.element('BODY > DIV[renderer="jsonrep"]').text.to.contain([
             'map(',

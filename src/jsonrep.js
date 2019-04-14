@@ -114,25 +114,24 @@ function makeExports (exports) {
 
         exports.options = exports.options || {};
 
-        // TODO: Only re-inject loader if not already present (build two versions of JS file).
-        exports.PINF = require("pinf-loader-js");
         exports.Codeblock = require("codeblock/codeblock.rt0").Codeblock;
 
         if (WINDOW) {
 
+            // TODO: Only re-inject loader if not already present (build two versions of JS file).
             if (typeof WINDOW.PINF === "undefined") {
-                WINDOW.PINF = exports.PINF;
+                WINDOW.PINF = exports.PINF = require("pinf-loader-js").Loader(WINDOW);
             } else {
                 // TODO: Instead of re-using loader here allow attachment
-                //       if a sub loader to the parent loader?
+                //       of a sub loader to the parent loader?
                 exports.PINF = WINDOW.PINF;
             }
 
             if (WINDOW.document) {
 
-                if (!exports.PINF.document) {
-                    exports.PINF.document = WINDOW.document;
-                }
+                //if (!exports.PINF.document) {
+                //    exports.PINF.document = WINDOW.document;
+                //}
 
                 if (!exports.options.ourBaseUri) {
                     var ourBaseUri = Array.from(WINDOW.document.querySelectorAll('SCRIPT[src]')).filter(function (tag) {
@@ -185,7 +184,12 @@ function makeExports (exports) {
 
                 if (rep.css) {
 
-                    var css = exports.Codeblock.FromJSON(rep.css).getCode();
+                    var css = null;
+                    if (typeof rep.css === 'string') {
+                        css = rep.css;
+                    } else {
+                        css = exports.Codeblock.FromJSON(rep.css).getCode();
+                    }
 
                     // TODO: Optionally warn if no ':scope' keywords are found to remind user to scope css.
                     css = css.replace(/:scope/g, '[_repid="' + el.getAttribute("_repid") + '"]');

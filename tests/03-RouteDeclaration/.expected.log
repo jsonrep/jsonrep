@@ -1,11 +1,15 @@
+>>>TEST_IGNORE_LINE:assertions passed\.<<<
 >>>TEST_IGNORE_LINE:\d milliseconds.$<<<
 >>>TEST_IGNORE_LINE:\d+\spassing\s\([^\)]+\)<<<
 environments: default
 
 
   Suite
-[bash.origin.express] Adding route: /lib/loader.js
+[bash.origin.express] Adding route: /lib/loader-core.browser.js
 [bash.origin.express] Adding route: /page.html
+[bash.origin.express] Adding route: /dist/insight.domplate.reps/*
+[bash.origin.express] Adding route: /dist/regenerator-runtime.js
+[bash.origin.express] Adding route: /dist/domplate.browser.js
 [bash.origin.express] Adding route: /dist/insight.rep.js
 [bash.origin.express] Adding route: /lib/jsonrep.js
 [bash.origin.express] Adding route: /dist/riot.js
