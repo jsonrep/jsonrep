@@ -160,10 +160,6 @@ function impl(domplate) {
   };
 }
 
-function css() {
-  return atob("ClNQQU4ubWFwW19fZGJpZD0iNGE5NWY2OTQ2NDljNzNmNThhN2Y2MzU2Y2ZkMTQzN2UwYmU3NDgyMyJdID4gU1BBTiB7CiAgICBjb2xvcjogIzlDOUM5QzsKICAgIGZvbnQtd2VpZ2h0OiBib2xkOwp9CgpTUEFOLm1hcFtfX2RiaWQ9IjRhOTVmNjk0NjQ5YzczZjU4YTdmNjM1NmNmZDE0MzdlMGJlNzQ4MjMiXSA+IERJVi5wYWlyIHsKICAgIGRpc3BsYXk6IGJsb2NrOwogICAgcGFkZGluZy1sZWZ0OiAyMHB4Owp9CgpTUEFOLm1hcFtfX2RiaWQ9IjRhOTVmNjk0NjQ5YzczZjU4YTdmNjM1NmNmZDE0MzdlMGJlNzQ4MjMiXSA+IFNQQU4ucGFpciB7CiAgICBwYWRkaW5nLWxlZnQ6IDJweDsKfQoKU1BBTi5tYXBbX19kYmlkPSI0YTk1ZjY5NDY0OWM3M2Y1OGE3ZjYzNTZjZmQxNDM3ZTBiZTc0ODIzIl0gPiAucGFpciA+IFNQQU4uZGVsaW1pdGVyLCBTUEFOLm1hcCA+IC5wYWlyID4gU1BBTi5zZXBhcmF0b3IgewogICAgY29sb3I6ICM5QzlDOUM7CiAgICBwYWRkaW5nLWxlZnQ6IDJweDsKICAgIHBhZGRpbmctcmlnaHQ6IDJweDsKfQoKClNQQU4ubWFwW19fZGJpZD0iNGE5NWY2OTQ2NDljNzNmNThhN2Y2MzU2Y2ZkMTQzN2UwYmU3NDgyMyJdID4gU1BBTiB7CiAgICBjb2xvcjogZ3JlZW47CiAgICBmb250LXdlaWdodDogbm9ybWFsOwp9CgpTUEFOLm1hcFtfX2RiaWQ9IjRhOTVmNjk0NjQ5YzczZjU4YTdmNjM1NmNmZDE0MzdlMGJlNzQ4MjMiXSA+IC5wYWlyID4gU1BBTi5kZWxpbWl0ZXIsIFNQQU4ubWFwID4gLnBhaXIgPiBTUEFOLnNlcGFyYXRvciB7CiAgICBjb2xvcjogZ3JlZW47Cn0K");
-}
-
 exports.main = function (domplate, options) {
   options = options || {};
   var rep = impl(domplate);
@@ -253,15 +249,12 @@ return (function (__code__, __context__, __in__, __out__) {  with (this) {  with
   rep.__ensureCssInjected = function () {
     if (injectedCss) return;
     injectedCss = true;
-    var node = document.createElement("style");
-    var cssCode = css();
 
     if (options.cssBaseUrl) {
-      cssCode = cssCode.replace(/(url\s*\()([^\)]+\))/g, "$1" + options.cssBaseUrl + "$2");
+      domplate.loadStyle(options.cssBaseUrl + "php/array-associative.rep.css");
+    } else {
+      domplate.loadStyle("php/array-associative.rep.css");
     }
-
-    node.innerHTML = cssCode;
-    document.body.appendChild(node);
   };
 
   Object.keys(rep).forEach(function (tagName) {

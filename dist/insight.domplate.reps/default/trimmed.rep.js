@@ -26,10 +26,6 @@ function impl(domplate) {
   };
 }
 
-function css() {
-  return atob("ClNQQU4udHJpbW1lZFtfX2RiaWQ9IjVlZTBhMTFmMWI3Y2U4ZDk5MzE4ZGY5NmU0OGQ4YWFlNzc1YTM0ODIiXSB7CiAgICBjb2xvcjogI0ZGRkZGRjsKICAgIGJhY2tncm91bmQtY29sb3I6IGJsdWU7CiAgICBwYWRkaW5nLWxlZnQ6IDVweDsKICAgIHBhZGRpbmctcmlnaHQ6IDVweDsKfQo=");
-}
-
 exports.main = function (domplate, options) {
   options = options || {};
   var rep = impl(domplate);
@@ -81,15 +77,12 @@ return (function (__code__, __context__, __in__, __out__) {  with (this) {  with
   rep.__ensureCssInjected = function () {
     if (injectedCss) return;
     injectedCss = true;
-    var node = document.createElement("style");
-    var cssCode = css();
 
     if (options.cssBaseUrl) {
-      cssCode = cssCode.replace(/(url\s*\()([^\)]+\))/g, "$1" + options.cssBaseUrl + "$2");
+      domplate.loadStyle(options.cssBaseUrl + "default/trimmed.rep.css");
+    } else {
+      domplate.loadStyle("default/trimmed.rep.css");
     }
-
-    node.innerHTML = cssCode;
-    document.body.appendChild(node);
   };
 
   Object.keys(rep).forEach(function (tagName) {

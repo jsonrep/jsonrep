@@ -16,6 +16,10 @@ const FS = LIB.FS_EXTRA;
 const DIST_BASE_PATH = PATH.join(__dirname, ".dist");
 
 
+console.log('>>>TEST_IGNORE_LINE:"GET /<<<');
+console.log('>>>TEST_IGNORE_LINE:\\[bash.origin.express\\] Routing request /<<<');
+
+
 describe("Suite", function() {
 
     if (FS.existsSync(DIST_BASE_PATH)) {

@@ -146,10 +146,6 @@ function impl(domplate) {
   };
 }
 
-function css() {
-  return atob("ClNQQU4udGFibGVbX19kYmlkPSI3NGVlNjI0MjBiYmQwMThlNDlhMTVkZDYxMTYxNmU3NTk3YWUxYjA0Il0gewogICAgYmFja2dyb3VuZC1pbWFnZTogdXJsKGltYWdlcy90YWJsZS5wbmcpOwogICAgYmFja2dyb3VuZC1yZXBlYXQ6IG5vLXJlcGVhdDsKICAgIGJhY2tncm91bmQtcG9zaXRpb246IDRweCAtMXB4OwogICAgcGFkZGluZy1sZWZ0OiAyNXB4Owp9CgpESVYudGFibGVbX19kYmlkPSI3NGVlNjI0MjBiYmQwMThlNDlhMTVkZDYxMTYxNmU3NTk3YWUxYjA0Il0gewogICAgcGFkZGluZzogMHB4OwogICAgbWFyZ2luOiAwcHg7Cn0KCkRJVi50YWJsZVtfX2RiaWQ9Ijc0ZWU2MjQyMGJiZDAxOGU0OWExNWRkNjExNjE2ZTc1OTdhZTFiMDQiXSBUQUJMRSB7CiAgYm9yZGVyLWJvdHRvbTogMXB4IHNvbGlkICNEN0Q3RDc7CiAgYm9yZGVyLXJpZ2h0OiAxcHggc29saWQgI0Q3RDdENzsKfQoKRElWLnRhYmxlW19fZGJpZD0iNzRlZTYyNDIwYmJkMDE4ZTQ5YTE1ZGQ2MTE2MTZlNzU5N2FlMWIwNCJdIFRBQkxFIFRCT0RZIFRSLmhpZGUgewogIGRpc3BsYXk6IG5vbmU7Cn0KCkRJVi50YWJsZVtfX2RiaWQ9Ijc0ZWU2MjQyMGJiZDAxOGU0OWExNWRkNjExNjE2ZTc1OTdhZTFiMDQiXSBUQUJMRSBUQk9EWSBUUiBUSC5oZWFkZXIgewogIHZlcnRpY2FsLWFsaWduOiB0b3A7CiAgZm9udC13ZWlnaHQ6IGJvbGQ7CiAgdGV4dC1hbGlnbjogY2VudGVyOwogIGJvcmRlcjogMXB4IHNvbGlkICNEN0Q3RDc7CiAgYm9yZGVyLWJvdHRvbTogMHB4OwogIGJvcmRlci1yaWdodDogMHB4OwogIGJhY2tncm91bmQtY29sb3I6ICNlY2VjZWM7CiAgcGFkZGluZzogMnB4OwogIHBhZGRpbmctbGVmdDogMTBweDsKICBwYWRkaW5nLXJpZ2h0OiAxMHB4Owp9CgpESVYudGFibGVbX19kYmlkPSI3NGVlNjI0MjBiYmQwMThlNDlhMTVkZDYxMTYxNmU3NTk3YWUxYjA0Il0gVEFCTEUgVEJPRFkgVFIgVEQuY2VsbCB7CiAgdmVydGljYWwtYWxpZ246IHRvcDsKICBwYWRkaW5nLXJpZ2h0OiAxMHB4OwogIGJvcmRlcjogMXB4IHNvbGlkICNEN0Q3RDc7CiAgYm9yZGVyLWJvdHRvbTogMHB4OwogIGJvcmRlci1yaWdodDogMHB4OwogIHBhZGRpbmc6IDJweDsKICBwYWRkaW5nLWxlZnQ6IDEwcHg7CiAgcGFkZGluZy1yaWdodDogMTBweDsKfQoKRElWLnRhYmxlW19fZGJpZD0iNzRlZTYyNDIwYmJkMDE4ZTQ5YTE1ZGQ2MTE2MTZlNzU5N2FlMWIwNCJdIFRBQkxFIFRCT0RZIFRSIFRELmNlbGw6aG92ZXIgewogICAgYmFja2dyb3VuZC1jb2xvcjogI2ZmYzczZDsKICAgIGN1cnNvcjogcG9pbnRlcjsgICAgCn0gICAgICAgIAo=");
-}
-
 exports.main = function (domplate, options) {
   options = options || {};
   var rep = impl(domplate);
@@ -201,15 +197,12 @@ return (function (__code__, __context__, __in__, __out__) {  with (this) {  with
   rep.__ensureCssInjected = function () {
     if (injectedCss) return;
     injectedCss = true;
-    var node = document.createElement("style");
-    var cssCode = css();
 
     if (options.cssBaseUrl) {
-      cssCode = cssCode.replace(/(url\s*\()([^\)]+\))/g, "$1" + options.cssBaseUrl + "$2");
+      domplate.loadStyle(options.cssBaseUrl + "default/table.rep.css");
+    } else {
+      domplate.loadStyle("default/table.rep.css");
     }
-
-    node.innerHTML = cssCode;
-    document.body.appendChild(node);
   };
 
   Object.keys(rep).forEach(function (tagName) {

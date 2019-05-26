@@ -1,7 +1,7 @@
 
-exports.main = function (JSONREP, node) {
+exports.main = function (JSONREP, node, options) {
 
-    return JSONREP.makeRep({
+    return JSONREP.makeRep2({
         "config": {
             "node": node,
             "append": "!"
@@ -27,5 +27,5 @@ exports.main = function (JSONREP, node) {
             </script>
 
         <<<)
-    });
+    }, options);
 };

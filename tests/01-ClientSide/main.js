@@ -10,6 +10,8 @@ module.config = {
 
 const PATH = require("path");
 
+console.log('>>>TEST_IGNORE_LINE:\"GET /<<<');
+
 describe("Suite", function() {
 
     require('bash.origin.lib').js.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {

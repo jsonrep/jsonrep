@@ -154,10 +154,6 @@ function impl(domplate) {
   };
 }
 
-function css() {
-  return atob("ClNQQU4ubnVsbFtfX2RiaWQ9ImU4Y2ZlY2M0YTg2MTg0OTZiZjgxMWZhN2ZiZDMzZGZjMjMzOGRmNTkiXSB7CiAgICBjb2xvcjogbmF2eTsKfQoKU1BBTi5zdHJpbmdbX19kYmlkPSJlOGNmZWNjNGE4NjE4NDk2YmY4MTFmYTdmYmQzM2RmYzIzMzhkZjU5Il0gewogICAgY29sb3I6IGJsYWNrOwp9CgpTUEFOLnN0cmluZ1tfX2RiaWQ9ImU4Y2ZlY2M0YTg2MTg0OTZiZjgxMWZhN2ZiZDMzZGZjMjMzOGRmNTkiXVt3cmFwcGVkPXRydWVdIHsKICAgIGNvbG9yOiByZWQ7Cn0KClNQQU4uc3RyaW5nW19fZGJpZD0iZThjZmVjYzRhODYxODQ5NmJmODExZmE3ZmJkMzNkZmMyMzM4ZGY1OSJdID4gU1BBTi5zcGVjaWFsIHsKICAgIGNvbG9yOiBncmF5OwogICAgZm9udC13ZWlnaHQ6IGJvbGQ7CiAgICBwYWRkaW5nLWxlZnQ6IDNweDsKICAgIHBhZGRpbmctcmlnaHQ6IDNweDsKfQoKU1BBTi5zdHJpbmdbX19kYmlkPSJlOGNmZWNjNGE4NjE4NDk2YmY4MTFmYTdmYmQzM2RmYzIzMzhkZjU5Il0gPiBTUEFOLnRyaW1tZWQgewogICAgY29sb3I6ICNGRkZGRkY7CiAgICBiYWNrZ3JvdW5kLWNvbG9yOiBibHVlOwogICAgcGFkZGluZy1sZWZ0OiA1cHg7CiAgICBwYWRkaW5nLXJpZ2h0OiA1cHg7CiAgICBtYXJnaW4tbGVmdDogNXB4Owp9Cg==");
-}
-
 exports.main = function (domplate, options) {
   options = options || {};
   var rep = impl(domplate);
@@ -228,15 +224,12 @@ return (function (__code__, __context__, __in__, __out__) {  with (this) {  with
   rep.__ensureCssInjected = function () {
     if (injectedCss) return;
     injectedCss = true;
-    var node = document.createElement("style");
-    var cssCode = css();
 
     if (options.cssBaseUrl) {
-      cssCode = cssCode.replace(/(url\s*\()([^\)]+\))/g, "$1" + options.cssBaseUrl + "$2");
+      domplate.loadStyle(options.cssBaseUrl + "php/string.rep.css");
+    } else {
+      domplate.loadStyle("php/string.rep.css");
     }
-
-    node.innerHTML = cssCode;
-    document.body.appendChild(node);
   };
 
   Object.keys(rep).forEach(function (tagName) {

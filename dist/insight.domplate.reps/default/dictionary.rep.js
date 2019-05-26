@@ -182,10 +182,6 @@ function impl(domplate) {
   };
 }
 
-function css() {
-  return atob("ClNQQU4uZGljdGlvbmFyeVtfX2RiaWQ9IjJjNzY0YTE5Yzg4OWU4N2MyMjliZGJiMGI4ZjUxYTY1MmYzMzUwZmIiXSA+IFNQQU4gewogICAgY29sb3I6ICM5QzlDOUM7Cn0KClNQQU4uZGljdGlvbmFyeVtfX2RiaWQ9IjJjNzY0YTE5Yzg4OWU4N2MyMjliZGJiMGI4ZjUxYTY1MmYzMzUwZmIiXSA+IFNQQU4uY29sbGFwc2VkIHsKICAgIGNvbG9yOiAjMDAwMEZGOwogICAgZm9udC13ZWlnaHQ6IG5vcm1hbDsKICAgIHBhZGRpbmctbGVmdDogNXB4OwogICAgcGFkZGluZy1yaWdodDogNXB4Owp9CgpTUEFOLmRpY3Rpb25hcnlbX19kYmlkPSIyYzc2NGExOWM4ODllODdjMjI5YmRiYjBiOGY1MWE2NTJmMzM1MGZiIl0gPiBTUEFOLnN1bW1hcnkgewogICAgY29sb3I6ICMwMDAwRkY7CiAgICBmb250LXdlaWdodDogbm9ybWFsOwogICAgcGFkZGluZy1sZWZ0OiA1cHg7CiAgICBwYWRkaW5nLXJpZ2h0OiA1cHg7Cn0KClNQQU4uZGljdGlvbmFyeVtfX2RiaWQ9IjJjNzY0YTE5Yzg4OWU4N2MyMjliZGJiMGI4ZjUxYTY1MmYzMzUwZmIiXSA+IFNQQU4ubWVtYmVyIHsKICAgIGNvbG9yOiAjOUM5QzlDOwp9CgpTUEFOLmRpY3Rpb25hcnlbX19kYmlkPSIyYzc2NGExOWM4ODllODdjMjI5YmRiYjBiOGY1MWE2NTJmMzM1MGZiIl0gPiBESVYubWVtYmVyIHsKICAgIGRpc3BsYXk6IGJsb2NrOwogICAgcGFkZGluZy1sZWZ0OiAyMHB4Owp9ClNQQU4uZGljdGlvbmFyeVtfX2RiaWQ9IjJjNzY0YTE5Yzg4OWU4N2MyMjliZGJiMGI4ZjUxYTY1MmYzMzUwZmIiXSA+IERJVi5tZW1iZXIuZXhwYW5kYWJsZSB7CiAgICBiYWNrZ3JvdW5kLWltYWdlOiB1cmwoaW1hZ2VzL3R3aXN0eS1jbG9zZWQucG5nKTsKICAgIGJhY2tncm91bmQtcmVwZWF0OiBuby1yZXBlYXQ7CiAgICBiYWNrZ3JvdW5kLXBvc2l0aW9uOiA2cHggMnB4OwogICAgY3Vyc29yOiBwb2ludGVyOwp9ClNQQU4uZGljdGlvbmFyeVtfX2RiaWQ9IjJjNzY0YTE5Yzg4OWU4N2MyMjliZGJiMGI4ZjUxYTY1MmYzMzUwZmIiXSA+IERJVi5tZW1iZXIuZXhwYW5kYWJsZS5leHBhbmRlZCB7CiAgICBiYWNrZ3JvdW5kLWltYWdlOiB1cmwoaW1hZ2VzL3R3aXN0eS1vcGVuLnBuZyk7Cn0KClNQQU4uZGljdGlvbmFyeVtfX2RiaWQ9IjJjNzY0YTE5Yzg4OWU4N2MyMjliZGJiMGI4ZjUxYTY1MmYzMzUwZmIiXSA+IC5tZW1iZXIgPiBTUEFOLm5hbWUgewogICAgY29sb3I6ICNFNTlEMDc7CiAgICBmb250LXdlaWdodDogbm9ybWFsOwp9CgpTUEFOLmRpY3Rpb25hcnlbX19kYmlkPSIyYzc2NGExOWM4ODllODdjMjI5YmRiYjBiOGY1MWE2NTJmMzM1MGZiIl0gPiAubWVtYmVyID4gU1BBTi52YWx1ZSB7CiAgICBmb250LXdlaWdodDogbm9ybWFsOwp9CgpTUEFOLmRpY3Rpb25hcnlbX19kYmlkPSIyYzc2NGExOWM4ODllODdjMjI5YmRiYjBiOGY1MWE2NTJmMzM1MGZiIl0gPiAubWVtYmVyID4gU1BBTi5kZWxpbWl0ZXIsIFNQQU4uZGljdGlvbmFyeSA+IC5tZW1iZXIgPiBTUEFOLnNlcGFyYXRvciwgU1BBTi5kaWN0aW9uYXJ5ID4gLm1lbWJlciBTUEFOLm1vcmUgewogICAgY29sb3I6ICM5QzlDOUM7CiAgICBwYWRkaW5nLWxlZnQ6IDJweDsKICAgIHBhZGRpbmctcmlnaHQ6IDJweDsKfSAgICAgICAgCg==");
-}
-
 exports.main = function (domplate, options) {
   options = options || {};
   var rep = impl(domplate);
@@ -313,15 +309,12 @@ return (function (__code__, __context__, __in__, __out__) {  with (this) {  with
   rep.__ensureCssInjected = function () {
     if (injectedCss) return;
     injectedCss = true;
-    var node = document.createElement("style");
-    var cssCode = css();
 
     if (options.cssBaseUrl) {
-      cssCode = cssCode.replace(/(url\s*\()([^\)]+\))/g, "$1" + options.cssBaseUrl + "$2");
+      domplate.loadStyle(options.cssBaseUrl + "default/dictionary.rep.css");
+    } else {
+      domplate.loadStyle("default/dictionary.rep.css");
     }
-
-    node.innerHTML = cssCode;
-    document.body.appendChild(node);
   };
 
   Object.keys(rep).forEach(function (tagName) {

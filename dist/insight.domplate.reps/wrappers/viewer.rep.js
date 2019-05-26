@@ -32,10 +32,6 @@ function impl(domplate) {
   };
 }
 
-function css() {
-  return atob("CkRJVi52aWV3ZXItaGFybmVzc1tfX2RiaWQ9IjgxZGQ2Y2MzNDljYzYwNzY5N2IyMjE0OGFhMTgwOTA1MGMwZmNkYTQiXSB7CiAgICBwYWRkaW5nOiAycHggNHB4IDFweCA2cHg7CiAgICBmb250LWZhbWlseTogTHVjaWRhIEdyYW5kZSwgVGFob21hLCBzYW5zLXNlcmlmOwogICAgZm9udC1zaXplOiAxMXB4Owp9Cg==");
-}
-
 exports.main = function (domplate, options) {
   options = options || {};
   var rep = impl(domplate);
@@ -68,15 +64,12 @@ return (function (__code__, __context__, __in__, __out__) {  with (this) {  with
   rep.__ensureCssInjected = function () {
     if (injectedCss) return;
     injectedCss = true;
-    var node = document.createElement("style");
-    var cssCode = css();
 
     if (options.cssBaseUrl) {
-      cssCode = cssCode.replace(/(url\s*\()([^\)]+\))/g, "$1" + options.cssBaseUrl + "$2");
+      domplate.loadStyle(options.cssBaseUrl + "wrappers/viewer.rep.css");
+    } else {
+      domplate.loadStyle("wrappers/viewer.rep.css");
     }
-
-    node.innerHTML = cssCode;
-    document.body.appendChild(node);
   };
 
   Object.keys(rep).forEach(function (tagName) {

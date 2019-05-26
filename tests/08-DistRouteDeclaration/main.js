@@ -8,6 +8,9 @@ module.config = {
 }
 */
 
+console.log('>>>TEST_IGNORE_LINE:"GET /<<<');
+console.log('>>>TEST_IGNORE_LINE:\\[bash.origin.express\\] Routing request /<<<');
+
 describe("Suite", function() {
 
     require('bash.origin.lib').js.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {

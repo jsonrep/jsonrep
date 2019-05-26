@@ -53,10 +53,6 @@ function impl(domplate) {
   };
 }
 
-function css() {
-  return atob("ClNQQU5bX19kYmlkPSJiYzI2YmQyMzZmMWZkZDQxMmFiYmVhYzM3NmJlNmQ3MzAxYjA0MzJlIl0gewogICAgY29sb3I6IGJsYWNrOwp9Cg==");
-}
-
 exports.main = function (domplate, options) {
   options = options || {};
   var rep = impl(domplate);
@@ -108,15 +104,12 @@ return (function (__code__, __context__, __in__, __out__) {  with (this) {  with
   rep.__ensureCssInjected = function () {
     if (injectedCss) return;
     injectedCss = true;
-    var node = document.createElement("style");
-    var cssCode = css();
 
     if (options.cssBaseUrl) {
-      cssCode = cssCode.replace(/(url\s*\()([^\)]+\))/g, "$1" + options.cssBaseUrl + "$2");
+      domplate.loadStyle(options.cssBaseUrl + "default/string.rep.css");
+    } else {
+      domplate.loadStyle("default/string.rep.css");
     }
-
-    node.innerHTML = cssCode;
-    document.body.appendChild(node);
   };
 
   Object.keys(rep).forEach(function (tagName) {

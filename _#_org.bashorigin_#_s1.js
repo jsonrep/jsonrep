@@ -33,6 +33,8 @@ exports.forConfig = function (CONFIG) {
             }, "lib/jsonrep.js")
         },
         "/dist/riot.js": PATH.join(LIB.resolve("riot/package.json"), "../riot.js"),
+        "/dist/riot.csp.js": PATH.join(LIB.resolve("riot/package.json"), "../riot.csp.js"),
+        "/dist/jquery3.min.js": PATH.join(__dirname, "dist/jquery3.min.js"),
         "/dist/domplate.browser.js": LIB.resolve("domplate/dist/domplate.browser.js"),
         "/dist/insight.domplate.reps/*": PATH.join(LIB.resolve("insight.domplate.reps/package.json"), "../dist/reps"),
         "/dist/regenerator-runtime.js": {
@@ -49,38 +51,114 @@ exports.forConfig = function (CONFIG) {
     });
 
     const repRoutes = {};
+
     Object.keys(CONFIG.reps).forEach(function (uri) {
 
         function getBundleCode (callback) {
             try {
                 var repCode = CONFIG.reps[uri];
                 var repCodeSrcPath = false;
+
+                if (/^\//.test(repCode)) {
+                    // All good
+                } else
+                if (/^\./.test(repCode)) {
+                    repCode = PATH.join((CONFIG.basedir) ? CONFIG.basedir : process.cwd(), repCode);
+                } else
+                if (typeof repCode === 'string') {
+
+                    var originalRepCode = repCode;
+                    var resolvedPath = null;
+                    var searchPath = repCode;
+                    if (/\//.test(searchPath)) {
+                        searchPath = searchPath.split("/")[0] + "/package.json";                        
+                    }
+
+                    if (CONFIG.baseDir) {
+                        try {
+                            resolvedPath = LIB.RESOLVE.sync(searchPath, {
+                                basedir: CONFIG.baseDir
+                            });
+                        } catch (err) {
+                        }
+                    }
+                    if (!resolvedPath) {
+                        resolvedPath = LIB.RESOLVE.sync(searchPath, {
+                            basedir: __dirname
+                        });
+                    }
+
+                    if (searchPath !== repCode) {
+                        repCode = PATH.join(
+                            resolvedPath,
+                            "..",
+                            repCode.replace(/^[^\/]+\/?/, '')
+                        );
+                    } else {
+                        repCode = resolvedPath;
+                    }
+
+                    if (!/^\//.test(repCode)) {
+                        return callback(new Error(`Could not resolve rep code uri '${originalRepCode}'!`));
+                    }
+                }
+
+                var cssCode = undefined;
                 if (/^\//.test(repCode)) {
                     repCodeSrcPath = repCode;
                     repCode = FS.readFileSync(repCodeSrcPath, "utf8");
 
                     if (/(^|\n)PINF\.bundle\(/.test(repCode)) {
                         // Already bundled
-                        return callback(null, repCode);
+                        return callback(null, {
+                            code: repCode
+                        });
                     }
+
+                    var repId = LIB.CRYPTO.createHash('sha1').update(repCode).digest('hex');
 
                     repCode = CODEBLOCK.purifyCode(repCode, {
                         freezeToJavaScript: true,
                         on: {
                             codeblock: function (codeblock) {
 
+                                if (codeblock.getFormat() === "css") {
+                                    if (CONFIG.externalizeCss) {
+
+                                        cssCode = codeblock.getCode();
+
+                                        if (cssCode) {
+
+                                            // TODO: Optionally warn if no ':scope' keywords are found to remind user to scope css.
+                                            cssCode = cssCode.replace(/:scope/g, '[_cssid="' + repId + '"]');
+
+                                            codeblock._format = "json";
+
+                                            codeblock.setCode(JSON.stringify({
+                                                _cssid: repId,
+                                                repUri: uri
+                                            }));
+                                        }
+                                    }
+                                } else
                                 if (codeblock.getFormat() === "riotjs:makeRep") {
 
                                     var processor = require("./src/nodejs/processors/" + codeblock.getFormat().replace(/:/g, "_") + ".js");
 
-                                    var result = processor.processSync(codeblock);
+                                    var result = processor.processSync(codeblock, {
+                                        uri: uri,
+                                        CONFIG: CONFIG
+                                    });
                                     codeblock._format = "javascript";
-                                    codeblock.setCode(result);
+                                    codeblock.setCode(result.code);
+
+                                    if (result.css) {
+                                        cssCode = result.css;
+                                    }
                                 }
                             }
                         }
-                    });
-
+                    }).toString();
                 } else
                 if (repCode[".@"] === "github.com~0ink~codeblock/codeblock:Codeblock") {
                     repCode = CODEBLOCK.thawFromJSON(repCode).getCode();
@@ -88,9 +166,10 @@ exports.forConfig = function (CONFIG) {
                 if (typeof repCode === "function") {
                     repCode = repCode.toString().replace(/^function \(\) \{\n([\s\S]+)\n\s*\}$/, "$1");
                 } else {
+                    console.error("CONFIG.reps[uri]", CONFIG.reps[uri]);
+                    console.error("repCode", repCode);
                     throw new Error("Unknown code format!");
                 }
-
 
                 // Browserify code.
                 var implConfig = {
@@ -107,7 +186,10 @@ exports.forConfig = function (CONFIG) {
                 implMod["#io.pinf/process~s1"]({}, function (err, repCode) {
                     if (err) return callback(err);
 
-                    return callback(null, repCode);
+                    return callback(null, {
+                        code: repCode,
+                        css: cssCode
+                    });
                 });
 
             } catch (err) {
@@ -122,11 +204,24 @@ exports.forConfig = function (CONFIG) {
             getBundleCode(function (err, bundleCode) {
                 if (err) return console.error(err);
 
-                FS.outputFileSync(PATH.join(baseDistPath, selfSubpath, uri + ".rep.js"), bundleCode, "utf8");
+                FS.outputFileSync(PATH.join(baseDistPath, selfSubpath, uri + ".rep.js"), bundleCode.code, "utf8");
+                if (bundleCode.css) {
+                    FS.outputFileSync(PATH.join(baseDistPath, selfSubpath, uri + ".rep.css"), bundleCode.css, "utf8");
+                }
 
                 FS.copySync(
-                    PATH.join(LIB.resolve("riot/package.json"), "../riot.min.js"),
+                    PATH.join(LIB.resolve("riot/package.json"), "../riot.js"),
                     PATH.join(baseDistPath, "dist/riot.js")
+                );
+
+                FS.copySync(
+                    PATH.join(LIB.resolve("riot/package.json"), "../riot.csp.js"),
+                    PATH.join(baseDistPath, "dist/riot.csp.js")
+                );
+
+                FS.copySync(
+                    PATH.join(__dirname, "dist/jquery3.min.js"),
+                    PATH.join(baseDistPath, "dist/jquery3.min.js")
                 );
 
                 FS.copySync(
@@ -150,7 +245,20 @@ exports.forConfig = function (CONFIG) {
                 getBundleCode(function (err, bundleCode) {
                     if (err) return next(err);
 
-                    res.end(bundleCode);                    
+                    res.end(bundleCode.code);                    
+                });
+            };
+        };
+        repRoutes["/" + uri + ".rep.css"] = function () {
+
+            return function (req, res, next) {
+                res.writeHead(200, {
+                    "Content-Type": "text/css"
+                });
+                getBundleCode(function (err, bundleCode) {
+                    if (err) return next(err);
+
+                    res.end(bundleCode.css);                    
                 });
             };
         };
@@ -172,34 +280,43 @@ exports.forConfig = function (CONFIG) {
         if (/\.html?$/.test(CONFIG.dist)) {
             FS.outputFileSync(CONFIG.dist, [
                 // TODO: Make base URL format configurable
-                '<head>',
-                    '<script>',
-                        'var baseUrl = window.location.pathname.replace(/\.[^\.]+$/, "");',
-                        'var pmodule = { "filename": (baseUrl + "/") };',
+                '<!DOCTYPE html>',
+                '<html lang="en">',
+                    '<head>',
+                        '<meta charset="utf-8">',
+                        '<script>',
+                            'var baseUrl = window.location.pathname.replace(/\.[^\.]+$/, "");',
+                            'var pmodule = { "filename": (baseUrl + "/") };',
 
-                        'var script = document.createElement("script");',
-                        'script.type = "text/javascript";',
-                        'script.src = baseUrl + "/dist/riot.js";',
-                        'document.getElementsByTagName("head")[0].appendChild(script);',
+                            'var script = document.createElement("script");',
+                            'script.type = "text/javascript";',
+                            'script.src = baseUrl + "/dist/jquery3.min.js";',
+                            'document.getElementsByTagName("head")[0].appendChild(script);',
 
-                        'script = document.createElement("script");',
-                        'script.type = "text/javascript";',
-                        'script.src = baseUrl + "/dist/regenerator-runtime.js";',
-                        'document.getElementsByTagName("head")[0].appendChild(script);',
+                            'script = document.createElement("script");',
+                            'script.type = "text/javascript";',
+                            'script.src = baseUrl + "/dist/riot.js";',
+                            'document.getElementsByTagName("head")[0].appendChild(script);',
 
-                        'script = document.createElement("script");',
-                        'script.type = "text/javascript";',
-                        'script.src = baseUrl + "/lib/jsonrep.js";',
-                        'document.getElementsByTagName("head")[0].appendChild(script);',
-                    '</script>',
-                    '<style>',
-                        'HTML, BODY {',
-                            'padding: 0px;',
-                            'margin: 0px;',
-                        '}',
-                    '</style>',
-                '</head>',
-                '<body renderer="jsonrep" style="visibility:hidden;">' + JSON.stringify(CONFIG.page) + '</body>'
+                            'script = document.createElement("script");',
+                            'script.type = "text/javascript";',
+                            'script.src = baseUrl + "/dist/regenerator-runtime.js";',
+                            'document.getElementsByTagName("head")[0].appendChild(script);',
+
+                            'script = document.createElement("script");',
+                            'script.type = "text/javascript";',
+                            'script.src = baseUrl + "/lib/jsonrep.js";',
+                            'document.getElementsByTagName("head")[0].appendChild(script);',
+                        '</script>',
+                        '<style>',
+                            'HTML, BODY {',
+                                'padding: 0px;',
+                                'margin: 0px;',
+                            '}',
+                        '</style>',
+                    '</head>',
+                    '<body renderer="jsonrep" style="visibility:hidden;">' + JSON.stringify(CONFIG.page) + '</body>',
+                '</html>'
             ].join("\n"), "utf8");
         } else
         if (/\.js?$/.test(CONFIG.dist)) {
@@ -229,7 +346,7 @@ exports.forConfig = function (CONFIG) {
                         libApp(req, res, next);
                         return;
                     } else
-                    if ((m = req.url.match(/^\/(.+)\.rep\.js$/))) {
+                    if ((m = req.url.match(/^\/(.+)\.rep\.(js|css)$/))) {
                         if (CONFIG.reps[m[1]]) {
                             repsApp(req, res, next);
                             return;
@@ -252,19 +369,24 @@ exports.forConfig = function (CONFIG) {
                         });
                         res.end([
                             // TODO: Make base URL format configurable
-                            '<head>',
-                                '<script src="' + (req.mountAt + "/dist/riot.js").replace(/\/\//g, "/") + '"></script>',
-                                '<script src="' + (req.mountAt + "/dist/regenerator-runtime.js").replace(/\/\//g, "/") + '"></script>',
-                                '<script src="' + (req.mountAt + "/lib/jsonrep.js").replace(/\/\//g, "/") + '"></script>',
-                                '<script>var pmodule = { "filename": "' + (req.mountAt + req.url).replace(/\/\//g, "/") + '" };</script>',
-                                '<style>',
-                                    'HTML, BODY {',
-                                        'padding: 0px;',
-                                        'margin: 0px;',
-                                    '}',
-                                '</style>',
-                            '</head>',
-                            '<body renderer="jsonrep" style="visibility:hidden;">' + JSON.stringify(CONFIG.page) + '</body>'
+                            '<!DOCTYPE html>',
+                            '<html lang="en">',
+                                '<head>',
+                                    '<meta charset="utf-8">',
+                                    '<script src="' + (req.mountAt + "/dist/jquery3.min.js").replace(/\/\//g, "/") + '"></script>',
+                                    '<script src="' + (req.mountAt + "/dist/riot.js").replace(/\/\//g, "/") + '"></script>',
+                                    '<script src="' + (req.mountAt + "/dist/regenerator-runtime.js").replace(/\/\//g, "/") + '"></script>',
+                                    '<script src="' + (req.mountAt + "/lib/jsonrep.js").replace(/\/\//g, "/") + '"></script>',
+                                    '<script>var pmodule = { "filename": "' + (req.mountAt + req.url).replace(/\/\//g, "/") + '" };</script>',
+                                    '<style>',
+                                        'HTML, BODY {',
+                                            'padding: 0px;',
+                                            'margin: 0px;',
+                                        '}',
+                                    '</style>',
+                                '</head>',
+                                '<body renderer="jsonrep" style="visibility:hidden;">' + JSON.stringify(CONFIG.page) + '</body>',
+                            '</html>',
                         ].join("\n"));
                         return;
                     } else

@@ -12,17 +12,14 @@ environments: default
 Server: http://localhost:8080/
 [READY]
 [bash.origin.express] Routing request / with method GET due to route /
-127.0.0.1 - "GET / HTTP/1.1" 200 - "-"
 [bash.origin.express] Routing request / with method GET due to route /lib/jsonrep.js
-127.0.0.1 - "GET /lib/jsonrep.js HTTP/1.1" 200 - "http://localhost:8080/"
 [bash.origin.express] Routing request / with method GET due to route /dist/insight.rep.js
-127.0.0.1 - "GET /dist/insight.rep.js HTTP/1.1" 200 - "http://localhost:8080/"
 [bash.origin.express] Routing request /default/map.rep.js with method GET due to route /dist/insight.domplate.reps/*
 [bash.origin.express] Routing request /wrappers/viewer.rep.js with method GET due to route /dist/insight.domplate.reps/*
 [bash.origin.express] Routing request /default/string.rep.js with method GET due to route /dist/insight.domplate.reps/*
-127.0.0.1 - "GET /dist/insight.domplate.reps/wrappers/viewer.rep.js HTTP/1.1" 200 - "http://localhost:8080/"
-127.0.0.1 - "GET /dist/insight.domplate.reps/default/map.rep.js HTTP/1.1" 200 - "http://localhost:8080/"
-127.0.0.1 - "GET /dist/insight.domplate.reps/default/string.rep.js HTTP/1.1" 200 - "http://localhost:8080/"
+[bash.origin.express] Routing request /wrappers/viewer.rep.css with method GET due to route /dist/insight.domplate.reps/*
+[bash.origin.express] Routing request /default/map.rep.css with method GET due to route /dist/insight.domplate.reps/*
+[bash.origin.express] Routing request /default/string.rep.css with method GET due to route /dist/insight.domplate.reps/*
 
 
 

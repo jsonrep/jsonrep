@@ -26,10 +26,6 @@ function impl(domplate) {
   };
 }
 
-function css() {
-  return atob("CkRJVi51bmtub3duW19fZGJpZD0iODU5OTQ0ZWMzYWZkMDEzNmMyMDhjNzZiMzNmZDU0YzlmMDhjYjFhNSJdIHsKICAgIGNvbG9yOiAjRkZGRkZGOwogICAgYmFja2dyb3VuZC1jb2xvcjogcmVkOwp9Cg==");
-}
-
 exports.main = function (domplate, options) {
   options = options || {};
   var rep = impl(domplate);
@@ -100,15 +96,12 @@ return (function (__code__, __context__, __in__, __out__) {  with (this) {  with
   rep.__ensureCssInjected = function () {
     if (injectedCss) return;
     injectedCss = true;
-    var node = document.createElement("style");
-    var cssCode = css();
 
     if (options.cssBaseUrl) {
-      cssCode = cssCode.replace(/(url\s*\()([^\)]+\))/g, "$1" + options.cssBaseUrl + "$2");
+      domplate.loadStyle(options.cssBaseUrl + "php/unknown.rep.css");
+    } else {
+      domplate.loadStyle("php/unknown.rep.css");
     }
-
-    node.innerHTML = cssCode;
-    document.body.appendChild(node);
   };
 
   Object.keys(rep).forEach(function (tagName) {

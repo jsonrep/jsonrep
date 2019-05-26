@@ -23,13 +23,38 @@ function makeExports(exports) {
       rep = html.code;
 
       if (typeof rep === "function") {
-        rep = rep(html);
+        rep = rep(html, options);
       }
 
       html = rep.html;
       delete rep.html;
     }
 
+    return exports._makeRep(html, rep);
+  };
+
+  exports.makeRep2 = function (html, options) {
+    var rep = undefined;
+
+    if (_typeof(html) === "object" && typeof html.html !== "undefined") {
+      rep = html;
+      html = rep.html;
+      delete rep.html;
+    } else if (_typeof(html) === "object" && typeof html.code !== "undefined") {
+        rep = html.code;
+
+        if (typeof rep === "function") {
+          rep = rep.call(exports, html, options);
+        }
+
+        html = rep.html;
+        delete rep.html;
+      }
+
+    return exports._makeRep(html, rep);
+  };
+
+  exports._makeRep = function (html, rep) {
     if (_typeof(html) === "object" && html[".@"] === "github.com~0ink~codeblock/codeblock:Codeblock") {
       html = exports.Codeblock.FromJSON(html).compile(rep).getCode().replace(/^\n|\n$/g, "");
     }
@@ -87,7 +112,11 @@ function makeExports(exports) {
     }
 
     return exports.loadRenderer(uri).then(function (renderer) {
-      return renderer.main(exports, node);
+      return renderer.main(exports, node, {
+        renderer: {
+          uri: uri
+        }
+      });
     });
   };
 }
@@ -119,12 +148,33 @@ function makeExports(exports) {
       }
     }
 
+    exports.loadStyle = function (uri) {
+      if (WINDOW && typeof WINDOW.pmodule !== "undefined" && !/^\//.test(uri)) {
+        uri = [WINDOW.pmodule.filename.replace(/\/([^\/]*)$/, ""), uri].join("/").replace(/\/\.?\//g, "/");
+      }
+
+      return new Promise(function (resolve, reject) {
+        console.log("[jsonrep] Load style:", uri);
+        var link = window.document.createElementNS ? window.document.createElementNS("http://www.w3.org/1999/xhtml", "link") : window.document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = uri;
+
+        link.onload = function () {
+          resolve();
+        };
+
+        var head = window.document.getElementsByTagName("head")[0] || window.document.documentElement;
+        head.appendChild(link);
+      });
+    };
+
     exports.loadRenderer = function (uri) {
       if (WINDOW && typeof WINDOW.pmodule !== "undefined" && !/^\//.test(uri)) {
         uri = [WINDOW.pmodule.filename.replace(/\/([^\/]*)$/, ""), uri].join("/").replace(/\/\.?\//g, "/");
       }
 
       return new Promise(function (resolve, reject) {
+        console.log("Load rep:", uri);
         exports.PINF.sandbox(uri, resolve, reject);
       });
     };
@@ -146,11 +196,21 @@ function makeExports(exports) {
           if (typeof rep.css === 'string') {
             css = rep.css;
           } else {
-            css = exports.Codeblock.FromJSON(rep.css).getCode();
+            var block = exports.Codeblock.FromJSON(rep.css);
+
+            if (block._format === 'json') {
+              var cssConfig = JSON.parse(block.getCode());
+              el.setAttribute("_cssid", cssConfig._cssid);
+              exports.loadStyle(cssConfig.repUri + '.rep.css');
+            } else if (block._format === 'css') {
+              css = block.getCode();
+            }
           }
 
-          css = css.replace(/:scope/g, '[_repid="' + el.getAttribute("_repid") + '"]');
-          allCss.push(css);
+          if (css && css.length) {
+            css = css.replace(/:scope/g, '[_repid="' + el.getAttribute("_repid") + '"]');
+            allCss.push(css);
+          }
         }
 
         if (rep && rep.on && rep.on.mount) {
@@ -161,6 +221,7 @@ function makeExports(exports) {
       if (allCss.length > 0) {
         var style = WINDOW.document.createElement('style');
         style.innerHTML = allCss.join("\n");
+        console.log("Inject <style>:", style.innerHTML);
         WINDOW.document.body.appendChild(style);
       }
 

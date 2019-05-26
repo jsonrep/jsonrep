@@ -12,8 +12,21 @@ describe("Suite", function() {
 
     require('bash.origin.lib').js.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {
         "routes": {
-            "^/": {
+            "^/injectStyle": {
                 "@github.com~jsonrep~jsonrep#s1": {
+                    "page": {
+                        "@sample": {
+                            "message": "Hello World"
+                        }
+                    },
+                    "reps": {
+                        "sample": __dirname + "/sample.rep.js"
+                    }
+                }
+            },
+            "^/loadStyle": {
+                "@github.com~jsonrep~jsonrep#s1": {
+                    "externalizeCss": true,
                     "page": {
                         "@sample": {
                             "message": "Hello World"
@@ -32,7 +45,13 @@ describe("Suite", function() {
         // TODO: Test by comparing screenshots so we can detect css changes.
 
         // Run as page
-        client.url('http://localhost:' + process.env.PORT + '/').pause(500);
+        client.url('http://localhost:' + process.env.PORT + '/injectStyle').pause(500);
+        client.waitForElementPresent('BODY', 3000);        
+        client.expect.element('BODY').text.to.contain([
+            'Hello World!'
+        ].join(""));
+
+        client.url('http://localhost:' + process.env.PORT + '/loadStyle').pause(500);
         client.waitForElementPresent('BODY', 3000);        
         client.expect.element('BODY').text.to.contain([
             'Hello World!'

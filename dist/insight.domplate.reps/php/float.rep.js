@@ -39,10 +39,6 @@ function impl(domplate) {
   };
 }
 
-function css() {
-  return atob("ClNQQU4uZmxvYXRbX19kYmlkPSJmMDEzN2I0ZTUwMDMxOTBlMGNhNjJlYTFjNTM1MGJmYTFmM2ViNTcwIl0gewogICAgY29sb3I6IGdyZWVuOwp9Cg==");
-}
-
 exports.main = function (domplate, options) {
   options = options || {};
   var rep = impl(domplate);
@@ -94,15 +90,12 @@ return (function (__code__, __context__, __in__, __out__) {  with (this) {  with
   rep.__ensureCssInjected = function () {
     if (injectedCss) return;
     injectedCss = true;
-    var node = document.createElement("style");
-    var cssCode = css();
 
     if (options.cssBaseUrl) {
-      cssCode = cssCode.replace(/(url\s*\()([^\)]+\))/g, "$1" + options.cssBaseUrl + "$2");
+      domplate.loadStyle(options.cssBaseUrl + "php/float.rep.css");
+    } else {
+      domplate.loadStyle("php/float.rep.css");
     }
-
-    node.innerHTML = cssCode;
-    document.body.appendChild(node);
   };
 
   Object.keys(rep).forEach(function (tagName) {

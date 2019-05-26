@@ -9,7 +9,6 @@ function makeExports (exports) {
     }
 
     exports.makeRep = function (html, rep) {
-        // TODO: Speed this up.
         if (
             typeof html === "object" &&
             typeof html.html !== "undefined" &&
@@ -28,12 +27,42 @@ function makeExports (exports) {
             // TODO: Replace variables
             rep = html.code;
             if (typeof rep === "function") {
-                rep = rep(html);
+                rep = rep(html, options);
             }
             html = rep.html;
             delete rep.html;
         }
+        return exports._makeRep(html, rep);
+    } 
 
+    exports.makeRep2 = function (html, options) {
+        var rep = undefined;
+        if (
+            typeof html === "object" &&
+            typeof html.html !== "undefined"
+        ) {
+            rep = html;
+            html = rep.html;
+            delete rep.html;
+        } else
+        if (
+            typeof html === "object" &&
+            typeof html.code !== "undefined"
+            //typeof html.code.html !== "undefined" &&
+        ) {
+            // TODO: Replace variables
+            rep = html.code;
+            if (typeof rep === "function") {
+                rep = rep.call(exports, html, options);
+            }
+            html = rep.html;
+            delete rep.html;
+        }
+        return exports._makeRep(html, rep);
+    } 
+
+    exports._makeRep = function (html, rep) {
+        // TODO: Speed this up.
         if (
             typeof html === "object" &&
             html[".@"] === "github.com~0ink~codeblock/codeblock:Codeblock"
@@ -103,7 +132,11 @@ function makeExports (exports) {
 
         return exports.loadRenderer(uri).then(function (renderer) {
 
-            return renderer.main(exports, node);
+            return renderer.main(exports, node, {
+                renderer: {
+                    uri: uri
+                }
+            });
         });
     }
 }
@@ -146,6 +179,36 @@ function makeExports (exports) {
             }
         }
 
+        exports.loadStyle = function (uri) {
+
+            // Adjust base path depending on the environment.
+            if (
+                WINDOW &&
+                typeof WINDOW.pmodule !== "undefined" &&
+                !/^\//.test(uri)
+            ) {
+                uri = [
+                    WINDOW.pmodule.filename.replace(/\/([^\/]*)$/, ""),
+                    uri
+                ].join("/").replace(/\/\.?\//g, "/");
+            }
+
+            return new Promise(function (resolve, reject) {
+// TODO: Only log when in debug mode.
+console.log("[jsonrep] Load style:", uri);
+                var link = window.document.createElementNS ?
+                            window.document.createElementNS("http://www.w3.org/1999/xhtml", "link") :
+                            window.document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = uri;
+                link.onload = function () {
+                    resolve();
+                }
+                var head = window.document.getElementsByTagName("head")[0] || window.document.documentElement;
+                head.appendChild(link);
+            });
+        }
+
         exports.loadRenderer = function (uri) {
 
             // Adjust base path depending on the environment.
@@ -159,8 +222,12 @@ function makeExports (exports) {
                     uri
                 ].join("/").replace(/\/\.?\//g, "/");
             }
-            
+
             return new Promise(function (resolve, reject) {
+
+// TODO: Only log when in debug mode.
+console.log("Load rep:", uri);
+
                 exports.PINF.sandbox(uri, resolve, reject);
             });
         }
@@ -188,13 +255,25 @@ function makeExports (exports) {
                     if (typeof rep.css === 'string') {
                         css = rep.css;
                     } else {
-                        css = exports.Codeblock.FromJSON(rep.css).getCode();
+                        var block = exports.Codeblock.FromJSON(rep.css);
+                        if (block._format === 'json') {
+                            var cssConfig = JSON.parse(block.getCode());
+
+                            el.setAttribute("_cssid", cssConfig._cssid);
+                            exports.loadStyle(cssConfig.repUri + '.rep.css');
+
+                        } else
+                        if (block._format === 'css') {
+                            css = block.getCode();
+                        }
                     }
 
-                    // TODO: Optionally warn if no ':scope' keywords are found to remind user to scope css.
-                    css = css.replace(/:scope/g, '[_repid="' + el.getAttribute("_repid") + '"]');
+                    if (css && css.length) {
+                        // TODO: Optionally warn if no ':scope' keywords are found to remind user to scope css.
+                        css = css.replace(/:scope/g, '[_repid="' + el.getAttribute("_repid") + '"]');
 
-                    allCss.push(css);
+                        allCss.push(css);
+                    }
                 }
 
                 if (
@@ -209,6 +288,8 @@ function makeExports (exports) {
             if (allCss.length > 0) {
                 var style = WINDOW.document.createElement('style');
                 style.innerHTML = allCss.join("\n");
+// TODO: Only log when in debug mode.
+console.log("Inject <style>:", style.innerHTML);
                 WINDOW.document.body.appendChild(style);
             }
 
