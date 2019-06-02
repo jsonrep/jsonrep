@@ -16,7 +16,7 @@ environments: default
 [bash.origin.express] Adding route: /sample.rep.css
 [bash.origin.express] Adding route: /sample.rep.js
 [bash.origin.express] Adding route: /page.js
-[bash.origin.express] Adding route: /^\/injectStyle/
+[bash.origin.express] Adding route: /^\/injectStyle\//
 [bash.origin.express] Adding route: /dist/insight.domplate.reps/*
 [bash.origin.express] Adding route: /dist/regenerator-runtime.js
 [bash.origin.express] Adding route: /dist/domplate.browser.js
@@ -28,49 +28,49 @@ environments: default
 [bash.origin.express] Adding route: /sample.rep.css
 [bash.origin.express] Adding route: /sample.rep.js
 [bash.origin.express] Adding route: /page.js
-[bash.origin.express] Adding route: /^\/loadStyle/
+[bash.origin.express] Adding route: /^\/loadStyle\//
 Server: http://localhost:8080/
 [READY]
-[bash.origin.express] Routing request / with method GET due to route { /^\/injectStyle/ fast_star: false, fast_slash: false }
-127.0.0.1 - "GET /injectStyle HTTP/1.1" 200 - "-"
-[bash.origin.express] Routing request /dist/jquery3.min.js with method GET due to route { /^\/injectStyle/ fast_star: false, fast_slash: false }
+[bash.origin.express] Routing request / with method GET due to route { /^\/injectStyle\// fast_star: false, fast_slash: false }
+127.0.0.1 - "GET /injectStyle/ HTTP/1.1" 200 - "-"
+[bash.origin.express] Routing request /dist/jquery3.min.js with method GET due to route { /^\/injectStyle\// fast_star: false, fast_slash: false }
 [bash.origin.express] Routing request / with method GET due to route /dist/jquery3.min.js
-[bash.origin.express] Routing request /dist/riot.js with method GET due to route { /^\/injectStyle/ fast_star: false, fast_slash: false }
+[bash.origin.express] Routing request /dist/riot.js with method GET due to route { /^\/injectStyle\// fast_star: false, fast_slash: false }
 [bash.origin.express] Routing request / with method GET due to route /dist/riot.js
-[bash.origin.express] Routing request /dist/regenerator-runtime.js with method GET due to route { /^\/injectStyle/ fast_star: false, fast_slash: false }
+[bash.origin.express] Routing request /dist/regenerator-runtime.js with method GET due to route { /^\/injectStyle\// fast_star: false, fast_slash: false }
 [bash.origin.express] Routing request / with method GET due to route /dist/regenerator-runtime.js
-[bash.origin.express] Routing request /lib/jsonrep.js with method GET due to route { /^\/injectStyle/ fast_star: false, fast_slash: false }
+[bash.origin.express] Routing request /lib/jsonrep.js with method GET due to route { /^\/injectStyle\// fast_star: false, fast_slash: false }
 [bash.origin.express] Routing request / with method GET due to route /lib/jsonrep.js
-127.0.0.1 - "GET /injectStyle/dist/jquery3.min.js HTTP/1.1" 200 - "http://localhost:8080/injectStyle"
-127.0.0.1 - "GET /injectStyle/dist/riot.js HTTP/1.1" 200 - "http://localhost:8080/injectStyle"
-127.0.0.1 - "GET /injectStyle/dist/regenerator-runtime.js HTTP/1.1" 200 - "http://localhost:8080/injectStyle"
-127.0.0.1 - "GET /injectStyle/lib/jsonrep.js HTTP/1.1" 200 - "http://localhost:8080/injectStyle"
-[bash.origin.express] Routing request /sample.rep.js with method GET due to route { /^\/injectStyle/ fast_star: false, fast_slash: false }
+127.0.0.1 - "GET /injectStyle/dist/jquery3.min.js HTTP/1.1" 200 - "http://localhost:8080/injectStyle/"
+127.0.0.1 - "GET /injectStyle/dist/riot.js HTTP/1.1" 200 - "http://localhost:8080/injectStyle/"
+127.0.0.1 - "GET /injectStyle/dist/regenerator-runtime.js HTTP/1.1" 200 - "http://localhost:8080/injectStyle/"
+127.0.0.1 - "GET /injectStyle/lib/jsonrep.js HTTP/1.1" 200 - "http://localhost:8080/injectStyle/"
+[bash.origin.express] Routing request /sample.rep.js with method GET due to route { /^\/injectStyle\// fast_star: false, fast_slash: false }
 [bash.origin.express] Routing request / with method GET due to route /sample.rep.js
-127.0.0.1 - "GET /injectStyle/sample.rep.js HTTP/1.1" 200 - "http://localhost:8080/injectStyle"
-[bash.origin.express] Routing request /sample.rep.css with method GET due to route { /^\/injectStyle/ fast_star: false, fast_slash: false }
+127.0.0.1 - "GET /injectStyle/sample.rep.js HTTP/1.1" 200 - "http://localhost:8080/injectStyle/"
+[bash.origin.express] Routing request /sample.rep.css with method GET due to route { /^\/injectStyle\// fast_star: false, fast_slash: false }
 [bash.origin.express] Routing request / with method GET due to route /sample.rep.css
-127.0.0.1 - "GET /injectStyle/sample.rep.css HTTP/1.1" 200 - "http://localhost:8080/injectStyle"
-[bash.origin.express] Routing request / with method GET due to route { /^\/loadStyle/ fast_star: false, fast_slash: false }
-127.0.0.1 - "GET /loadStyle HTTP/1.1" 200 - "-"
-[bash.origin.express] Routing request /dist/jquery3.min.js with method GET due to route { /^\/loadStyle/ fast_star: false, fast_slash: false }
+127.0.0.1 - "GET /injectStyle/sample.rep.css HTTP/1.1" 200 - "http://localhost:8080/injectStyle/"
+[bash.origin.express] Routing request / with method GET due to route { /^\/loadStyle\// fast_star: false, fast_slash: false }
+127.0.0.1 - "GET /loadStyle/ HTTP/1.1" 200 - "-"
+[bash.origin.express] Routing request /dist/jquery3.min.js with method GET due to route { /^\/loadStyle\// fast_star: false, fast_slash: false }
 [bash.origin.express] Routing request / with method GET due to route /dist/jquery3.min.js
-[bash.origin.express] Routing request /dist/riot.js with method GET due to route { /^\/loadStyle/ fast_star: false, fast_slash: false }
+[bash.origin.express] Routing request /dist/riot.js with method GET due to route { /^\/loadStyle\// fast_star: false, fast_slash: false }
 [bash.origin.express] Routing request / with method GET due to route /dist/riot.js
-[bash.origin.express] Routing request /dist/regenerator-runtime.js with method GET due to route { /^\/loadStyle/ fast_star: false, fast_slash: false }
+[bash.origin.express] Routing request /dist/regenerator-runtime.js with method GET due to route { /^\/loadStyle\// fast_star: false, fast_slash: false }
 [bash.origin.express] Routing request / with method GET due to route /dist/regenerator-runtime.js
-[bash.origin.express] Routing request /lib/jsonrep.js with method GET due to route { /^\/loadStyle/ fast_star: false, fast_slash: false }
+[bash.origin.express] Routing request /lib/jsonrep.js with method GET due to route { /^\/loadStyle\// fast_star: false, fast_slash: false }
 [bash.origin.express] Routing request / with method GET due to route /lib/jsonrep.js
-127.0.0.1 - "GET /loadStyle/dist/jquery3.min.js HTTP/1.1" 200 - "http://localhost:8080/loadStyle"
-127.0.0.1 - "GET /loadStyle/dist/riot.js HTTP/1.1" 200 - "http://localhost:8080/loadStyle"
-127.0.0.1 - "GET /loadStyle/dist/regenerator-runtime.js HTTP/1.1" 200 - "http://localhost:8080/loadStyle"
-127.0.0.1 - "GET /loadStyle/lib/jsonrep.js HTTP/1.1" 200 - "http://localhost:8080/loadStyle"
-[bash.origin.express] Routing request /sample.rep.js with method GET due to route { /^\/loadStyle/ fast_star: false, fast_slash: false }
+127.0.0.1 - "GET /loadStyle/dist/jquery3.min.js HTTP/1.1" 200 - "http://localhost:8080/loadStyle/"
+127.0.0.1 - "GET /loadStyle/dist/riot.js HTTP/1.1" 200 - "http://localhost:8080/loadStyle/"
+127.0.0.1 - "GET /loadStyle/dist/regenerator-runtime.js HTTP/1.1" 200 - "http://localhost:8080/loadStyle/"
+127.0.0.1 - "GET /loadStyle/lib/jsonrep.js HTTP/1.1" 200 - "http://localhost:8080/loadStyle/"
+[bash.origin.express] Routing request /sample.rep.js with method GET due to route { /^\/loadStyle\// fast_star: false, fast_slash: false }
 [bash.origin.express] Routing request / with method GET due to route /sample.rep.js
-127.0.0.1 - "GET /loadStyle/sample.rep.js HTTP/1.1" 200 - "http://localhost:8080/loadStyle"
-[bash.origin.express] Routing request /sample.rep.css with method GET due to route { /^\/loadStyle/ fast_star: false, fast_slash: false }
+127.0.0.1 - "GET /loadStyle/sample.rep.js HTTP/1.1" 200 - "http://localhost:8080/loadStyle/"
+[bash.origin.express] Routing request /sample.rep.css with method GET due to route { /^\/loadStyle\// fast_star: false, fast_slash: false }
 [bash.origin.express] Routing request / with method GET due to route /sample.rep.css
-127.0.0.1 - "GET /loadStyle/sample.rep.css HTTP/1.1" 200 - "http://localhost:8080/loadStyle"
+127.0.0.1 - "GET /loadStyle/sample.rep.css HTTP/1.1" 200 - "http://localhost:8080/loadStyle/"
 
 
 

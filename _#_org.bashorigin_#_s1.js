@@ -10,7 +10,7 @@ const BO = LIB.BASH_ORIGIN;
 exports.forConfig = function (CONFIG) {
 
 
-    const baseDistPath = CONFIG.dist ? CONFIG.dist.replace(/\.([^\.]+)$/, "") : null;
+    const baseDistPath = CONFIG.dist ? CONFIG.dist.replace(/([^\/]+)\.([^\.]+)$/, "") : null;
     // TODO: Make this 'selfSubpath' configurable based on the approach
     //       we are taking to inline dependencies into file structure.
     const selfSubpath = "";
@@ -24,31 +24,6 @@ exports.forConfig = function (CONFIG) {
         }
         return config;
     }
-
-
-    const libApp = LIB.BASH_ORIGIN_EXPRESS.hookRoutes({
-        "/lib/jsonrep.js": {
-            "@it.pinf.org.browserify#s1": augmentConfig({
-                "src": PATH.join(__dirname, "src/jsonrep.js")
-            }, "lib/jsonrep.js")
-        },
-        "/dist/riot.js": PATH.join(LIB.resolve("riot/package.json"), "../riot.js"),
-        "/dist/riot.csp.js": PATH.join(LIB.resolve("riot/package.json"), "../riot.csp.js"),
-        "/dist/jquery3.min.js": PATH.join(__dirname, "dist/jquery3.min.js"),
-        "/dist/domplate.browser.js": LIB.resolve("domplate/dist/domplate.browser.js"),
-        "/dist/insight.domplate.reps/*": PATH.join(LIB.resolve("insight.domplate.reps/package.json"), "../dist/reps"),
-        "/dist/regenerator-runtime.js": {
-            "@it.pinf.org.browserify#s1": augmentConfig({
-                "src": LIB.resolve("regenerator-runtime")
-            }, "dist/regenerator-runtime.js")
-        },
-        "/dist/insight.rep.js": {
-            "@it.pinf.org.browserify#s1": augmentConfig({
-                "src": PATH.join(__dirname, "src/insight.rep.js"),
-                "format": "pinf"
-            }, "dist/insight.rep.js")
-        }
-    });
 
     const repRoutes = {};
 
@@ -275,6 +250,38 @@ exports.forConfig = function (CONFIG) {
         }
     };
 
+
+    const libRoutes = {
+        "/lib/jsonrep.js": {
+            "@it.pinf.org.browserify#s1": augmentConfig({
+                "src": PATH.join(__dirname, "src/jsonrep.js")
+            }, "lib/jsonrep.js")
+        },
+        "/dist/riot.js": PATH.join(LIB.resolve("riot/package.json"), "../riot.js"),
+        "/dist/riot.csp.js": PATH.join(LIB.resolve("riot/package.json"), "../riot.csp.js"),
+        "/dist/jquery3.min.js": PATH.join(__dirname, "dist/jquery3.min.js"),
+        "/dist/domplate.browser.js": LIB.resolve("domplate/dist/domplate.browser.js"),
+        "/dist/insight.domplate.reps/*": PATH.join(LIB.resolve("insight.domplate.reps/package.json"), "../dist/reps"),
+        "/dist/regenerator-runtime.js": {
+            "@it.pinf.org.browserify#s1": augmentConfig({
+                "src": LIB.resolve("regenerator-runtime")
+            }, "dist/regenerator-runtime.js")
+        },
+        "/dist/insight.rep.js": {
+            "@it.pinf.org.browserify#s1": augmentConfig({
+                "src": PATH.join(__dirname, "src/insight.rep.js"),
+                "format": "pinf"
+            }, "dist/insight.rep.js")
+        }
+    };
+
+    if (baseDistPath) {
+        libRoutes['/dist/'] = baseDistPath;
+    }
+
+    const libApp = LIB.BASH_ORIGIN_EXPRESS.hookRoutes(libRoutes);
+
+
     if (CONFIG.dist) {
 
         if (/\.html?$/.test(CONFIG.dist)) {
@@ -284,9 +291,15 @@ exports.forConfig = function (CONFIG) {
                 '<html lang="en">',
                     '<head>',
                         '<meta charset="utf-8">',
+                        '<script src="dist/jquery3.min.js"></script>',
+                        '<script src="dist/riot.js"></script>',
+                        '<script src="dist/regenerator-runtime.js"></script>',
+                        '<script src="lib/jsonrep.js"></script>',
+
+/*
                         '<script>',
                             'var baseUrl = window.location.pathname.replace(/\.[^\.]+$/, "");',
-                            'var pmodule = { "filename": (baseUrl + "/") };',
+                            //'var pmodule = { "filename": (baseUrl + "/") };',
 
                             'var script = document.createElement("script");',
                             'script.type = "text/javascript";',
@@ -308,12 +321,15 @@ exports.forConfig = function (CONFIG) {
                             'script.src = baseUrl + "/lib/jsonrep.js";',
                             'document.getElementsByTagName("head")[0].appendChild(script);',
                         '</script>',
+*/
+                        /*
                         '<style>',
                             'HTML, BODY {',
                                 'padding: 0px;',
                                 'margin: 0px;',
                             '}',
                         '</style>',
+                        */
                     '</head>',
                     '<body renderer="jsonrep" style="visibility:hidden;">' + JSON.stringify(CONFIG.page) + '</body>',
                 '</html>'
@@ -377,6 +393,7 @@ exports.forConfig = function (CONFIG) {
                                     '<script src="' + (req.mountAt + "/dist/riot.js").replace(/\/\//g, "/") + '"></script>',
                                     '<script src="' + (req.mountAt + "/dist/regenerator-runtime.js").replace(/\/\//g, "/") + '"></script>',
                                     '<script src="' + (req.mountAt + "/lib/jsonrep.js").replace(/\/\//g, "/") + '"></script>',
+                                    /*
                                     '<script>var pmodule = { "filename": "' + (req.mountAt + req.url).replace(/\/\//g, "/") + '" };</script>',
                                     '<style>',
                                         'HTML, BODY {',
@@ -384,6 +401,7 @@ exports.forConfig = function (CONFIG) {
                                             'margin: 0px;',
                                         '}',
                                     '</style>',
+                                    */
                                 '</head>',
                                 '<body renderer="jsonrep" style="visibility:hidden;">' + JSON.stringify(CONFIG.page) + '</body>',
                             '</html>',
@@ -391,7 +409,7 @@ exports.forConfig = function (CONFIG) {
                         return;
                     } else
                     if (
-                        /^\/\.js$/.test(req.url) &&
+                        /^\/(page)?\.js$/.test(req.url) &&
                         CONFIG.page
                     ) {
                         req.url = "/page.js";

@@ -18,7 +18,7 @@ environments: default
 [bash.origin.express] Adding route: /announcer.rep.css
 [bash.origin.express] Adding route: /announcer.rep.js
 [bash.origin.express] Adding route: /page.js
-[bash.origin.express] Adding route: /^\/jsonrep/
+[bash.origin.express] Adding route: /^\/jsonrep\//
 Server: http://localhost:8080/
 [READY]
 

@@ -28,9 +28,9 @@ describe("Suite", function() {
 
     LIB.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {
         "routes": {
-            "^/jsonrep/page": {
+            "^/jsonrep/page/": {
                 "@github.com~jsonrep~jsonrep#s1": {
-                    "dist": PATH.join(DIST_BASE_PATH, "page.html"),
+                    "dist": PATH.join(DIST_BASE_PATH, "page/index.html"),
                     "prime": true,
                     "page": {
                         "@announcer": {
@@ -48,9 +48,9 @@ describe("Suite", function() {
                     }
                 }
             },
-            "^/jsonrep/bundle": {
+            "^/jsonrep/bundle/": {
                 "@github.com~jsonrep~jsonrep#s1": {
-                    "dist": PATH.join(DIST_BASE_PATH, "bundle.js"),
+                    "dist": PATH.join(DIST_BASE_PATH, "bundle/page.js"),
                     "prime": true,
                     "page": {
                         "@announcer": {
@@ -73,7 +73,7 @@ describe("Suite", function() {
                 '<head>' +
                     '<script src="/lib/loader-core.browser.js"></script>' +
                     '<script>' +
-                        'window.PINF.sandbox("/jsonrep/bundle.js", function (sandbox) {' +
+                        'window.PINF.sandbox("/jsonrep/bundle/page.js", function (sandbox) {' +
                             'sandbox.main();' +
                         '}, console.error);' +
                     '</script>' +
@@ -85,7 +85,7 @@ describe("Suite", function() {
                 '<head>' +
                     '<script src="/lib/loader-core.browser.js"></script>' +
                     '<script>' +
-                        'window.PINF.sandbox("/dist/bundle.js", function (sandbox) {' +
+                        'window.PINF.sandbox("/dist/bundle/page.js", function (sandbox) {' +
                             'sandbox.main();' +
                         '}, console.error);' +
                     '</script>' +
@@ -98,9 +98,9 @@ describe("Suite", function() {
     it('Test', function (client) {
 
         // Run as page
-        client.url('http://localhost:' + process.env.PORT + '/jsonrep/page.html').pause(500);
+        client.url('http://localhost:' + process.env.PORT + '/jsonrep/page/').pause(500);
 
-if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
+//if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
 
         client.waitForElementPresent('BODY', 3000);
         client.expect.element('BODY').text.to.contain([
@@ -110,7 +110,10 @@ if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
         ].join("\n"));
 
         // Run by requiring as PINF bundle into empty body
-        client.url('http://localhost:' + process.env.PORT + '/page.html').pause(500);        
+        client.url('http://localhost:' + process.env.PORT + '/page.html').pause(500);
+
+//if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
+
         client.waitForElementPresent('BODY', 3000);
         client.expect.element('BODY').text.to.contain([
             'map(',
@@ -120,7 +123,10 @@ if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
 
         // Now test dist files
 
-        client.url('http://localhost:' + process.env.PORT + '/dist/page.html').pause(500);
+        client.url('http://localhost:' + process.env.PORT + '/dist/page/index.html').pause(500);
+
+//if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
+
         client.waitForElementPresent('BODY', 3000);
         client.expect.element('BODY').text.to.contain([
             'map(',
@@ -129,6 +135,9 @@ if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
         ].join("\n"));
 
         client.url('http://localhost:' + process.env.PORT + '/dist_bundle_page.html').pause(500);
+
+if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
+
         client.waitForElementPresent('BODY', 3000);
         client.expect.element('BODY').text.to.contain([
             'map(',

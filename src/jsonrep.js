@@ -218,7 +218,7 @@ console.log("[jsonrep] Load style:", uri);
                 !/^\//.test(uri)
             ) {
                 uri = [
-                    WINDOW.pmodule.filename.replace(/\/([^\/]*)$/, ""),
+                    WINDOW.pmodule.filename.replace(/\/([^\/]*)\/([^\/]*)$/, ""),
                     uri
                 ].join("/").replace(/\/\.?\//g, "/");
             }
