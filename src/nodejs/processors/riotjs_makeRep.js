@@ -72,6 +72,7 @@ exports.processSync = function (codeblock, options) {
                             }
                         }
                         riot.util.styleManager.inject = function () {
+                            if (!options) return;
                             // TODO: Error tracking
                             JSONREP.loadStyle(options.renderer.uri + '.css');
                         }

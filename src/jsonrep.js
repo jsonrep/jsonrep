@@ -8,7 +8,7 @@ function makeExports (exports) {
         return reps[id] || null;
     }
 
-    exports.makeRep = function (html, rep) {
+    exports.makeRep = function (html, rep, options) {
         if (
             typeof html === "object" &&
             typeof html.html !== "undefined" &&
@@ -27,7 +27,7 @@ function makeExports (exports) {
             // TODO: Replace variables
             rep = html.code;
             if (typeof rep === "function") {
-                rep = rep(html, options);
+                rep = rep.call(exports, html, options);
             }
             html = rep.html;
             delete rep.html;
@@ -181,6 +181,9 @@ function makeExports (exports) {
 
         exports.loadStyle = function (uri) {
 
+//console.log("[jsonrep] uri:", uri);
+//console.log("[jsonrep] WINDOW.pmodule:", WINDOW.pmodule);
+
             // Adjust base path depending on the environment.
             if (
                 WINDOW &&
@@ -188,7 +191,7 @@ function makeExports (exports) {
                 !/^\//.test(uri)
             ) {
                 uri = [
-                    WINDOW.pmodule.filename.replace(/\/([^\/]*)$/, ""),
+                    WINDOW.pmodule.filename.replace(/\/([^\/]*)\/([^\/]*)$/, ""),
                     uri
                 ].join("/").replace(/\/\.?\//g, "/");
             }
