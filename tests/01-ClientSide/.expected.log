@@ -2,6 +2,7 @@
 >>>TEST_IGNORE_LINE:\d milliseconds.$<<<
 >>>TEST_IGNORE_LINE:\d+\spassing\s\([^\)]+\)<<<
 environments: default
+>>>TEST_IGNORE_LINE:\[bash.origin.express\] Routing request /<<<
 
 
   Suite
@@ -11,15 +12,6 @@ environments: default
 [bash.origin.express] Adding route: /
 Server: http://localhost:8080/
 [READY]
-[bash.origin.express] Routing request / with method GET due to route /
-[bash.origin.express] Routing request / with method GET due to route /lib/jsonrep.js
-[bash.origin.express] Routing request / with method GET due to route /dist/insight.rep.js
-[bash.origin.express] Routing request /default/map.rep.js with method GET due to route /dist/insight.domplate.reps/*
-[bash.origin.express] Routing request /wrappers/viewer.rep.js with method GET due to route /dist/insight.domplate.reps/*
-[bash.origin.express] Routing request /default/string.rep.js with method GET due to route /dist/insight.domplate.reps/*
-[bash.origin.express] Routing request /wrappers/viewer.rep.css with method GET due to route /dist/insight.domplate.reps/*
-[bash.origin.express] Routing request /default/map.rep.css with method GET due to route /dist/insight.domplate.reps/*
-[bash.origin.express] Routing request /default/string.rep.css with method GET due to route /dist/insight.domplate.reps/*
 
 
 

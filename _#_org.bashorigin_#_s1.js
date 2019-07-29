@@ -152,11 +152,17 @@ exports.forConfig = function (CONFIG) {
                 };
                 if (repCodeSrcPath) {
                     //FS.outputFileSync(repCodeSrcPath + "~.compiled.js", repCode, "utf8");
-                    implConfig.code = repCode;//repCodeSrcPath + "~.compiled.js";
+                    implConfig.code = repCode;//repCodeSrcPath + "~.compiled.js";                    
                     implConfig.basedir = PATH.dirname(repCodeSrcPath);
+
+//console.log("implConfig.basedir:", implConfig.basedir);
+
                 } else {
                     implConfig.code = repCode;
                 }
+
+                implConfig.babel = CONFIG.babel || null;
+
                 var implMod = BO.depend("it.pinf.org.browserify#s1", implConfig);
                 implMod["#io.pinf/process~s1"]({}, function (err, repCode) {
                     if (err) return callback(err);
@@ -246,7 +252,8 @@ exports.forConfig = function (CONFIG) {
             "format": "pinf",
             "variables": {
                 "DOCUMENT": CONFIG.page
-            }
+            },
+            "babel": CONFIG.babel || null
         }
     };
 

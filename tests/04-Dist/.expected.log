@@ -16,6 +16,7 @@ environments: default
 [bash.origin.express] Adding route: /dist/riot.csp.js
 [bash.origin.express] Adding route: /lib/jsonrep.js
 [bash.origin.express] Adding route: /dist/riot.js
+[bash.origin.express] Adding route: /dist/
 [bash.origin.express] Adding route: /announcer.rep.css
 [bash.origin.express] Adding route: /announcer.rep.js
 [bash.origin.express] Adding route: /page.js
@@ -28,6 +29,7 @@ environments: default
 [bash.origin.express] Adding route: /dist/riot.csp.js
 [bash.origin.express] Adding route: /lib/jsonrep.js
 [bash.origin.express] Adding route: /dist/riot.js
+[bash.origin.express] Adding route: /dist/
 [bash.origin.express] Adding route: /announcer.rep.css
 [bash.origin.express] Adding route: /announcer.rep.js
 [bash.origin.express] Adding route: /page.js

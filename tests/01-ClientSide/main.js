@@ -11,6 +11,7 @@ module.config = {
 const PATH = require("path");
 
 console.log('>>>TEST_IGNORE_LINE:\"GET /<<<');
+console.log('>>>TEST_IGNORE_LINE:\\[bash.origin.express\\] Routing request /<<<');
 
 describe("Suite", function() {
 

@@ -229,7 +229,7 @@ console.log("[jsonrep] Load style:", uri);
             return new Promise(function (resolve, reject) {
 
 // TODO: Only log when in debug mode.
-console.log("Load rep:", uri);
+//console.log("Load rep:", uri);
 
                 exports.PINF.sandbox(uri, resolve, reject);
             });
@@ -292,7 +292,7 @@ console.log("Load rep:", uri);
                 var style = WINDOW.document.createElement('style');
                 style.innerHTML = allCss.join("\n");
 // TODO: Only log when in debug mode.
-console.log("Inject <style>:", style.innerHTML);
+//console.log("Inject <style>:", style.innerHTML);
                 WINDOW.document.body.appendChild(style);
             }
 
