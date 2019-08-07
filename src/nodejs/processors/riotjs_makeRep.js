@@ -57,7 +57,7 @@ exports.processSync = function (codeblock, options) {
                                 return;
                             }
 
-                            console.log("[jsonrep][riot] Inject cssText:", cssText);  
+                            //console.log("[jsonrep][riot] Inject cssText:", cssText);  
 
                             if (window.document.createStyleSheet) {
                                 var sheet = window.document.createStyleSheet();
