@@ -283,12 +283,7 @@ return (function (__code__, __context__, __in__, __out__) {  with (this) {  with
   rep.__ensureCssInjected = function () {
     if (injectedCss) return;
     injectedCss = true;
-
-    if (options.cssBaseUrl) {
-      domplate.loadStyle(options.cssBaseUrl + "php/array-indexed.rep.css");
-    } else {
-      domplate.loadStyle("php/array-indexed.rep.css");
-    }
+    domplate.loadStyle("php/array-indexed.rep.css", options.cssBaseUrl || undefined);
   };
 
   Object.keys(rep).forEach(function (tagName) {

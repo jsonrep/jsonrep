@@ -75,10 +75,10 @@ function impl(domplate) {
       var row = domplate.util.getAncestorByClass(event.target, "value");
 
       if (row.expandable) {
-        this.toggleRow(row);
+        if (this.toggleRow(row)) {
+          event.stopPropagation();
+        }
       }
-
-      event.stopPropagation();
     },
     isCollapsible: function isCollapsible(node) {
       return node.type == "reference" || node.type == "dictionary" || node.type == "map" || node.type == "array";
@@ -102,7 +102,24 @@ function impl(domplate) {
 
       return rep[type];
     },
+    _isTagExpandable: function _isTagExpandable(tag) {
+      while (true) {
+        if (!tag.parentNode) {
+          return true;
+        }
+
+        if (tag.getAttribute("allowTagExpand") === "false") {
+          return false;
+        }
+
+        tag = tag.parentNode;
+      }
+    },
     toggleRow: function toggleRow(row) {
+      if (!this._isTagExpandable(row)) {
+        return false;
+      }
+
       var node = null;
 
       if (domplate.util.hasClass(row, "expanded")) {
@@ -119,6 +136,8 @@ function impl(domplate) {
         }, row);
         domplate.util.setClass(row, "expanded");
       }
+
+      return true;
     },
     mapIterator: function mapIterator(context, node, type) {
       var pairs = [];
@@ -249,12 +268,7 @@ return (function (__code__, __context__, __in__, __out__) {  with (this) {  with
   rep.__ensureCssInjected = function () {
     if (injectedCss) return;
     injectedCss = true;
-
-    if (options.cssBaseUrl) {
-      domplate.loadStyle(options.cssBaseUrl + "php/array-associative.rep.css");
-    } else {
-      domplate.loadStyle("php/array-associative.rep.css");
-    }
+    domplate.loadStyle("php/array-associative.rep.css", options.cssBaseUrl || undefined);
   };
 
   Object.keys(rep).forEach(function (tagName) {

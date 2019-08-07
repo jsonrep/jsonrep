@@ -77,12 +77,7 @@ return (function (__code__, __context__, __in__, __out__) {  with (this) {  with
   rep.__ensureCssInjected = function () {
     if (injectedCss) return;
     injectedCss = true;
-
-    if (options.cssBaseUrl) {
-      domplate.loadStyle(options.cssBaseUrl + "php/null.rep.css");
-    } else {
-      domplate.loadStyle("php/null.rep.css");
-    }
+    domplate.loadStyle("php/null.rep.css", options.cssBaseUrl || undefined);
   };
 
   Object.keys(rep).forEach(function (tagName) {
