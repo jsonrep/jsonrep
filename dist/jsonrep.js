@@ -14,7 +14,7 @@ function makeExports(exports) {
     return reps[id] || null;
   };
 
-  exports.makeRep = function (html, rep) {
+  exports.makeRep = function (html, rep, options) {
     if (_typeof(html) === "object" && typeof html.html !== "undefined" && typeof rep === "undefined") {
       rep = html;
       html = rep.html;
@@ -23,7 +23,7 @@ function makeExports(exports) {
       rep = html.code;
 
       if (typeof rep === "function") {
-        rep = rep(html, options);
+        rep = rep.call(exports, html, options);
       }
 
       html = rep.html;
@@ -150,7 +150,7 @@ function makeExports(exports) {
 
     exports.loadStyle = function (uri) {
       if (WINDOW && typeof WINDOW.pmodule !== "undefined" && !/^\//.test(uri)) {
-        uri = [WINDOW.pmodule.filename.replace(/\/([^\/]*)$/, ""), uri].join("/").replace(/\/\.?\//g, "/");
+        uri = [WINDOW.pmodule.filename.replace(/\/([^\/]*)\/([^\/]*)$/, ""), uri].join("/").replace(/\/\.?\//g, "/");
       }
 
       return new Promise(function (resolve, reject) {
@@ -170,11 +170,10 @@ function makeExports(exports) {
 
     exports.loadRenderer = function (uri) {
       if (WINDOW && typeof WINDOW.pmodule !== "undefined" && !/^\//.test(uri)) {
-        uri = [WINDOW.pmodule.filename.replace(/\/([^\/]*)$/, ""), uri].join("/").replace(/\/\.?\//g, "/");
+        uri = [WINDOW.pmodule.filename.replace(/\/([^\/]*)\/([^\/]*)$/, ""), uri].join("/").replace(/\/\.?\//g, "/");
       }
 
       return new Promise(function (resolve, reject) {
-        console.log("Load rep:", uri);
         exports.PINF.sandbox(uri, resolve, reject);
       });
     };
@@ -221,7 +220,6 @@ function makeExports(exports) {
       if (allCss.length > 0) {
         var style = WINDOW.document.createElement('style');
         style.innerHTML = allCss.join("\n");
-        console.log("Inject <style>:", style.innerHTML);
         WINDOW.document.body.appendChild(style);
       }
 

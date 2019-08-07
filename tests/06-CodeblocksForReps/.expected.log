@@ -9,9 +9,8 @@ environments: default
 [bash.origin.express] Adding route: /dist/insight.domplate.reps/*
 [bash.origin.express] Adding route: /dist/regenerator-runtime.js
 [bash.origin.express] Adding route: /dist/domplate.browser.js
-[bash.origin.express] Adding route: /dist/jquery3.min.js
 [bash.origin.express] Adding route: /dist/insight.rep.js
-[bash.origin.express] Adding route: /dist/riot.csp.js
+[bash.origin.express] Adding route: /dist/jquery3.min.js
 [bash.origin.express] Adding route: /lib/jsonrep.js
 [bash.origin.express] Adding route: /dist/riot.js
 [bash.origin.express] Adding route: /variables.rep.css
@@ -25,9 +24,8 @@ environments: default
 [bash.origin.express] Adding route: /dist/insight.domplate.reps/*
 [bash.origin.express] Adding route: /dist/regenerator-runtime.js
 [bash.origin.express] Adding route: /dist/domplate.browser.js
-[bash.origin.express] Adding route: /dist/jquery3.min.js
 [bash.origin.express] Adding route: /dist/insight.rep.js
-[bash.origin.express] Adding route: /dist/riot.csp.js
+[bash.origin.express] Adding route: /dist/jquery3.min.js
 [bash.origin.express] Adding route: /lib/jsonrep.js
 [bash.origin.express] Adding route: /dist/riot.js
 [bash.origin.express] Adding route: /variables.rep.css
