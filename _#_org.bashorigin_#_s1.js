@@ -86,6 +86,14 @@ exports.forConfig = function (CONFIG) {
 
                     if (/(^|\n)PINF\.bundle\(/.test(repCode)) {
                         // Already bundled
+
+                        const cssSrcPath = repCodeSrcPath.replace(/\.js$/, '.css');
+                        if (FS.existsSync(cssSrcPath)) {
+                            return callback(null, {
+                                code: repCode,
+                                css: FS.readFileSync(cssSrcPath, "utf8")
+                            });
+                        }
                         return callback(null, {
                             code: repCode
                         });
