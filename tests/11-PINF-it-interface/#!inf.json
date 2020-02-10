@@ -1,0 +1,26 @@
+#!/usr/bin/env inf
+{
+    "#": "gi0.PINF.it/core/v0",
+
+    "#": {
+        "jsonrep": "jsonrep"
+    },
+
+    ":builder:": "jsonrep @ builder/v0",
+
+
+    "gi0.PINF.it/core/v0 @ # :builder: set() config": {
+        "dist": ".dist/page/index.html",
+        "prime": true,
+        "page": {
+            "@announcer": {
+                "message": "Hello World!"
+            }
+        },
+        "reps": {
+            "announcer": "../05-FilepathRep/announcer.rep.js"
+        }
+    },
+
+    "gi0.PINF.it/core/v0 @ # :builder: run()": ""
+}
