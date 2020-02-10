@@ -8,6 +8,11 @@ module.config = {
 }
 */
 
+console.log('>>>TEST_IGNORE_LINE:\"GET /<<<');
+console.log('>>>TEST_IGNORE_LINE:\\[bash.origin.express\\] Routing request /<<<');
+console.log('>>>TEST_IGNORE_LINE:Connecting to localhost on port<<<');
+console.log('>>>TEST_IGNORE_LINE:^[\\s\\t]*$<<<');
+
 describe("Suite", function() {
 
     require('bash.origin.lib').js.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {
@@ -21,6 +26,9 @@ describe("Suite", function() {
                     },
                     "reps": {
                         "sample": __dirname + "/sample.rep.js"
+                    },
+                    "include": {
+                        "riot.js": true
                     }
                 }
             },
@@ -34,6 +42,9 @@ describe("Suite", function() {
                     },
                     "reps": {
                         "sample": __dirname + "/sample.rep.js"
+                    },
+                    "include": {
+                        "riot.min.js": true
                     }
                 }
             }
@@ -46,6 +57,9 @@ describe("Suite", function() {
 
         // Run as page
         client.url('http://localhost:' + process.env.PORT + '/injectStyle/').pause(500);
+
+if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
+
         client.waitForElementPresent('BODY', 3000);        
         client.expect.element('BODY').text.to.contain([
             'Hello World!'

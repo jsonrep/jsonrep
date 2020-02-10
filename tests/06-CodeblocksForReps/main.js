@@ -8,8 +8,10 @@ module.config = {
 }
 */
 
-console.log('>>>TEST_IGNORE_LINE:"GET /<<<');
+console.log('>>>TEST_IGNORE_LINE:\"GET /<<<');
 console.log('>>>TEST_IGNORE_LINE:\\[bash.origin.express\\] Routing request /<<<');
+console.log('>>>TEST_IGNORE_LINE:Connecting to localhost on port<<<');
+console.log('>>>TEST_IGNORE_LINE:^[\\s\\t]*$<<<');
 
 describe("Suite", function() {
 

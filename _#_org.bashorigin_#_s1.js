@@ -202,7 +202,7 @@ exports.forConfig = function (CONFIG) {
                 Object.keys(CONFIG.include).forEach(function (name) {
                     const val = CONFIG.include[name];
                     if (name === 'riot.js') {
-                        if (val !== false) {
+                        if (val === true) {
                             FS.copySync(
                                 PATH.join(LIB.resolve("riot/package.json"), "../riot.js"),
                                 PATH.join(baseDistPath, "dist/riot.js")
@@ -226,7 +226,7 @@ exports.forConfig = function (CONFIG) {
                         }
                     } else
                     if (name === 'jquery') {
-                        if (val !== false) {
+                        if (val === true) {
                             FS.copySync(
                                 PATH.join(__dirname, "dist/jquery3.min.js"),
                                 PATH.join(baseDistPath, "dist/jquery3.min.js")
@@ -323,7 +323,7 @@ exports.forConfig = function (CONFIG) {
     Object.keys(CONFIG.include).forEach(function (name) {
         const val = CONFIG.include[name];
         if (name === 'riot.js') {
-            if (val !== false) {
+            if (val === true) {
                 libRoutes["/dist/riot.js"] = PATH.join(LIB.resolve("riot/package.json"), "../riot.js");
             }
         } else
@@ -338,12 +338,12 @@ exports.forConfig = function (CONFIG) {
             }
         } else
         if (name === 'jquery') {    
-            if (val !== false) {
+            if (val === true) {
                 libRoutes["/dist/jquery3.min.js"] = PATH.join(__dirname, "dist/jquery3.min.js");
             }
         } else
         if (name === 'regenerator-runtime') {    
-            if (val !== false) {
+            if (val === true) {
                 libRoutes["/dist/regenerator-runtime.js"] = {
                     "@it.pinf.org.browserify#s1": augmentConfig({
                         "src": LIB.resolve("regenerator-runtime")
@@ -378,12 +378,12 @@ exports.forConfig = function (CONFIG) {
                 '<html lang="en">',
                     '<head>',
                         '<meta charset="utf-8">',
-                        ((CONFIG.include['jquery'] !== false) ? '<script src="dist/jquery3.min.js"></script>': ''),
+                        ((CONFIG.include['jquery'] === true) ? '<script src="dist/jquery3.min.js"></script>': ''),
                         (
                             (CONFIG.include['riot.csp.js'] === true) ?
                                 '<script src="dist/riot.csp.js"></script>' :
                                 (
-                                    (CONFIG.include['riot.js'] !== false) ?
+                                    (CONFIG.include['riot.js'] === true) ?
                                         '<script src="dist/riot.js"></script>' :
                                         ((CONFIG.include['riot.min.js'] === true) ?
                                             '<script src="dist/riot.min.js"></script>' :
@@ -391,7 +391,7 @@ exports.forConfig = function (CONFIG) {
                                         )
                                 )
                         ),
-                        ((CONFIG.include['regenerator-runtime'] !== false) ? '<script src="dist/regenerator-runtime.js"></script>' : ''),
+                        ((CONFIG.include['regenerator-runtime'] === true) ? '<script src="dist/regenerator-runtime.js"></script>' : ''),
                         additionalIncludes.map(function (name) {
                             return `<script src="dist/${name}"></script>`;
                         }).join("\n"),
@@ -484,18 +484,19 @@ exports.forConfig = function (CONFIG) {
                         res.writeHead(200, {
                             "Content-Type": "text/html"
                         });
+
                         res.end([
                             // TODO: Make base URL format configurable
                             '<!DOCTYPE html>',
                             '<html lang="en">',
                                 '<head>',
                                     '<meta charset="utf-8">',
-                                    ((CONFIG.include['jquery'] !== false) ? ('<script src="' + (req.mountAt + "/dist/jquery3.min.js").replace(/\/\//g, "/") + '"></script>') : ''),
+                                    ((CONFIG.include['jquery'] === true) ? ('<script src="' + (req.mountAt + "/dist/jquery3.min.js").replace(/\/\//g, "/") + '"></script>') : ''),
                                     (
                                         (CONFIG.include['riot.csp.js'] === true) ?
                                             ('<script src="' + (req.mountAt + "/dist/csp.riot.js").replace(/\/\//g, "/") + '"></script>') :
                                             (
-                                                (CONFIG.include['riot.js'] !== false) ?
+                                                (CONFIG.include['riot.js'] === true) ?
                                                     ('<script src="' + (req.mountAt + "/dist/riot.js").replace(/\/\//g, "/") + '"></script>') :
                                                     (
                                                         (CONFIG.include['riot.min.js'] === true) ?
@@ -504,7 +505,7 @@ exports.forConfig = function (CONFIG) {
                                                     )
                                             )
                                     ),
-                                    ((CONFIG.include['regenerator-runtime'] !== false) ? ('<script src="' + (req.mountAt + "/dist/regenerator-runtime.js").replace(/\/\//g, "/") + '"></script>') : ''),
+                                    ((CONFIG.include['regenerator-runtime'] === true) ? ('<script src="' + (req.mountAt + "/dist/regenerator-runtime.js").replace(/\/\//g, "/") + '"></script>') : ''),
                                     additionalIncludes.map(function (name) {
                                         return `<script src="dist/${name}"></script>`;
                                     }).join("\n"),
