@@ -3,8 +3,8 @@
 >>>TEST_IGNORE_LINE:\d+\spassing\s\([^\)]+\)<<<
 environments: default
 >>>TEST_IGNORE_LINE:\[bash.origin.express\] Routing request /<<<
-
-
+>>>TEST_IGNORE_LINE:^[\s\t]*$<<<
+[0m
   Suite
 [bash.origin.express] Adding route: /dist/insight.domplate.reps/*
 [bash.origin.express] Adding route: /dist/insight.rep.js
@@ -12,6 +12,3 @@ environments: default
 [bash.origin.express] Adding route: /
 Server: http://localhost:8080/
 [READY]
-
-
-

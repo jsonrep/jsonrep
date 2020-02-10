@@ -20,6 +20,6 @@
   },
   "devDependencies": {
     "insight.domplate.reps": "^0.1.0-pre.0",
-    "bash.origin.lib": "^0.4.0-pre.1"
+    "bash.origin.lib": "^0.4.0-pre.10"
   }
 }

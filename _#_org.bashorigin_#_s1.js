@@ -5,7 +5,7 @@ const PATH = LIB.path;
 const FS = LIB.FS_EXTRA;
 const CODEBLOCK = LIB.CODEBLOCK;
 const BO = LIB.BASH_ORIGIN;
-
+const RESOLVE = LIB.RESOLVE;
 
 exports.forConfig = function (CONFIG) {
 
@@ -199,33 +199,55 @@ exports.forConfig = function (CONFIG) {
                     FS.outputFileSync(PATH.join(baseDistPath, selfSubpath, uri + ".rep.css"), bundleCode.css, "utf8");
                 }
 
-                if (CONFIG.include['riot.js'] !== false) {
-                    FS.copySync(
-                        PATH.join(LIB.resolve("riot/package.json"), "../riot.js"),
-                        PATH.join(baseDistPath, "dist/riot.js")
-                    );
-                }
-                if (CONFIG.include['riot.min.js'] === true) {
-                    FS.copySync(
-                        PATH.join(LIB.resolve("riot/package.json"), "../riot.min.js"),
-                        PATH.join(baseDistPath, "dist/riot.min.js")
-                    );
-                }
-
-                if (CONFIG.include['riot.csp.js'] === true) {
-                    FS.copySync(
-                        PATH.join(LIB.resolve("riot/package.json"), "../riot.csp.js"),
-                        PATH.join(baseDistPath, "dist/riot.csp.js")
-                    );
-                }
+                Object.keys(CONFIG.include).forEach(function (name) {
+                    const val = CONFIG.include[name];
+                    if (name === 'riot.js') {
+                        if (val !== false) {
+                            FS.copySync(
+                                PATH.join(LIB.resolve("riot/package.json"), "../riot.js"),
+                                PATH.join(baseDistPath, "dist/riot.js")
+                            );
+                        }
+                    } else
+                    if (name === 'riot.min.js') {
+                        if (val === true) {
+                            FS.copySync(
+                                PATH.join(LIB.resolve("riot/package.json"), "../riot.min.js"),
+                                PATH.join(baseDistPath, "dist/riot.min.js")
+                            );
+                        }
+                    } else
+                    if (name === 'riot.csp.js') {    
+                        if (val === true) {
+                            FS.copySync(
+                                PATH.join(LIB.resolve("riot/package.json"), "../riot.csp.js"),
+                                PATH.join(baseDistPath, "dist/riot.csp.js")
+                            );
+                        }
+                    } else
+                    if (name === 'jquery') {
+                        if (val !== false) {
+                            FS.copySync(
+                                PATH.join(__dirname, "dist/jquery3.min.js"),
+                                PATH.join(baseDistPath, "dist/jquery3.min.js")
+                            );
+                        }
+                    } else
+                    if (name === 'regenerator-runtime') {
+                        // do nothing
+                    } else {
+                        if (typeof val !== 'string') {
+                            throw new Error(`The value for an include directive must be a requireable id!`);
+                        }
+                        FS.copySync(
+                            RESOLVE.sync(val, {
+                                basedir: (CONFIG.basedir) ? CONFIG.basedir : process.cwd()
+                            }),
+                            PATH.join(baseDistPath, 'dist', name)
+                        );
+                    }
+                });
                 
-                if (CONFIG.include['jquery'] !== false) {
-                    FS.copySync(
-                        PATH.join(__dirname, "dist/jquery3.min.js"),
-                        PATH.join(baseDistPath, "dist/jquery3.min.js")
-                    );
-                }
-
                 FS.copySync(
                     PATH.join(LIB.resolve("insight.domplate.reps/package.json"), "../dist/reps/domplate.browser.js"),
                     PATH.join(baseDistPath, "dist/domplate.browser.js")
@@ -295,35 +317,57 @@ exports.forConfig = function (CONFIG) {
         }
     };
 
-    if (CONFIG.include['riot.js'] !== false) {
-        libRoutes["/dist/riot.js"] = PATH.join(LIB.resolve("riot/package.json"), "../riot.js");
-    }
-    if (CONFIG.include['riot.min.js'] === true) {
-        libRoutes["/dist/riot.min.js"] = PATH.join(LIB.resolve("riot/package.json"), "../riot.min.js");
-    }
 
-    if (CONFIG.include['riot.csp.js'] === true) {
-        libRoutes["/dist/riot.csp.js"] = PATH.join(LIB.resolve("riot/package.json"), "../riot.csp.js");
-    }
+    const additionalIncludes = [];
 
-    if (CONFIG.include['jquery'] !== false) {
-        libRoutes["/dist/jquery3.min.js"] = PATH.join(__dirname, "dist/jquery3.min.js");
-    }
-    if (CONFIG.include['regenerator-runtime'] !== false) {
-        libRoutes["/dist/regenerator-runtime.js"] = {
-            "@it.pinf.org.browserify#s1": augmentConfig({
-                "src": LIB.resolve("regenerator-runtime")
-            }, "dist/regenerator-runtime.js")
-        };
-    }
+    Object.keys(CONFIG.include).forEach(function (name) {
+        const val = CONFIG.include[name];
+        if (name === 'riot.js') {
+            if (val !== false) {
+                libRoutes["/dist/riot.js"] = PATH.join(LIB.resolve("riot/package.json"), "../riot.js");
+            }
+        } else
+        if (name === 'riot.min.js') {
+            if (val === true) {
+                libRoutes["/dist/riot.min.js"] = PATH.join(LIB.resolve("riot/package.json"), "../riot.min.js");
+            }
+        } else
+        if (name === 'riot.csp.js') {    
+            if (val === true) {
+                libRoutes["/dist/riot.csp.js"] = PATH.join(LIB.resolve("riot/package.json"), "../riot.csp.js");
+            }
+        } else
+        if (name === 'jquery') {    
+            if (val !== false) {
+                libRoutes["/dist/jquery3.min.js"] = PATH.join(__dirname, "dist/jquery3.min.js");
+            }
+        } else
+        if (name === 'regenerator-runtime') {    
+            if (val !== false) {
+                libRoutes["/dist/regenerator-runtime.js"] = {
+                    "@it.pinf.org.browserify#s1": augmentConfig({
+                        "src": LIB.resolve("regenerator-runtime")
+                    }, "dist/regenerator-runtime.js")
+                };
+            }
+        } else {
+            if (typeof val !== 'string') {
+                throw new Error(`The value for an include directive must be a requireable id!`);
+            }
 
+            libRoutes[`/dist/${name}`] = RESOLVE.sync(val, {
+                basedir: (CONFIG.basedir) ? CONFIG.basedir : process.cwd()
+            });
+
+            additionalIncludes.push(name);
+        }
+    });
 
     if (baseDistPath) {
         libRoutes['/dist/'] = baseDistPath;
     }
 
     const libApp = LIB.BASH_ORIGIN_EXPRESS.hookRoutes(libRoutes);
-
 
     if (CONFIG.dist) {
 
@@ -348,6 +392,9 @@ exports.forConfig = function (CONFIG) {
                                 )
                         ),
                         ((CONFIG.include['regenerator-runtime'] !== false) ? '<script src="dist/regenerator-runtime.js"></script>' : ''),
+                        additionalIncludes.map(function (name) {
+                            return `<script src="dist/${name}"></script>`;
+                        }).join("\n"),
                         '<script src="lib/jsonrep.js"></script>',
 
 /*
@@ -458,6 +505,9 @@ exports.forConfig = function (CONFIG) {
                                             )
                                     ),
                                     ((CONFIG.include['regenerator-runtime'] !== false) ? ('<script src="' + (req.mountAt + "/dist/regenerator-runtime.js").replace(/\/\//g, "/") + '"></script>') : ''),
+                                    additionalIncludes.map(function (name) {
+                                        return `<script src="dist/${name}"></script>`;
+                                    }).join("\n"),
                                     '<script src="' + (req.mountAt + "/lib/jsonrep.js").replace(/\/\//g, "/") + '"></script>',
                                     /*
                                     '<script>var pmodule = { "filename": "' + (req.mountAt + req.url).replace(/\/\//g, "/") + '" };</script>',
