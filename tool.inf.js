@@ -6,6 +6,7 @@ exports['gi0.pinf.it/core/v0/tool'] = async function (workspace, LIB) {
         if (/\/builder\/v0$/.test(instance.kindId)) {
 
             const BUILDER = require("./_#_org.bashorigin_#_s1");
+            LIB.Promise.promisifyAll(BUILDER);
 
             return async function (invocation) {
 
@@ -14,7 +15,9 @@ exports['gi0.pinf.it/core/v0/tool'] = async function (workspace, LIB) {
                     const config = invocation.config.config;
                     config.basedir = invocation.cwd;
 
-                    await BUILDER.forConfig(config);
+                    await BUILDER.forConfigAsync (config, {
+                        registerPathOnChangedHandler: workspace.registerPathOnChangedHandler
+                    });
 
                     return true;
                 }

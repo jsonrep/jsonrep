@@ -7,7 +7,9 @@ const CODEBLOCK = LIB.CODEBLOCK;
 const BO = LIB.BASH_ORIGIN;
 const RESOLVE = LIB.RESOLVE;
 
-exports.forConfig = function (CONFIG) {
+exports.forConfig = function (CONFIG, options, callback) {
+
+    options = options || {};
 
     CONFIG.include = CONFIG.include || {};
 
@@ -28,10 +30,16 @@ exports.forConfig = function (CONFIG) {
 
     const repRoutes = {};
 
+    const bundlers = {};
+    const BUNDLER_IDENTITY = __dirname;
+
     Object.keys(CONFIG.reps).forEach(function (uri) {
 
-        function getBundleCode (callback) {
+        bundlers[uri] = function (callback) {
             try {
+
+                const sourcePaths = [];
+
                 var repCode = CONFIG.reps[uri];
                 var repCodeSrcPath = false;
 
@@ -82,6 +90,9 @@ exports.forConfig = function (CONFIG) {
                 var cssCode = undefined;
                 if (/^\//.test(repCode)) {
                     repCodeSrcPath = repCode;
+
+                    sourcePaths.push(repCodeSrcPath);
+
                     repCode = FS.readFileSync(repCodeSrcPath, "utf8");
 
                     if (/(^|\n)PINF\.bundle\(/.test(repCode)) {
@@ -89,9 +100,13 @@ exports.forConfig = function (CONFIG) {
 
                         const cssSrcPath = repCodeSrcPath.replace(/\.js$/, '.css');
                         if (FS.existsSync(cssSrcPath)) {
+
+                            sourcePaths.push(cssSrcPath);
+
                             return callback(null, {
                                 code: repCode,
-                                css: FS.readFileSync(cssSrcPath, "utf8")
+                                css: FS.readFileSync(cssSrcPath, "utf8"),
+                                sourcePaths: sourcePaths
                             });
                         }
                         return callback(null, {
@@ -160,6 +175,7 @@ exports.forConfig = function (CONFIG) {
                     format: "pinf"
                 };
                 if (repCodeSrcPath) {
+
                     //FS.outputFileSync(repCodeSrcPath + "~.compiled.js", repCode, "utf8");
                     implConfig.code = repCode;//repCodeSrcPath + "~.compiled.js";                    
                     implConfig.basedir = PATH.dirname(repCodeSrcPath);
@@ -178,7 +194,8 @@ exports.forConfig = function (CONFIG) {
 
                     return callback(null, {
                         code: repCode,
-                        css: cssCode
+                        css: cssCode,
+                        sourcePaths: sourcePaths
                     });
                 });
 
@@ -187,100 +204,59 @@ exports.forConfig = function (CONFIG) {
             }
         }
 
-        if (
-            baseDistPath &&
-            CONFIG.prime
-        ) {
-            getBundleCode(function (err, bundleCode) {
-                if (err) return console.error(err);
+        repRoutes["/" + uri + ".rep.js"] = function (options) {
 
-                FS.outputFileSync(PATH.join(baseDistPath, selfSubpath, uri + ".rep.js"), bundleCode.code, "utf8");
-                if (bundleCode.css) {
-                    FS.outputFileSync(PATH.join(baseDistPath, selfSubpath, uri + ".rep.css"), bundleCode.css, "utf8");
-                }
+            let watchPathsRegistered = false;
 
-                Object.keys(CONFIG.include).forEach(function (name) {
-                    const val = CONFIG.include[name];
-                    if (name === 'riot.js') {
-                        if (val === true) {
-                            FS.copySync(
-                                PATH.join(LIB.resolve("riot/package.json"), "../riot.js"),
-                                PATH.join(baseDistPath, "dist/riot.js")
-                            );
-                        }
-                    } else
-                    if (name === 'riot.min.js') {
-                        if (val === true) {
-                            FS.copySync(
-                                PATH.join(LIB.resolve("riot/package.json"), "../riot.min.js"),
-                                PATH.join(baseDistPath, "dist/riot.min.js")
-                            );
-                        }
-                    } else
-                    if (name === 'riot.csp.js') {    
-                        if (val === true) {
-                            FS.copySync(
-                                PATH.join(LIB.resolve("riot/package.json"), "../riot.csp.js"),
-                                PATH.join(baseDistPath, "dist/riot.csp.js")
-                            );
-                        }
-                    } else
-                    if (name === 'jquery') {
-                        if (val === true) {
-                            FS.copySync(
-                                PATH.join(__dirname, "dist/jquery3.min.js"),
-                                PATH.join(baseDistPath, "dist/jquery3.min.js")
-                            );
-                        }
-                    } else
-                    if (name === 'regenerator-runtime') {
-                        // do nothing
-                    } else {
-                        if (typeof val !== 'string') {
-                            throw new Error(`The value for an include directive must be a requireable id!`);
-                        }
-                        FS.copySync(
-                            RESOLVE.sync(val, {
-                                basedir: (CONFIG.basedir) ? CONFIG.basedir : process.cwd()
-                            }),
-                            PATH.join(baseDistPath, 'dist', name)
-                        );
-                    }
-                });
-                
-                FS.copySync(
-                    PATH.join(LIB.resolve("insight.domplate.reps/package.json"), "../dist/reps/domplate.browser.js"),
-                    PATH.join(baseDistPath, "dist/domplate.browser.js")
-                );
-
-                FS.copySync(
-                    PATH.join(LIB.resolve("insight.domplate.reps/package.json"), "../dist/reps"),
-                    PATH.join(baseDistPath, "dist/insight.domplate.reps")
-                );
-            });
-        }
-
-        repRoutes["/" + uri + ".rep.js"] = function () {
-            
             return function (req, res, next) {
                 res.writeHead(200, {
                     "Content-Type": "application/javascript"
                 });
-                getBundleCode(function (err, bundleCode) {
+                bundlers[uri](function (err, bundleCode) {
                     if (err) return next(err);
+
+                    if (options.registerPathOnChangedHandler && !watchPathsRegistered) {
+                        watchPathsRegistered = true;
+                        const handler = function () {
+                            return new Promise(function (resolve, reject) {
+                                bundlers[uri](function (err) {
+                                    if (err) return reject(err);
+                                    resolve();
+                                });
+                            });
+                        };
+                        handler._ID = BUNDLER_IDENTITY;
+                        options.registerPathOnChangedHandler(bundleCode.sourcePaths, handler);
+                    }
 
                     res.end(bundleCode.code);                    
                 });
             };
         };
-        repRoutes["/" + uri + ".rep.css"] = function () {
+        repRoutes["/" + uri + ".rep.css"] = function (options) {
+
+            let watchPathsRegistered = false;
 
             return function (req, res, next) {
                 res.writeHead(200, {
                     "Content-Type": "text/css"
                 });
-                getBundleCode(function (err, bundleCode) {
+                bundlers[uri](function (err, bundleCode) {
                     if (err) return next(err);
+
+                    if (options.registerPathOnChangedHandler && !watchPathsRegistered) {
+                        watchPathsRegistered = true;
+                        const handler = function () {
+                            return new Promise(function (resolve, reject) {
+                                bundlers[uri](function (err) {
+                                    if (err) return reject(err);
+                                    resolve();
+                                });
+                            });
+                        };
+                        handler._ID = BUNDLER_IDENTITY;
+                        options.registerPathOnChangedHandler(bundleCode.sourcePaths, handler);
+                    }
 
                     res.end(bundleCode.css);                    
                 });
@@ -288,6 +264,7 @@ exports.forConfig = function (CONFIG) {
         };
     });
 
+    
     // NOTE: We use 'repRoutes' just to make file generation easier.
     repRoutes["/page.js"] = {
         "@it.pinf.org.browserify#s1": {
@@ -367,7 +344,9 @@ exports.forConfig = function (CONFIG) {
         libRoutes['/dist/'] = baseDistPath;
     }
 
-    const libApp = LIB.BASH_ORIGIN_EXPRESS.hookRoutes(libRoutes);
+    const libApp = LIB.BASH_ORIGIN_EXPRESS.hookRoutes(libRoutes, undefined, {
+        registerPathOnChangedHandler: options.registerPathOnChangedHandler
+    });
 
     if (CONFIG.dist) {
 
@@ -444,105 +423,236 @@ exports.forConfig = function (CONFIG) {
         }
     }
 
-    const repsApp = LIB.BASH_ORIGIN_EXPRESS.hookRoutes(repRoutes);
+    const repsApp = LIB.BASH_ORIGIN_EXPRESS.hookRoutes(repRoutes, undefined, {
+        registerPathOnChangedHandler: options.registerPathOnChangedHandler
+    });
 
 
-    return {
+    const API = {
         "#io.pinf/middleware~s1": function (API) {
+
+            var primed = false;
+            function ensurePrimed (callback) {
+                if (primed) {
+                    return callback(null);
+                }
+                try {
+                    prime().then(function () {
+                        callback(null);
+                    }, callback);
+                } catch (err) {
+                    return callback(err);
+                }
+            }
 
             var m = null;
 
             return function (req, res, next) {
 
-                // TODO: Use standard route conventions for these.
-                if (req.method === "GET") {
-                    if (
-                        /^\/lib\//.test(req.url) ||
-                        /^\/dist\//.test(req.url)
-                    ) {
-                        libApp(req, res, next);
-                        return;
-                    } else
-                    if ((m = req.url.match(/^\/(.+)\.rep\.(js|css)$/))) {
-                        if (CONFIG.reps[m[1]]) {
-                            repsApp(req, res, next);
+                ensurePrimed(function (err) {
+                    if (err) return next(err);
+
+                    // TODO: Use standard route conventions for these.
+                    if (req.method === "GET") {
+                        if (
+                            /^\/lib\//.test(req.url) ||
+                            /^\/dist\//.test(req.url)
+                        ) {
+                            libApp(req, res, next);
                             return;
-                        } else {
-                            return next(new Error("Rep with name '" + m[1] + "' not declared!"));
-                        }
-                    } else
-                    if (
-                        (
-                            /^\/$/.test(req.url) ||
-                            /^\/\.html$/.test(req.url)
-                        ) &&
-                        CONFIG.page
-                    ) {
-                        if (CONFIG.rootFormat === "pinf") {
-                            throw new Error("Implement PINF bundle for root page!");
-                        }
-                        res.writeHead(200, {
-                            "Content-Type": "text/html"
-                        });
-
-                        res.end([
-                            // TODO: Make base URL format configurable
-                            '<!DOCTYPE html>',
-                            '<html lang="en">',
-                                '<head>',
-                                    '<meta charset="utf-8">',
-                                    ((CONFIG.include['jquery'] === true) ? ('<script src="' + (req.mountAt + "/dist/jquery3.min.js").replace(/\/\//g, "/") + '"></script>') : ''),
-                                    (
-                                        (CONFIG.include['riot.csp.js'] === true) ?
-                                            ('<script src="' + (req.mountAt + "/dist/csp.riot.js").replace(/\/\//g, "/") + '"></script>') :
-                                            (
-                                                (CONFIG.include['riot.js'] === true) ?
-                                                    ('<script src="' + (req.mountAt + "/dist/riot.js").replace(/\/\//g, "/") + '"></script>') :
-                                                    (
-                                                        (CONFIG.include['riot.min.js'] === true) ?
-                                                            ('<script src="' + (req.mountAt + "/dist/riot.min.js").replace(/\/\//g, "/") + '"></script>') :
-                                                            ''
-                                                    )
-                                            )
-                                    ),
-                                    ((CONFIG.include['regenerator-runtime'] === true) ? ('<script src="' + (req.mountAt + "/dist/regenerator-runtime.js").replace(/\/\//g, "/") + '"></script>') : ''),
-                                    additionalIncludes.map(function (name) {
-                                        return `<script src="dist/${name}"></script>`;
-                                    }).join("\n"),
-                                    '<script src="' + (req.mountAt + "/lib/jsonrep.js").replace(/\/\//g, "/") + '"></script>',
-                                    /*
-                                    '<script>var pmodule = { "filename": "' + (req.mountAt + req.url).replace(/\/\//g, "/") + '" };</script>',
-                                    '<style>',
-                                        'HTML, BODY {',
-                                            'padding: 0px;',
-                                            'margin: 0px;',
-                                        '}',
-                                    '</style>',
-                                    */
-                                '</head>',
-                                '<body renderer="jsonrep" style="visibility:hidden;">' + JSON.stringify(CONFIG.page) + '</body>',
-                            '</html>',
-                        ].join("\n"));
-                        return;
-                    } else
-                    if (
-                        /^\/(page)?\.js$/.test(req.url) &&
-                        CONFIG.page
-                    ) {
-                        req.url = "/page.js";
-
-                        repsApp(req, res, function (err) {
-                            if (err) {
-                                err.message += " (for url '" + req.url + "')";
-                                err.stack += "\n(for url '" + req.url + "')";
+                        } else
+                        if ((m = req.url.match(/^\/(.+)\.rep\.(js|css)$/))) {
+                            if (CONFIG.reps[m[1]]) {
+                                repsApp(req, res, next);
+                                return;
+                            } else {
+                                return next(new Error("Rep with name '" + m[1] + "' not declared!"));
                             }
-                            return next(err);
-                        });
-                        return;
+                        } else
+                        if (
+                            (
+                                /^\/$/.test(req.url) ||
+                                /^\/\.html$/.test(req.url)
+                            ) &&
+                            CONFIG.page
+                        ) {
+                            if (CONFIG.rootFormat === "pinf") {
+                                throw new Error("Implement PINF bundle for root page!");
+                            }
+                            res.writeHead(200, {
+                                "Content-Type": "text/html"
+                            });
+
+                            res.end([
+                                // TODO: Make base URL format configurable
+                                '<!DOCTYPE html>',
+                                '<html lang="en">',
+                                    '<head>',
+                                        '<meta charset="utf-8">',
+                                        ((CONFIG.include['jquery'] === true) ? ('<script src="' + (req.mountAt + "/dist/jquery3.min.js").replace(/\/\//g, "/") + '"></script>') : ''),
+                                        (
+                                            (CONFIG.include['riot.csp.js'] === true) ?
+                                                ('<script src="' + (req.mountAt + "/dist/csp.riot.js").replace(/\/\//g, "/") + '"></script>') :
+                                                (
+                                                    (CONFIG.include['riot.js'] === true) ?
+                                                        ('<script src="' + (req.mountAt + "/dist/riot.js").replace(/\/\//g, "/") + '"></script>') :
+                                                        (
+                                                            (CONFIG.include['riot.min.js'] === true) ?
+                                                                ('<script src="' + (req.mountAt + "/dist/riot.min.js").replace(/\/\//g, "/") + '"></script>') :
+                                                                ''
+                                                        )
+                                                )
+                                        ),
+                                        ((CONFIG.include['regenerator-runtime'] === true) ? ('<script src="' + (req.mountAt + "/dist/regenerator-runtime.js").replace(/\/\//g, "/") + '"></script>') : ''),
+                                        additionalIncludes.map(function (name) {
+                                            return `<script src="dist/${name}"></script>`;
+                                        }).join("\n"),
+                                        '<script src="' + (req.mountAt + "/lib/jsonrep.js").replace(/\/\//g, "/") + '"></script>',
+                                        /*
+                                        '<script>var pmodule = { "filename": "' + (req.mountAt + req.url).replace(/\/\//g, "/") + '" };</script>',
+                                        '<style>',
+                                            'HTML, BODY {',
+                                                'padding: 0px;',
+                                                'margin: 0px;',
+                                            '}',
+                                        '</style>',
+                                        */
+                                    '</head>',
+                                    '<body renderer="jsonrep" style="visibility:hidden;">' + JSON.stringify(CONFIG.page) + '</body>',
+                                '</html>',
+                            ].join("\n"));
+                            return;
+                        } else
+                        if (
+                            /^\/(page)?\.js$/.test(req.url) &&
+                            CONFIG.page
+                        ) {
+                            req.url = "/page.js";
+
+                            repsApp(req, res, function (err) {
+                                if (err) {
+                                    err.message += " (for url '" + req.url + "')";
+                                    err.stack += "\n(for url '" + req.url + "')";
+                                }
+                                return next(err);
+                            });
+                            return;
+                        }
                     }
-                }
-                return next();
+                    return next();
+                });
             };
         }
+    };
+
+    async function prime () {
+        if (
+            !baseDistPath ||
+            !CONFIG.prime
+        ) {
+            return;
+        }
+
+        Object.keys(CONFIG.include).forEach(function (name) {
+            const val = CONFIG.include[name];
+            if (name === 'riot.js') {
+                if (val === true) {
+                    FS.copySync(
+                        PATH.join(LIB.resolve("riot/package.json"), "../riot.js"),
+                        PATH.join(baseDistPath, "dist/riot.js")
+                    );
+                }
+            } else
+            if (name === 'riot.min.js') {
+                if (val === true) {
+                    FS.copySync(
+                        PATH.join(LIB.resolve("riot/package.json"), "../riot.min.js"),
+                        PATH.join(baseDistPath, "dist/riot.min.js")
+                    );
+                }
+            } else
+            if (name === 'riot.csp.js') {    
+                if (val === true) {
+                    FS.copySync(
+                        PATH.join(LIB.resolve("riot/package.json"), "../riot.csp.js"),
+                        PATH.join(baseDistPath, "dist/riot.csp.js")
+                    );
+                }
+            } else
+            if (name === 'jquery') {
+                if (val === true) {
+                    FS.copySync(
+                        PATH.join(__dirname, "dist/jquery3.min.js"),
+                        PATH.join(baseDistPath, "dist/jquery3.min.js")
+                    );
+                }
+            } else
+            if (name === 'regenerator-runtime') {
+                // do nothing
+            } else {
+                if (typeof val !== 'string') {
+                    throw new Error(`The value for an include directive must be a requireable id!`);
+                }
+                FS.copySync(
+                    RESOLVE.sync(val, {
+                        basedir: (CONFIG.basedir) ? CONFIG.basedir : process.cwd()
+                    }),
+                    PATH.join(baseDistPath, 'dist', name)
+                );
+            }
+        });
+        
+        FS.copySync(
+            PATH.join(LIB.resolve("insight.domplate.reps/package.json"), "../dist/reps/domplate.browser.js"),
+            PATH.join(baseDistPath, "dist/domplate.browser.js")
+        );
+
+        FS.copySync(
+            PATH.join(LIB.resolve("insight.domplate.reps/package.json"), "../dist/reps"),
+            PATH.join(baseDistPath, "dist/insight.domplate.reps")
+        );
+
+        return Promise.all(Object.keys(CONFIG.reps).map(function (uri) {
+            
+            let watchPathsRegistered = false;
+
+            function run () {
+                return new Promise(function (resolve, reject) {
+                    bundlers[uri](function (err, bundleCode) {
+                        if (err) return reject(err);
+
+                        if (options.registerPathOnChangedHandler && !watchPathsRegistered) {
+                            watchPathsRegistered = true;
+                            const handler = function () {
+                                return run();
+                            };
+                            handler._ID = BUNDLER_IDENTITY;
+                            options.registerPathOnChangedHandler(bundleCode.sourcePaths, handler);
+                        }
+
+                        FS.outputFileSync(PATH.join(baseDistPath, selfSubpath, uri + ".rep.js"), bundleCode.code, "utf8");
+                        if (bundleCode.css) {
+                            FS.outputFileSync(PATH.join(baseDistPath, selfSubpath, uri + ".rep.css"), bundleCode.css, "utf8");
+                        }
+                        resolve();
+                    });
+                });
+            }
+
+            return run();
+        }));        
     }
+
+    if (typeof callback !== "undefined") {
+        try {
+            prime().then(function () {
+                callback(null, API);
+            }, callback);
+        } catch (err) {
+            return callback(err);
+        }
+        return;
+    }
+
+    return API;
 }
