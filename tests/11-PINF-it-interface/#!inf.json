@@ -3,15 +3,13 @@
     "#": "gi0.PINF.it/core/v0",
 
     "#": {
-        "jsonrep": "jsonrep"
+        "/.dist": "jsonrep"
     },
 
-    ":builder:": "jsonrep @ builder/v0",
+    ":builder:": "/.dist @ builder/v1",
 
 
-    "gi0.PINF.it/core/v0 @ # :builder: set() config": {
-        "dist": ".dist/page/index.html",
-        "prime": true,
+    "gi0.PINF.it/build/v0 @ # :builder: run() /.dist/": {
         "page": {
             "@announcer": {
                 "message": "Hello World!"
@@ -20,7 +18,5 @@
         "reps": {
             "announcer": "../05-FilepathRep/announcer.rep.js"
         }
-    },
-
-    "gi0.PINF.it/core/v0 @ # :builder: run()": ""
+    }
 }

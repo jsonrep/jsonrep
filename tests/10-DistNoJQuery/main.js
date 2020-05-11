@@ -8,75 +8,44 @@ module.config = {
 }
 */
 
-const LIB = require('bash.origin.lib').js;
-
-const PATH = LIB.path;
-const FS = LIB.FS_EXTRA;
-
-const DIST_BASE_PATH = PATH.join(__dirname, ".dist");
-
-
 console.log('>>>TEST_IGNORE_LINE:\"GET /<<<');
 console.log('>>>TEST_IGNORE_LINE:\\[bash.origin.express\\] Routing request /<<<');
 console.log('>>>TEST_IGNORE_LINE:Connecting to localhost on port<<<');
 console.log('>>>TEST_IGNORE_LINE:^[\\s\\t]*$<<<');
+console.log('>>>TEST_IGNORE_LINE:Possible EventEmitter memory leak detected.<<<');
 
+const LIB = require('bash.origin.lib').js;
+const PATH = LIB.path;
+const FS = LIB.FS_EXTRA;
 
 describe("Suite", function() {
 
-    if (FS.existsSync(DIST_BASE_PATH)) {
-        FS.removeSync(DIST_BASE_PATH);
-    }
-
-    LIB.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {
+    const server = LIB.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {
+        "mountPrefix": "/.dist",
         "routes": {
-            "^/jsonrep/page/": {
-                "@github.com~jsonrep~jsonrep#s1": {
-                    "dist": PATH.join(DIST_BASE_PATH, "page/index.html"),
-                    "prime": true,
-                    "include": {
-                        "jquery": false,
-                        "regenerator-runtime": false,
-                        "riot.csp.js": false,
-                        "riot.js": false,
-                        "riot.min.js": true
-                    },
-                    "page": {
-                        "@announcer": {
-                            "message": "Hello World!"
-                        }
-                    },
-                    "reps": {
-                        "announcer": function () {
+            "^/jsonrep/": {
+                "gi0.PINF.it/build/v0 # / # /": {
+                    "@jsonrep # router/v1": {
+                        "include": {
+                            "jquery": false,
+                            "regenerator-runtime": false,
+                            "riot.csp.js": false,
+                            "riot.js": false,
+                            "riot.min.js": true
+                        },
+                        "page": {
+                            "@announcer": {
+                                "message": "Hello World!"
+                            }
+                        },
+                        "reps": {
+                            "announcer": function () {
 
-                            exports.main = function (JSONREP, node) {
+                                exports.main = function (JSONREP, node) {
 
-                                return JSONREP.markupNode(node);
-                            };
-                        }
-                    }
-                }
-            },
-            "^/jsonrep/bundle/": {
-                "@github.com~jsonrep~jsonrep#s1": {
-                    "dist": PATH.join(DIST_BASE_PATH, "bundle/page.js"),
-                    "prime": true,
-                    "include": {
-                        "jquery": false,
-                        "regenerator-runtime": false
-                    },
-                    "page": {
-                        "@announcer": {
-                            "message": "Hello World!"
-                        }
-                    },
-                    "reps": {
-                        "announcer": function () {
-
-                            exports.main = function (JSONREP, node) {
-
-                                return JSONREP.markupNode(node);
-                            };
+                                    return JSONREP.markupNode(node);
+                                };
+                            }
                         }
                     }
                 }
@@ -86,32 +55,22 @@ describe("Suite", function() {
                 '<head>' +
                     '<script src="/lib/loader-core.browser.js"></script>' +
                     '<script>' +
-                        'window.PINF.sandbox("/jsonrep/bundle/page.js", function (sandbox) {' +
+                        'window.PINF.sandbox("/jsonrep/page.js", function (sandbox) {' +
                             'sandbox.main();' +
                         '}, console.error);' +
                     '</script>' +
                 '</head>' +
                 '<body></body>'
-            ),
-            "^/dist/": DIST_BASE_PATH,
-            "/dist_bundle_page.html": (
-                '<head>' +
-                    '<script src="/lib/loader-core.browser.js"></script>' +
-                    '<script>' +
-                        'window.PINF.sandbox("/dist/bundle/page.js", function (sandbox) {' +
-                            'sandbox.main();' +
-                        '}, console.error);' +
-                    '</script>' +
-                '</head>' +
-                '<body></body>'
-            )            
+            )
         }
     });
 
-    it('Test', function (client) {
+    it('Test', async function (client) {
+
+        const PORT = (await server).config.port;
 
         // Run as page
-        client.url('http://localhost:' + process.env.PORT + '/jsonrep/page/').pause(500);
+        client.url('http://localhost:' + PORT + '/jsonrep/page.html').pause(500);
 
 //if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
 
@@ -123,7 +82,7 @@ describe("Suite", function() {
         ].join("\n"));
 
         // Run by requiring as PINF bundle into empty body
-        client.url('http://localhost:' + process.env.PORT + '/page.html').pause(500);
+        client.url('http://localhost:' + PORT + '/page.html').pause(500);
 
 //if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
 
@@ -133,32 +92,6 @@ describe("Suite", function() {
             'message=>Hello World!',
             ')'
         ].join("\n"));
-
-        // Now test dist files
-
-        client.url('http://localhost:' + process.env.PORT + '/dist/page/index.html').pause(500);
-
-//if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
-
-        client.waitForElementPresent('BODY', 3000);
-        client.expect.element('BODY').text.to.contain([
-            'map(',
-            'message=>Hello World!',
-            ')'
-        ].join("\n"));
-
-        client.url('http://localhost:' + process.env.PORT + '/dist_bundle_page.html').pause(500);
-
-if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
-
-        client.waitForElementPresent('BODY', 3000);
-        client.expect.element('BODY').text.to.contain([
-            'map(',
-            'message=>Hello World!',
-            ')'
-        ].join("\n"));
-
-//        if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
 
     });
 });

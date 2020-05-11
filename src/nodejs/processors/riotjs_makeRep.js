@@ -52,29 +52,32 @@ exports.processSync = function (codeblock, options) {
                 "on": {
                     "mount":${((function (el) {
 
-                        riot.util.styleManager.add = function (cssText, name) {
-                            if (!cssText) {
-                                return;
+                        if ("%%EXTERNALIZE_CSS%%" === "1") {
+                            riot.util.styleManager.inject = function () {
+                                if (!options) return;
+                                // TODO: Error tracking
+                                JSONREP.loadStyle(options.renderer.uri + '.css');
                             }
-
-                            //console.log("[jsonrep][riot] Inject cssText:", cssText);  
-
-                            if (window.document.createStyleSheet) {
-                                var sheet = window.document.createStyleSheet();
-                                sheet.cssText = cssText;
-                            } else {
-                                var style = window.document.createElementNS ?
-                                            window.document.createElementNS("http://www.w3.org/1999/xhtml", "style") :
-                                            window.document.createElement("style");
-                                style.appendChild(window.document.createTextNode(cssText));
-                                var head = window.document.getElementsByTagName("head")[0] || window.document.documentElement;
-                                head.appendChild(style);
+                        } else {
+                            riot.util.styleManager.add = function (cssText, name) {
+                                if (!cssText) {
+                                    return;
+                                }
+    
+                                //console.log("[jsonrep][riot] Inject cssText:", cssText);  
+    
+                                if (window.document.createStyleSheet) {
+                                    var sheet = window.document.createStyleSheet();
+                                    sheet.cssText = cssText;
+                                } else {
+                                    var style = window.document.createElementNS ?
+                                                window.document.createElementNS("http://www.w3.org/1999/xhtml", "style") :
+                                                window.document.createElement("style");
+                                    style.appendChild(window.document.createTextNode(cssText));
+                                    var head = window.document.getElementsByTagName("head")[0] || window.document.documentElement;
+                                    head.appendChild(style);
+                                }
                             }
-                        }
-                        riot.util.styleManager.inject = function () {
-                            if (!options) return;
-                            // TODO: Error tracking
-                            JSONREP.loadStyle(options.renderer.uri + '.css');
                         }
 
                         riot.tag('raw', '<div></div>', function(opts) {                                                                                                                                                                                                                            
@@ -90,7 +93,8 @@ exports.processSync = function (codeblock, options) {
                     }).toString()
                         .replace(/%%ID%%/, id)
                         .replace(/"%%JS%%"/, js)
-                        .replace(/%%URI%%/, options.uri))}
+                        .replace(/%%URI%%/, options.uri)
+                        .replace(/%%EXTERNALIZE_CSS%%/, options.CONFIG.externalizeCss ? "1" : "0"))}
                 }
             };
         }

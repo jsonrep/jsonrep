@@ -3,15 +3,13 @@
     "#": "gi0.PINF.it/core/v0",
 
     "#": {
-        "jsonrep": "jsonrep"
+        "/.dist/page": "jsonrep"
     },
 
-    ":builder:": "jsonrep @ builder/v0",
+    ":builder:": "/.dist/page @ builder/v1",
 
 
-    "gi0.PINF.it/core/v0 @ # :builder: set() config": {
-        "dist": ".dist/page/index.html",
-        "prime": true,
+    "gi0.PINF.it/build/v0 @ # :builder: write() /.dist/page": {
         "page": {
             "@announcer": {
                 "message": "Hello World!"
@@ -23,34 +21,39 @@
         }
     },
 
-    "gi0.PINF.it/core/v0 @ # :builder: run()": "",
-
-    "# run": (run.bash.progress () >>>
-        echo "-- 1 --"
-        cat ./.dist/page/announcer.rep.js
-        echo -e "\n-- 2 --"
-        cat ./.dist/page/sample.rep.js
-        echo -e "\n-- 3 --"
-    <<<),
-
-    "gi0.PINF.it/core/v0 @ # watch()": "",
-
-    "# run": (run.bash.progress () >>>
-        sed "-i" "" "-e" 's/PREFIX:1/PREFIX:2/g' ./announcer.rep.js
-        sed "-i" "" "-e" 's/"append": "!"/"append": "!!!"/g' ./sample.rep.js
-        sleep 1
-        cat ./.dist/page/announcer.rep.js
-        echo -e "\n-- 4 --"
-        cat ./.dist/page/sample.rep.js
-        echo -e "\n-- 5 --"
-        sed "-i" "" "-e" 's/PREFIX:2/PREFIX:1/g' ./announcer.rep.js
-        sed "-i" "" "-e" 's/"append": "!!!"/"append": "!"/g' ./sample.rep.js
-        sleep 1
-        cat ./.dist/page/announcer.rep.js
-        echo -e "\n-- 6 --"
-        cat ./.dist/page/sample.rep.js
-        echo -e "\n-- 7 --"
-    <<<),
-
-    "gi0.PINF.it/core/v0 @ # unwatch()": ""
+    "gi0.PINF.it/build/v0 @ # onDone()": (inf () >>>
+        {
+            "# run": (run.bash.progress () >>>
+                echo "-- 1 --"
+                cat ./.dist/page/announcer.rep.js | grep 'PREFIX'
+                echo -e "\n-- 2 --"
+                cat ./.dist/page/sample.rep.js | grep '"append"'
+                echo -e "\n-- 3 --"
+            <<<),
+        
+            "gi0.PINF.it/build/v0 @ # watch()": "",
+        
+            "# run": (run.bash.progress () >>>
+                sleep 2
+                echo -e "\n-- updating sources to trigger rebuild --"
+                sed "-i" "" "-e" 's/PREFIX:1/PREFIX:2/g' ./announcer.rep.js
+                sed "-i" "" "-e" 's/"append": "!"/"append": "!!!"/g' ./sample.rep.js
+                sleep 2
+                cat ./.dist/page/announcer.rep.js | grep 'PREFIX'
+                echo -e "\n-- 4 --"
+                cat ./.dist/page/sample.rep.js | grep '"append"'
+                echo -e "\n-- 5 --"
+                echo -e "\n-- updating sources to trigger rebuild --"
+                sed "-i" "" "-e" 's/PREFIX:2/PREFIX:1/g' ./announcer.rep.js
+                sed "-i" "" "-e" 's/"append": "!!!"/"append": "!"/g' ./sample.rep.js
+                sleep 2
+                cat ./.dist/page/announcer.rep.js | grep 'PREFIX'
+                echo -e "\n-- 6 --"
+                cat ./.dist/page/sample.rep.js | grep '"append"'
+                echo -e "\n-- 7 --"
+            <<<),
+        
+            "gi0.PINF.it/build/v0 @ # unwatch()": ""
+        }
+    <<<)
 }

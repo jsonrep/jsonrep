@@ -4,15 +4,12 @@ const ASSERT = require('assert');
 const JSONREP = require("../..");
 
 
-it('Test', function (done) {
+it('Test', async function () {
 
-    JSONREP.markupNode('{"message":"Hello World!"}').then(function (code) {
+    const code = await JSONREP.markupNode('{"message":"Hello World!"}');
 
-        ASSERT.equal(code, JSON.stringify({
-            "message": "Hello World!"
-        }, null, 4));
+    ASSERT.equal(code, JSON.stringify({
+        "message": "Hello World!"
+    }, null, 4));
 
-        done();
-        return null;
-    }).catch(done);
 });

@@ -19,10 +19,11 @@ if (WINDOW.document.body.innerHTML.replace(/[\s\n]*/g, "")) {
   WINDOW.document.body.setAttribute("renderer", "jsonrep");
   WINDOW.document.body.innerHTML = "{\"@div\":{\"innerHTML\":\"Hello World!\",\"style\":{\"border\":\"1px solid blue\"}}}";
   WINDOW.document.body.style.visibility = "hidden";
-  WINDOW.pmodule = pmodule;
 
   try {
     var JSONREP = require("./jsonrep");
+
+    JSONREP.options.ourBaseUri = bundle.module.filename.replace(/\/[^\/]+\/[^\/]+$/, '/dist');
   } catch (err) {
     console.error(err);
     throw err;
@@ -110,7 +111,7 @@ function makeExports(exports) {
     var keys = Object.keys(node);
 
     if (keys.length === 1 && /^@/.test(keys[0])) {
-      uri = keys[0].replace(/^@/, "") + ".rep";
+      uri = "/../" + keys[0].replace(/^@/, "") + ".rep";
       node = node[keys[0]];
     } else {
       if (exports.options.defaultRenderer) {
@@ -128,12 +129,8 @@ function makeExports(exports) {
           }
         });
       } else {
-        uri = "dist/insight.rep.js";
+        uri = "/reps/insight.rep.js";
       }
-    }
-
-    if (/^dist\//.test(uri) && exports.options.ourBaseUri) {
-      uri = exports.options.ourBaseUri + "/" + uri;
     }
 
     return exports.loadRenderer(uri).then(function (renderer) {
@@ -157,27 +154,30 @@ function makeExports(exports) {
       } else {
         exports.PINF = WINDOW.PINF;
       }
+    }
 
-      if (WINDOW.document) {
+    exports.getBaseUri = function () {
+      if (!exports.options.ourBaseUri && typeof WINDOW.document !== "undefined") {
         if (!exports.options.ourBaseUri) {
           var ourBaseUri = Array.from(WINDOW.document.querySelectorAll('SCRIPT[src]')).filter(function (tag) {
             return /\/jsonrep(\.min)?\.js$/.test(tag.getAttribute("src"));
           });
 
-          if (!ourBaseUri.length) {
-            exports.options.ourBaseUri = "";
-          } else {
-            exports.options.ourBaseUri = ourBaseUri[0].getAttribute("src").split("/").slice(0, -2).join("/");
+          if (ourBaseUri.length) {
+            exports.options.ourBaseUri = ourBaseUri[0].getAttribute("src").replace(/\/[^\/]+$/, '');
           }
         }
       }
-    }
 
-    exports.loadStyle = function (uri) {
-      if (WINDOW && typeof WINDOW.pmodule !== "undefined" && !/^\//.test(uri)) {
-        uri = [WINDOW.pmodule.filename.replace(/\/([^\/]*)\/([^\/]*)$/, ""), uri].join("/").replace(/\/\.?\//g, "/");
+      if (!exports.options.ourBaseUri) {
+        throw new Error("[jsonrep] Could not determine 'ourBaseUri' by looking at 'options' and injected script tags!");
       }
 
+      return exports.options.ourBaseUri;
+    };
+
+    exports.loadStyle = function (uri) {
+      uri = "".concat(exports.getBaseUri(), "/").concat(uri).replace(/\/\.?\//g, '/');
       return new Promise(function (resolve, reject) {
         var link = window.document.createElementNS ? window.document.createElementNS("http://www.w3.org/1999/xhtml", "link") : window.document.createElement("link");
         link.rel = "stylesheet";
@@ -193,10 +193,7 @@ function makeExports(exports) {
     };
 
     exports.loadRenderer = function (uri) {
-      if (WINDOW && typeof WINDOW.pmodule !== "undefined" && !/^\//.test(uri)) {
-        uri = [WINDOW.pmodule.filename.replace(/\/([^\/]*)\/([^\/]*)$/, ""), uri].join("/").replace(/\/\.?\//g, "/");
-      }
-
+      uri = "".concat(exports.getBaseUri(), "/").concat(uri).replace(/\/\.?\//g, '/');
       return new Promise(function (resolve, reject) {
         exports.PINF.sandbox(uri, resolve, reject);
       });
@@ -224,7 +221,7 @@ function makeExports(exports) {
             if (block._format === 'json') {
               var cssConfig = JSON.parse(block.getCode());
               el.setAttribute("_cssid", cssConfig._cssid);
-              exports.loadStyle(cssConfig.repUri + '.rep.css');
+              exports.loadStyle('../' + cssConfig.repUri + '.rep.css');
             } else if (block._format === 'css') {
               css = block.getCode();
             }
@@ -283,8 +280,6 @@ function makeExports(exports) {
 
   if (typeof sandbox !== "undefined") {
     init(sandbox);
-  } else if (WINDOW) {
-    WINDOW.jsonrep = init({});
   } else if (typeof exports !== "undefined") {
     init(exports);
   } else {
@@ -409,7 +404,7 @@ Codeblock.prototype.getCode = function () {
 **/
 
 (function (exports) {
- 
+
 // The global `require` for the 'external' (to the loader) environment.
 var Loader = function (global) {
 
@@ -456,7 +451,7 @@ var Loader = function (global) {
 	}
 
 	// @credit https://github.com/unscriptable/curl/blob/62caf808a8fd358ec782693399670be6806f1845/src/curl.js#L319-360
-	function loadInBrowser (uri, loadedCallback) {
+	function loadInBrowser (uri, loadedCallback, sandboxOptions) {
 		try {
 			// See if we are in a web worker.
 			if (typeof importScripts !== "undefined") {
@@ -484,7 +479,9 @@ var Loader = function (global) {
 				if (ev.type === "load" || readyStates[this.readyState]) {
 					this.onload = this.onreadystatechange = this.onerror = null;
 					loadedCallback(null, function () {
-						element.parentNode.removeChild(element);
+						if (!sandboxOptions || sandboxOptions.keepScriptTags !== true) {
+							element.parentNode.removeChild(element);
+						}
 					});
 				}
 			}
@@ -597,7 +594,8 @@ var Loader = function (global) {
 										cleanupCallback();
 									}
 								});
-							}
+							},
+							sandboxOptions
 						);
 					}
 				}
@@ -649,7 +647,8 @@ var Loader = function (global) {
 									function () {
 										pending -= 1;
 										finalize();
-									}
+									},
+									sandboxOptions
 								);
 							}
 						}
@@ -1138,7 +1137,7 @@ var Loader = function (global) {
 					loadedCallback(null);
 					return;
 				}
-				return fallbackLoad(uri, loadedCallback);
+				return fallbackLoad(uri, loadedCallback, options);
 			}
 			programIdentifier = bundle.uri || "#pinf:" + Math.random().toString(36).substr(2, 9);
 		}

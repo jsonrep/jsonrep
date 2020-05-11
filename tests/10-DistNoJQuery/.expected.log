@@ -7,27 +7,20 @@ environments: default
 [0m
   Suite
 [bash.origin.express] Adding route: /lib/loader-core.browser.js
-[bash.origin.express] Adding route: /dist_bundle_page.html
-[bash.origin.express] Adding route: /dist/insight.domplate.reps/*
-[bash.origin.express] Adding route: /dist/domplate.browser.js
-[bash.origin.express] Adding route: /dist/insight.rep.js
-[bash.origin.express] Adding route: /lib/jsonrep.js
-[bash.origin.express] Adding route: /dist/
-[bash.origin.express] Adding route: /announcer.rep.css
-[bash.origin.express] Adding route: /announcer.rep.js
-[bash.origin.express] Adding route: /page.js
-[bash.origin.express] Adding route: /^\/jsonrep\/bundle\//
-[bash.origin.express] Adding route: /dist/insight.domplate.reps/*
-[bash.origin.express] Adding route: /dist/domplate.browser.js
-[bash.origin.express] Adding route: /dist/insight.rep.js
-[bash.origin.express] Adding route: /dist/riot.min.js
-[bash.origin.express] Adding route: /lib/jsonrep.js
-[bash.origin.express] Adding route: /dist/
-[bash.origin.express] Adding route: /announcer.rep.css
-[bash.origin.express] Adding route: /announcer.rep.js
-[bash.origin.express] Adding route: /page.js
-[bash.origin.express] Adding route: /^\/jsonrep\/page\//
 [bash.origin.express] Adding route: /page.html
-[bash.origin.express] Adding route: /^\/dist\//
+[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.dist/][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/reps/div.rep.js[22m[39m
+[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.dist/dist/reps/div.rep.js[22m[39m
+[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.dist/][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/reps/golden-layout.rep.js[22m[39m
+[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.dist/dist/reps/golden-layout.rep.js[22m[39m
+[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.dist/][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/reps/io.shields.img.rep.js[22m[39m
+[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.dist/dist/reps/io.shields.img.rep.js[22m[39m
+[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.dist/][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/riot.js[22m[39m
+[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.dist/dist/riot.js[22m[39m
+[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.dist/][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/riot.min.js[22m[39m
+[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.dist/dist/riot.min.js[22m[39m
+[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.dist/][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/riot.csp.js[22m[39m
+[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.dist/dist/riot.csp.js[22m[39m
+[34m[1m[pinf.it][gi0.PINF.it/download/v0:download:/.dist/][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/jquery3.min.js[22m[39m
+[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.dist/dist/jquery3.min.js[22m[39m
+[bash.origin.express] Adding route: /^\/jsonrep\//
 Server: http://localhost:8080/
-[READY]

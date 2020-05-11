@@ -15,36 +15,6 @@ depend {
                 "PACKAGE_YEAR_CREATED": "2017",
                 "PACKAGE_LICENSE_ALIAS": "MPL",
                 "PACKAGE_SUMMARY": "$__DIRNAME__/GUIDE.md"
-            },
-            "routes": {
-                "/dist/regenerator-runtime.js": {
-                    "@it.pinf.org.browserify#s1": {
-                        "src": "regenerator-runtime",
-                        "dist": "$__DIRNAME__/dist/regenerator-runtime.js",
-                        "prime": true
-                    }
-                },
-                "/dist/div.rep.js": "$__DIRNAME__/dist/div.rep.js",
-                "/dist/io.shields.img.rep.js": "$__DIRNAME__/dist/io.shields.img.rep.js",
-                "/dist/golden-layout.rep.js": "$__DIRNAME__/dist/golden-layout.rep.js",
-                "/dist/jsonrep.js": {
-                    "@it.pinf.org.browserify#s1": {
-                        "src": "$__DIRNAME__/src/jsonrep.js",
-                        "dist": "$__DIRNAME__/dist/jsonrep.js",
-                        "prime": true
-                    }
-                },
-                "/dist/insight.rep.js": {
-                    "@it.pinf.org.browserify#s1": {
-                        "src": "$__DIRNAME__/src/insight.rep.js",
-                        "dist": "$__DIRNAME__/dist/insight.rep.js",
-                        "prime": true,
-                        "format": "pinf"
-                    }
-                }
-            },
-            "files": {
-                "dist/insight.domplate.reps": "insight.domplate.reps/dist/reps"
             }
         }
     }

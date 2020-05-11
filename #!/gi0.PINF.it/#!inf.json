@@ -1,0 +1,54 @@
+{
+    "#": "gi0.PINF.it/core/v0",
+
+    "#": {
+        "browserify": "it.pinf.org.browserify",
+        "/dist/reps/insight.domplate.reps": "insight.domplate.reps"
+    },
+
+    ":build:": "browserify @ build/v0",
+    ":build1:": "browserify @ build/v1",
+    ":copy:": "browserify @ copy/v0",
+    ":download:": "browserify @ download/v0",
+    ":insight.domplate.reps:": "/dist/reps/insight.domplate.reps @ builder/v1",
+
+    "router/v1 #": "${__DIRNAME__}/tool1.",
+    "builder/v1 #": "${__DIRNAME__}/tool1.",
+
+    "builder/v1 # onHome()": (inf () >>>
+        {
+            "gi0.PINF.it/build/v0 @ # :build1: write() /dist/jsonrep.js": {
+                "src": "../../src/jsonrep.js"
+            },
+            "gi0.PINF.it/build/v0 @ # :build1: write() /dist/reps/insight.rep.js": {
+                "src": "../../src/reps/insight.rep.js",
+                "format": "pinf"
+            },
+            "gi0.PINF.it/core/v0 @ # :copy: write() /dist/reps/div.rep.js": {
+                "source": "../../src/reps/div.rep.js"
+            },
+            "gi0.PINF.it/core/v0 @ # :copy: write() /dist/reps/golden-layout.rep.js": {
+                "source": "../../src/reps/golden-layout.rep.js"
+            },
+            "gi0.PINF.it/core/v0 @ # :copy: write() /dist/reps/io.shields.img.rep.js": {
+                "source": "../../src/reps/io.shields.img.rep.js"
+            },
+            "gi0.PINF.it/core/v0 @ # :copy: write() /dist/riot.js": {
+                "source": "riot/riot.js"
+            },
+            "gi0.PINF.it/core/v0 @ # :copy: write() /dist/riot.min.js": {
+                "source": "riot/riot.min.js"
+            },
+            "gi0.PINF.it/core/v0 @ # :copy: write() /dist/riot.csp.js": {
+                "source": "riot/riot.csp.js"
+            },
+            "gi0.PINF.it/core/v0 @ # :download: write() /dist/jquery3.min.js": {
+                "url": "https://code.jquery.com/jquery-3.5.0.min.js",
+                "hash": "sha1:1d6ae46f2ffa213dede37a521b011ec1cd8d1ad3"
+            },
+            "gi0.PINF.it/build/v0 @ # :build1: write() /dist/babel-regenerator-runtime.js": {
+                "src": "regenerator-runtime"
+            }
+        }
+    <<<)
+}

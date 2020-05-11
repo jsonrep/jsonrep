@@ -6,27 +6,4 @@ environments: default
 >>>TEST_IGNORE_LINE:^[\s\t]*$<<<
 [0m
   Suite
-[bash.origin.express] Adding route: /lib/loader-core.browser.js
-[bash.origin.express] Adding route: /dist_bundle_page.html
-[bash.origin.express] Adding route: /dist/insight.domplate.reps/*
-[bash.origin.express] Adding route: /dist/domplate.browser.js
-[bash.origin.express] Adding route: /dist/insight.rep.js
-[bash.origin.express] Adding route: /lib/jsonrep.js
-[bash.origin.express] Adding route: /dist/
-[bash.origin.express] Adding route: /announcer.rep.css
-[bash.origin.express] Adding route: /announcer.rep.js
-[bash.origin.express] Adding route: /page.js
-[bash.origin.express] Adding route: /^\/jsonrep\/bundle\//
-[bash.origin.express] Adding route: /dist/insight.domplate.reps/*
-[bash.origin.express] Adding route: /dist/domplate.browser.js
-[bash.origin.express] Adding route: /dist/insight.rep.js
-[bash.origin.express] Adding route: /lib/jsonrep.js
-[bash.origin.express] Adding route: /dist/
-[bash.origin.express] Adding route: /announcer.rep.css
-[bash.origin.express] Adding route: /announcer.rep.js
-[bash.origin.express] Adding route: /page.js
-[bash.origin.express] Adding route: /^\/jsonrep\/page\//
-[bash.origin.express] Adding route: /page.html
-[bash.origin.express] Adding route: /^\/dist\//
 Server: http://localhost:8080/
-[READY]

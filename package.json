@@ -7,19 +7,20 @@
   },
   "dependencies": {
     "regenerator-runtime": "^0.13.2",
-    "codeblock": "^0.3.15",
+    "codeblock": "^0.3.16-pre.3",
     "insight-for-js": "^0.2.0-pre.0",
     "pinf-loader-js": "^0.4.21",
     "riot": "^3.7.4",
     "postcss": "^7.0.14"
   },
   "scripts": {
-    "start": "./workspace.sh run",
     "test": "bash.origin.test tests",
+    "dev": "pinf.it ./#!inf.json --watch",
+    "build": "pinf.it ./#!inf.json",
     "publish-website": "./workspace.sh publish"
   },
   "devDependencies": {
     "insight.domplate.reps": "^0.1.0-pre.0",
-    "bash.origin.lib": "^0.4.0-pre.10"
+    "bash.origin.lib": "^0.4.0-pre.20"
   }
 }

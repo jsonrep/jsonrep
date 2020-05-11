@@ -13,31 +13,34 @@ console.log('>>>TEST_IGNORE_LINE:\\[bash.origin.express\\] Routing request /<<<'
 console.log('>>>TEST_IGNORE_LINE:Connecting to localhost on port<<<');
 console.log('>>>TEST_IGNORE_LINE:^[\\s\\t]*$<<<');
 console.log('>>>TEST_IGNORE_LINE:^Browserslist:<<<');
+console.log('>>>TEST_IGNORE_LINE:Possible EventEmitter memory leak detected.<<<');
+
+const LIB = require('bash.origin.lib').js;
 
 describe("Suite", function() {
 
-    require('bash.origin.lib').js.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {
+    const server = LIB.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {
         "routes": {
             "^/": {
-                "@github.com~jsonrep~jsonrep#s1": {
-                    "dist": __dirname + "/dist/page.js",
-                    "prime": true,
-                    "page": {
-                        "@div": {
-                            innerHTML: "Hello World!",
-                            style: {
-                                border: "1px solid blue"
+                "gi0.PINF.it/build/v0 # /dist # /": {
+                    "@jsonrep # router/v1": {
+                        "page": {
+                            "@div": {
+                                innerHTML: "Hello World!",
+                                style: {
+                                    border: "1px solid blue"
+                                }
                             }
-                        }
-                    },
-                    "reps": {
-                        "div": __dirname + "/div.rep.js"
-                    },
-                    "babel": {
-                        "presets": {
-                            "@babel/preset-env": {
-                                // @see https://github.com/browserslist/browserslist
-                                "targets": "last 1 Chrome versions"
+                        },
+                        "reps": {
+                            "div": __dirname + "/div.rep.js"
+                        },
+                        "babel": {
+                            "presets": {
+                                "@babel/preset-env": {
+                                    // @see https://github.com/browserslist/browserslist
+                                    "targets": "last 1 Chrome versions"
+                                }
                             }
                         }
                     }
@@ -46,16 +49,19 @@ describe("Suite", function() {
         }
     });
 
-    it('Test', function (client) {
+    it('Test', async function (client) {
+
+        const PORT = (await server).config.port;
 
         // Run as page
-        client.url('http://localhost:' + process.env.PORT + '/').pause(500);        
+        client.url('http://localhost:' + PORT + '/page.html').pause(500);        
+
+if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
+
         client.waitForElementPresent('BODY', 3000);
         client.expect.element('BODY').text.to.contain([
             'Hello World!'
         ].join(""));
-
-        if (process.env.BO_TEST_FLAG_DEV) client.pause(60 * 60 * 24 * 1000);
     });
 });
 

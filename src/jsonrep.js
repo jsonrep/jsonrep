@@ -102,7 +102,7 @@ function makeExports (exports) {
 			keys.length === 1 &&
 			/^@/.test(keys[0])
 		) {
-            uri = keys[0].replace(/^@/, "") + ".rep";
+            uri = "/../" + keys[0].replace(/^@/, "") + ".rep";
             node = node[keys[0]];
         } else {
             if (exports.options.defaultRenderer) {
@@ -119,16 +119,16 @@ function makeExports (exports) {
                     }
                 });
             } else {
-                uri = "dist/insight.rep.js";
+                uri = "/reps/insight.rep.js";
             }
         }
 
-        if (
-            /^dist\//.test(uri) &&
-            exports.options.ourBaseUri
-        ) {
-            uri = exports.options.ourBaseUri + "/" + uri;
-        }
+        // if (
+        //     !/^[\.\/]/.test(uri) &&
+        //     exports.options.ourBaseUri
+        // ) {
+        //     uri = exports.options.ourBaseUri + "/" + uri;
+        // }
 
         return exports.loadRenderer(uri).then(function (renderer) {
 
@@ -160,7 +160,25 @@ function makeExports (exports) {
                 exports.PINF = WINDOW.PINF;
             }
 
-            if (WINDOW.document) {
+            // if (
+            //     !exports.options.ourBaseUri &&
+            //     typeof WINDOW.bundle !== "undefined"
+            // ) {
+            //     exports.options.ourBaseUri = WINDOW.bundle.replace(/\/[^\/]+$/, '');
+            // }
+
+        }
+
+        exports.getBaseUri = function () {
+
+            // console.log("WINDOW.pmodule::", WINDOW.pmodule);
+            // console.log("exports.options.ourBaseUri::", exports.options.ourBaseUri);
+
+            // TODO: Only use this approach in the legacy browser build.
+            if (
+                !exports.options.ourBaseUri &&
+                typeof WINDOW.document !== "undefined"
+            ) {
 
                 //if (!exports.PINF.document) {
                 //    exports.PINF.document = WINDOW.document;
@@ -170,13 +188,16 @@ function makeExports (exports) {
                     var ourBaseUri = Array.from(WINDOW.document.querySelectorAll('SCRIPT[src]')).filter(function (tag) {
                         return /\/jsonrep(\.min)?\.js$/.test(tag.getAttribute("src"));
                     });
-                    if (!ourBaseUri.length) {
-                        exports.options.ourBaseUri = "";
-                    } else {
-                        exports.options.ourBaseUri = ourBaseUri[0].getAttribute("src").split("/").slice(0, -2).join("/");
+                    if (ourBaseUri.length) {
+                        exports.options.ourBaseUri = ourBaseUri[0].getAttribute("src").replace(/\/[^\/]+$/, '');
                     }
                 }
+            }            
+
+            if (!exports.options.ourBaseUri) {
+                throw new Error(`[jsonrep] Could not determine 'ourBaseUri' by looking at 'options' and injected script tags!`);
             }
+            return exports.options.ourBaseUri;
         }
 
         exports.loadStyle = function (uri) {
@@ -185,16 +206,22 @@ function makeExports (exports) {
 //console.log("[jsonrep] WINDOW.pmodule:", WINDOW.pmodule);
 
             // Adjust base path depending on the environment.
-            if (
-                WINDOW &&
-                typeof WINDOW.pmodule !== "undefined" &&
-                !/^\//.test(uri)
-            ) {
-                uri = [
-                    WINDOW.pmodule.filename.replace(/\/([^\/]*)\/([^\/]*)$/, ""),
-                    uri
-                ].join("/").replace(/\/\.?\//g, "/");
-            }
+            // if (
+            //     WINDOW &&
+            //     typeof WINDOW.pmodule !== "undefined" &&
+            //     !/^\//.test(uri)
+            // ) {
+            //     uri = [
+            //         WINDOW.pmodule.filename.replace(/\/([^\/]*)\/([^\/]*)$/, ""),
+            //         uri
+            //     ].join("/").replace(/\/\.?\//g, "/");
+            // }
+
+//console.log("loadStyle", uri, exports.getBaseUri());
+
+            uri = `${exports.getBaseUri()}/${uri}`.replace(/\/\.?\//g, '/');
+
+//console.log("loadStyle from url:", uri);
 
             return new Promise(function (resolve, reject) {
 // TODO: Only log when in debug mode.
@@ -215,16 +242,22 @@ function makeExports (exports) {
         exports.loadRenderer = function (uri) {
 
             // Adjust base path depending on the environment.
-            if (
-                WINDOW &&
-                typeof WINDOW.pmodule !== "undefined" &&
-                !/^\//.test(uri)
-            ) {
-                uri = [
-                    WINDOW.pmodule.filename.replace(/\/([^\/]*)\/([^\/]*)$/, ""),
-                    uri
-                ].join("/").replace(/\/\.?\//g, "/");
-            }
+            // if (
+            //     WINDOW &&
+            //     typeof WINDOW.pmodule !== "undefined" &&
+            //     !/^\//.test(uri)
+            // ) {
+            //     uri = [
+            //         WINDOW.pmodule.filename.replace(/\/([^\/]*)\/([^\/]*)$/, ""),
+            //         uri
+            //     ].join("/").replace(/\/\.?\//g, "/");
+            // }
+
+//console.log("loadRenderer", uri, exports.getBaseUri());
+
+            uri = `${exports.getBaseUri()}/${uri}`.replace(/\/\.?\//g, '/');
+
+//console.log("loadRenderer", uri, exports.getBaseUri());
 
             return new Promise(function (resolve, reject) {
 
@@ -263,7 +296,7 @@ function makeExports (exports) {
                             var cssConfig = JSON.parse(block.getCode());
 
                             el.setAttribute("_cssid", cssConfig._cssid);
-                            exports.loadStyle(cssConfig.repUri + '.rep.css');
+                            exports.loadStyle('../' + cssConfig.repUri + '.rep.css');
 
                         } else
                         if (block._format === 'css') {
@@ -341,9 +374,12 @@ function makeExports (exports) {
     // Detect environemnt
     if (typeof sandbox !== "undefined") {
         init(sandbox);
-    } else
-    if (WINDOW) {
-        WINDOW.jsonrep = init({});
+
+    // TODO: Set global only for the legacy (leaky) browser format.
+    // } else
+    // if (WINDOW) {
+    //     WINDOW.jsonrep = init({});
+
     } else
     if (typeof exports !== "undefined") {
         init(exports);

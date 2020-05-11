@@ -23,26 +23,28 @@ exports.main = function (JSONREP, node, options) {
         html: "<div></div>",
         "on": {
           "mount": function mount(el) {
-            riot.util.styleManager.add = function (cssText, name) {
-              if (!cssText) {
-                return;
-              }
+            if ("0" === "1") {
+              riot.util.styleManager.inject = function () {
+                if (!options) return;
+                JSONREP.loadStyle(options.renderer.uri + '.css');
+              };
+            } else {
+              riot.util.styleManager.add = function (cssText, name) {
+                if (!cssText) {
+                  return;
+                }
 
-              if (window.document.createStyleSheet) {
-                var sheet = window.document.createStyleSheet();
-                sheet.cssText = cssText;
-              } else {
-                var style = window.document.createElementNS ? window.document.createElementNS("http://www.w3.org/1999/xhtml", "style") : window.document.createElement("style");
-                style.appendChild(window.document.createTextNode(cssText));
-                var head = window.document.getElementsByTagName("head")[0] || window.document.documentElement;
-                head.appendChild(style);
-              }
-            };
-
-            riot.util.styleManager.inject = function () {
-              if (!options) return;
-              JSONREP.loadStyle(options.renderer.uri + '.css');
-            };
+                if (window.document.createStyleSheet) {
+                  var sheet = window.document.createStyleSheet();
+                  sheet.cssText = cssText;
+                } else {
+                  var style = window.document.createElementNS ? window.document.createElementNS("http://www.w3.org/1999/xhtml", "style") : window.document.createElement("style");
+                  style.appendChild(window.document.createTextNode(cssText));
+                  var head = window.document.getElementsByTagName("head")[0] || window.document.documentElement;
+                  head.appendChild(style);
+                }
+              };
+            }
 
             riot.tag('raw', '<div></div>', function (opts) {
               this.set = function () {

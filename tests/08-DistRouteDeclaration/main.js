@@ -13,30 +13,38 @@ console.log('>>>TEST_IGNORE_LINE:\\[bash.origin.express\\] Routing request /<<<'
 console.log('>>>TEST_IGNORE_LINE:Connecting to localhost on port<<<');
 console.log('>>>TEST_IGNORE_LINE:^[\\s\\t]*$<<<');
 console.log('>>>TEST_IGNORE_LINE:^Browserslist:<<<');
+console.log('>>>TEST_IGNORE_LINE:Possible EventEmitter memory leak detected.<<<');
+
+const LIB = require('bash.origin.lib').js;
 
 describe("Suite", function() {
 
-    require('bash.origin.lib').js.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {
+    const server = LIB.BASH_ORIGIN_EXPRESS.runForTestHooks(before, after, {
+        "mountPrefix": "/.tmp",
         "routes": {
             "^/": {
-                "@github.com~jsonrep~jsonrep#s1": {
-                    "page": {
-                        "@div": {
-                            innerHTML: "Hello World!"
+                "gi0.PINF.it/build/v0 # /jsonrep # /": {
+                    "@jsonrep # router/v1": {
+                        "page": {
+                            "@dist/reps/div": {
+                                innerHTML: "Hello World!"
+                            }
+                        },
+                        "reps": {
+                            "div": __dirname + "/../../src/reps/div.rep.js"
                         }
-                    },
-                    "reps": {
-                        "div": __dirname + "/../../dist/div.rep.js"
                     }
                 }
             }
         }
     });
 
-    it('Test', function (client) {
+    it('Test', async function (client) {
+
+        const PORT = (await server).config.port;
 
         // Run as page
-        client.url('http://localhost:' + process.env.PORT + '/').pause(500);        
+        client.url('http://localhost:' + PORT + '/page.html').pause(500);        
         client.waitForElementPresent('BODY', 3000);
         client.expect.element('BODY').text.to.contain([
             'Hello World!'

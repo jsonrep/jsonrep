@@ -1,3 +1,43 @@
+#!/usr/bin/env inf
 {
-    "builder/v0 #": "${__DIRNAME__}/tool."
+    "#": [
+        "gi0.PINF.it/core/v0"
+    ],
+
+    "#": {
+        "/": "jsonrep"
+    },
+
+    ":builder:": "/ @ builder/v1",
+
+    "gi0.PINF.it/build/v0 @ # onOption() watch": (inf () >>>
+        {
+            "#": {
+                "server": "bash.origin.express",
+                "runner": "it.pinf.dev.pptr"
+            },
+            ":server:": "server @ server/v0",
+            ":runner:": "runner @ runner/v0",
+            "gi0.PINF.it/core/v0 @ # :server: set() config": {
+                "port": 8080,
+                "routes": {
+                    "^/": "."
+                }
+            },
+            "gi0.PINF.it/core/v0 @ # :server: run() start": "",
+            "gi0.PINF.it/core/v0 @ # :runner: set() config": {
+                "reloadOnWorkspaceChange": true
+            },
+            "gi0.PINF.it/core/v0 @ # :runner: run() start": "http://localhost:8080/workspace/index.html",
+
+
+            "gi0.PINF.it/core/v0 @ # waitForAnyKey()": "",
+
+
+            "gi0.PINF.it/core/v0 @ # :runner: run() stop": "",
+            "gi0.PINF.it/core/v0 @ # :server: run() stop": "",
+
+            "gi0.PINF.it/core/v0 @ # unwatch()": ""
+        }
+    <<<)
 }
