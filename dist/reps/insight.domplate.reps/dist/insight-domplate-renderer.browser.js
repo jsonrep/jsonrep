@@ -2528,59 +2528,67 @@ function Renderer(options) {
   var context = new InsightDomplateContext();
 
   function ensureRepsForNodeLoaded(node) {
-    var loadTypes = {};
+    try {
+      var traverse = function traverse(node) {
+        if (node.type) {
+          loadTypes["default/" + node.type] = true;
+        }
 
-    function traverse(node) {
-      if (node.type) {
-        loadTypes["default/" + node.type] = true;
-      }
-
-      if (node.meta) {
-        if (node.meta["encoder.trimmed"]) {
-          loadTypes["default/trimmed"] = true;
-        } else if (node.meta.renderer === "structures/table") {
-            loadTypes["default/table"] = true;
-            loadTypes["default/string"] = true;
-            node.type = "table";
-          } else if (node.meta.renderer === "structures/trace") {
-              loadTypes["default/trace"] = true;
+        if (node.meta) {
+          if (node.meta["encoder.trimmed"]) {
+            loadTypes["default/trimmed"] = true;
+          } else if (node.meta.renderer === "structures/table") {
+              loadTypes["default/table"] = true;
               loadTypes["default/string"] = true;
-              node.type = "trace";
-            } else if (node.meta["lang"] && node.meta["lang.type"]) {
-              if (node.meta["lang"] === "php") {
-                if (node.meta["lang.type"] === "array") {
-                  if (node.value[0] && Array.isArray(node.value[0])) {
+              node.type = "table";
+            } else if (node.meta.renderer === "structures/trace") {
+                loadTypes["default/trace"] = true;
+                loadTypes["default/string"] = true;
+                node.type = "trace";
+              } else if (node.meta["lang"] && node.meta["lang.type"]) {
+                if (node.meta["lang"] === "php") {
+                  if (node.meta["lang.type"] === "array") {
+                    if (node.value[0] && Array.isArray(node.value[0])) {
+                      loadTypes["php/array-associative"] = true;
+                      node.value.forEach(function (pair) {
+                        traverse(pair[0]);
+                        traverse(pair[1]);
+                      });
+                    } else {
+                      loadTypes["php/array-indexed"] = true;
+                      node.value.forEach(function (node) {
+                        traverse(node);
+                      });
+                    }
+                  } else if (node.meta["lang.type"] === "map") {
                     loadTypes["php/array-associative"] = true;
                     node.value.forEach(function (pair) {
                       traverse(pair[0]);
                       traverse(pair[1]);
                     });
-                  } else {
-                    loadTypes["php/array-indexed"] = true;
-                    node.value.forEach(function (node) {
-                      traverse(node);
-                    });
-                  }
-                } else if (node.meta["lang.type"] === "map") {
-                  loadTypes["php/array-associative"] = true;
-                  node.value.forEach(function (pair) {
-                    traverse(pair[0]);
-                    traverse(pair[1]);
-                  });
-                } else if (node.meta["lang.type"] === "exception") {
-                  loadTypes["php/exception"] = true;
-                  loadTypes["default/string"] = true;
+                  } else if (node.meta["lang.type"] === "exception") {
+                    loadTypes["php/exception"] = true;
+                    loadTypes["default/string"] = true;
 
-                  if (node.value.title) {
-                    traverse(node.value.title);
-                  }
+                    if (node.value.title) {
+                      traverse(node.value.title);
+                    }
 
-                  if (node.value.stack) {
-                    node.value.stack.forEach(function (frame) {
-                      frame.args.forEach(function (arg) {
-                        traverse(arg);
+                    if (node.value.stack) {
+                      node.value.stack.forEach(function (frame) {
+                        frame.args.forEach(function (arg) {
+                          traverse(arg);
+                        });
                       });
-                    });
+                    }
+                  } else {
+                    loadTypes[node.meta["lang"] + "/" + node.meta["lang.type"]] = true;
+
+                    if (node.meta["lang.type"] === "table") {
+                      loadTypes["default/string"] = true;
+                    } else if (node.meta["lang.type"] === "trace") {
+                      loadTypes["default/string"] = true;
+                    }
                   }
                 } else {
                   loadTypes[node.meta["lang"] + "/" + node.meta["lang.type"]] = true;
@@ -2589,100 +2597,96 @@ function Renderer(options) {
                     loadTypes["default/string"] = true;
                   } else if (node.meta["lang.type"] === "trace") {
                     loadTypes["default/string"] = true;
+                  } else if (node.meta["lang.type"] === "pathtree") {
+                    loadTypes["default/string"] = true;
+                  } else if (node.meta["lang.type"] === "optiontree") {
+                    loadTypes["default/string"] = true;
                   }
                 }
-              } else {
-                loadTypes[node.meta["lang"] + "/" + node.meta["lang.type"]] = true;
+              }
 
-                if (node.meta["lang.type"] === "table") {
-                  loadTypes["default/string"] = true;
-                } else if (node.meta["lang.type"] === "trace") {
-                  loadTypes["default/string"] = true;
-                } else if (node.meta["lang.type"] === "pathtree") {
-                  loadTypes["default/string"] = true;
-                } else if (node.meta["lang.type"] === "optiontree") {
-                  loadTypes["default/string"] = true;
-                }
+          if (node.meta.wrapper) {
+            loadTypes[node.meta.wrapper] = true;
+
+            if (node.meta.wrapper === "wrappers/request") {
+              if (node.value.title) {
+                traverse(node.value.title);
               }
             }
+          }
+        }
 
-        if (node.meta.wrapper) {
-          loadTypes[node.meta.wrapper] = true;
+        if (node.value !== null && typeof node.value !== 'undefined') {
+          var type = node.type || node.meta["lang.type"];
 
-          if (node.meta.wrapper === "wrappers/request") {
+          if (type === "array") {
+            node.value.forEach(function (node) {
+              traverse(node);
+            });
+          } else if (type === "dictionary") {
+            Object.keys(node.value).forEach(function (key) {
+              traverse(node.value[key]);
+            });
+          } else if (type === "map") {
+            node.value.forEach(function (pair) {
+              traverse(pair[0]);
+              traverse(pair[1]);
+            });
+          } else if (type === "reference") {
+            if (node.value.instance) {
+              traverse(node.value.instance);
+            } else if (node.instances && typeof node.value === "number") {
+              traverse(node.instances[node.value]);
+            } else if (typeof node.getInstance === 'function') {
+              traverse(node.getInstance());
+            }
+          } else if (type === "table") {
             if (node.value.title) {
               traverse(node.value.title);
             }
+
+            if (node.value.header) {
+              node.value.header.forEach(function (node) {
+                traverse(node);
+              });
+            }
+
+            if (node.value.body) {
+              node.value.body.forEach(function (row) {
+                row.forEach(function (cell) {
+                  traverse(cell);
+                });
+              });
+            }
+          } else if (type === "trace") {
+            if (node.value.title) {
+              traverse(node.value.title);
+            }
+
+            if (node.value.stack) {
+              node.value.stack.forEach(function (frame) {
+                frame.args.forEach(function (arg) {
+                  traverse(arg);
+                });
+              });
+            }
           }
         }
-      }
+      };
 
-      if (node.value !== null && typeof node.value !== 'undefined') {
-        var type = node.type || node.meta["lang.type"];
-
-        if (type === "array") {
-          node.value.forEach(function (node) {
-            traverse(node);
-          });
-        } else if (type === "dictionary") {
-          Object.keys(node.value).forEach(function (key) {
-            traverse(node.value[key]);
-          });
-        } else if (type === "map") {
-          node.value.forEach(function (pair) {
-            traverse(pair[0]);
-            traverse(pair[1]);
-          });
-        } else if (type === "reference") {
-          if (node.value.instance) {
-            traverse(node.value.instance);
-          } else if (node.instances && typeof node.value === "number") {
-            traverse(node.instances[node.value]);
-          } else if (typeof node.getInstance === 'function') {
-            traverse(node.getInstance());
-          }
-        } else if (type === "table") {
-          if (node.value.title) {
-            traverse(node.value.title);
-          }
-
-          if (node.value.header) {
-            node.value.header.forEach(function (node) {
-              traverse(node);
-            });
-          }
-
-          if (node.value.body) {
-            node.value.body.forEach(function (row) {
-              row.forEach(function (cell) {
-                traverse(cell);
-              });
-            });
-          }
-        } else if (type === "trace") {
-          if (node.value.title) {
-            traverse(node.value.title);
-          }
-
-          if (node.value.stack) {
-            node.value.stack.forEach(function (frame) {
-              frame.args.forEach(function (arg) {
-                traverse(arg);
-              });
-            });
-          }
-        }
-      }
+      var loadTypes = {};
+      traverse(node);
+      return Promise.all(Object.keys(loadTypes).map(function (type) {
+        type = type.split("/");
+        var repUri = loader.repUriForType(type[0], type[1]);
+        return loader.ensureRepForUri(repUri).then(function () {
+          return null;
+        });
+      }));
+    } catch (err) {
+      console.error('Error checking node:', node);
+      throw err;
     }
-
-    traverse(node);
-    return Promise.all(Object.keys(loadTypes).map(function (type) {
-      type = type.split("/");
-      var repUri = loader.repUriForType(type[0], type[1]);
-      return loader.ensureRepForUri(repUri).then(function () {
-        return null;
-      });
-    }));
   }
 
   self.renderNodeInto = function (node, selectorOrElement, options) {

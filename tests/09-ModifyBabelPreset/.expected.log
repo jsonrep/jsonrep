@@ -7,19 +7,5 @@ environments: default
 >>>TEST_IGNORE_LINE:^Browserslist:<<<
 [0m
   Suite
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/dist][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/reps/div.rep.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/dist/dist/reps/div.rep.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/dist][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/reps/golden-layout.rep.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/dist/dist/reps/golden-layout.rep.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/dist][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/reps/io.shields.img.rep.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/dist/dist/reps/io.shields.img.rep.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/dist][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/riot.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/dist/dist/riot.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/dist][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/riot.min.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/dist/dist/riot.min.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/dist][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/riot.csp.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/dist/dist/riot.csp.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/download/v0:download:/dist][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/jquery3.min.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/dist/dist/jquery3.min.js[22m[39m
 [bash.origin.express] Adding route: /^\//
 Server: http://localhost:8080/

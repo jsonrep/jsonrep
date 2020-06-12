@@ -40,7 +40,7 @@ exports.inf = async function (INF, NS) {
         invoke: async function (pointer, value, options) {
             if (pointer === 'onHome()') {
                 runHomeInstructions = async function () {
-                    return INF.load(value);
+                    await INF.load(value);
                 }
                 return true;
             }

@@ -6,34 +6,6 @@ environments: default
 >>>TEST_IGNORE_LINE:^[\s\t]*$<<<
 [0m
   Suite
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.tmp/injectStyle][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/reps/div.rep.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.tmp/injectStyle/dist/reps/div.rep.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.tmp/injectStyle][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/reps/golden-layout.rep.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.tmp/injectStyle/dist/reps/golden-layout.rep.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.tmp/injectStyle][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/reps/io.shields.img.rep.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.tmp/injectStyle/dist/reps/io.shields.img.rep.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.tmp/injectStyle][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/riot.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.tmp/injectStyle/dist/riot.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.tmp/injectStyle][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/riot.min.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.tmp/injectStyle/dist/riot.min.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.tmp/injectStyle][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/riot.csp.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.tmp/injectStyle/dist/riot.csp.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/download/v0:download:/.tmp/injectStyle][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/jquery3.min.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.tmp/injectStyle/dist/jquery3.min.js[22m[39m
 [bash.origin.express] Adding route: /^\/injectStyle\//
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.tmp/loadStyle][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/reps/div.rep.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.tmp/loadStyle/dist/reps/div.rep.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.tmp/loadStyle][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/reps/golden-layout.rep.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.tmp/loadStyle/dist/reps/golden-layout.rep.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.tmp/loadStyle][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/reps/io.shields.img.rep.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.tmp/loadStyle/dist/reps/io.shields.img.rep.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.tmp/loadStyle][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/riot.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.tmp/loadStyle/dist/riot.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.tmp/loadStyle][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/riot.min.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.tmp/loadStyle/dist/riot.min.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/copy/v0:copy:/.tmp/loadStyle][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/riot.csp.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.tmp/loadStyle/dist/riot.csp.js[22m[39m
-[34m[1m[pinf.it][gi0.PINF.it/download/v0:download:/.tmp/loadStyle][22m[39m [34m[1mRun tool step for:[22m[39m [34m[1m../../#!/gi0.PINF.it:/dist/jquery3.min.js[22m[39m
-[34m[1m[pinf.it][22m[39m [34m[1mWriting to: TeStLoCaLiZeD/.tmp/loadStyle/dist/jquery3.min.js[22m[39m
 [bash.origin.express] Adding route: /^\/loadStyle\//
 Server: http://localhost:8080/

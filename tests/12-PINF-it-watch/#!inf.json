@@ -34,19 +34,25 @@
             "gi0.PINF.it/build/v0 @ # watch()": "",
         
             "# run": (run.bash.progress () >>>
+                _open=">>"
+                _close="<<"
                 sleep 2
                 echo -e "\n-- updating sources to trigger rebuild --"
+                echo "TEST_MATCH_IGNORE>${_open}"
                 sed "-i" "" "-e" 's/PREFIX:1/PREFIX:2/g' ./announcer.rep.js
                 sed "-i" "" "-e" 's/"append": "!"/"append": "!!!"/g' ./sample.rep.js
                 sleep 2
+                echo "${_close}<TEST_MATCH_IGNORE"
                 cat ./.dist/page/announcer.rep.js | grep 'PREFIX'
                 echo -e "\n-- 4 --"
                 cat ./.dist/page/sample.rep.js | grep '"append"'
                 echo -e "\n-- 5 --"
                 echo -e "\n-- updating sources to trigger rebuild --"
+                echo "TEST_MATCH_IGNORE>${_open}"
                 sed "-i" "" "-e" 's/PREFIX:2/PREFIX:1/g' ./announcer.rep.js
                 sed "-i" "" "-e" 's/"append": "!!!"/"append": "!"/g' ./sample.rep.js
                 sleep 2
+                echo "${_close}<TEST_MATCH_IGNORE"
                 cat ./.dist/page/announcer.rep.js | grep 'PREFIX'
                 echo -e "\n-- 6 --"
                 cat ./.dist/page/sample.rep.js | grep '"append"'

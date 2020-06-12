@@ -151,9 +151,7 @@ function makeExports(exports) {
     };
 
     exports.loadStyle = function (uri) {
-      console.log("loadStyle", uri, exports.getBaseUri());
-      uri = "".concat(exports.getBaseUri(), "/../").concat(uri).replace(/\/\.?\//g, '/');
-      console.log("loadStyle from url:", uri);
+      uri = "".concat(exports.getBaseUri(), "/").concat(uri).replace(/\/\.?\//g, '/');
       return new Promise(function (resolve, reject) {
         var link = window.document.createElementNS ? window.document.createElementNS("http://www.w3.org/1999/xhtml", "link") : window.document.createElement("link");
         link.rel = "stylesheet";
@@ -169,9 +167,7 @@ function makeExports(exports) {
     };
 
     exports.loadRenderer = function (uri) {
-      console.log("loadRenderer", uri, exports.getBaseUri());
       uri = "".concat(exports.getBaseUri(), "/").concat(uri).replace(/\/\.?\//g, '/');
-      console.log("loadRenderer", uri, exports.getBaseUri());
       return new Promise(function (resolve, reject) {
         exports.PINF.sandbox(uri, resolve, reject);
       });
@@ -199,7 +195,7 @@ function makeExports(exports) {
             if (block._format === 'json') {
               var cssConfig = JSON.parse(block.getCode());
               el.setAttribute("_cssid", cssConfig._cssid);
-              exports.loadStyle(cssConfig.repUri + '.rep.css');
+              exports.loadStyle('../' + cssConfig.repUri + '.rep.css');
             } else if (block._format === 'css') {
               css = block.getCode();
             }

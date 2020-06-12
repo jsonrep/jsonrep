@@ -1,7 +1,34 @@
 <html>
+    <head>
+        <script src="../dist/jsonrep.js"></script>
+        <script>
+            const JSONREP = window.jsonrep;
+        </script>
+        <style>
+            DIV[renderer="jsonrep"] {
+                display: inline-block;
+                visibility: hidden;
+            }
+        </style>
+    </head>
     <body>
         <ul>
-            <li>TODO</li>
+            <li><div renderer="jsonrep">{"message": "Hello World!"}</div></li>
+            <li><div renderer="jsonrep">{
+                "@../dist/reps/div": {
+                    "style": {
+                        "padding": "5px",
+                        "border": "1px solid black"
+                    },
+                    "innerHTML": {
+                        "@../dist/reps/io.shields.img": {
+                            "subject": "jsonrep",
+                            "status": "Rocks!",
+                            "color": "green"
+                        }
+                    }
+                }
+            }</div></li>
         </ul>
     </body>
 </html>

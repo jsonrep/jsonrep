@@ -5,19 +5,17 @@
     ],
 
     "#": {
+        "server": "bash.origin.express",
+        "runner": "it.pinf.dev.pptr",
         "/": "jsonrep"
     },
 
+    ":server:": "server @ server/v0",
+    ":runner:": "runner @ runner/v1",
     ":builder:": "/ @ builder/v1",
 
-    "gi0.PINF.it/build/v0 @ # onOption() watch": (inf () >>>
+    "gi0.PINF.it/build/v0 @ # onDone()": (inf () >>>
         {
-            "#": {
-                "server": "bash.origin.express",
-                "runner": "it.pinf.dev.pptr"
-            },
-            ":server:": "server @ server/v0",
-            ":runner:": "runner @ runner/v0",
             "gi0.PINF.it/core/v0 @ # :server: set() config": {
                 "port": 8080,
                 "routes": {
@@ -25,16 +23,14 @@
                 }
             },
             "gi0.PINF.it/core/v0 @ # :server: run() start": "",
-            "gi0.PINF.it/core/v0 @ # :runner: set() config": {
-                "reloadOnWorkspaceChange": true
+            "gi0.PINF.it/build/v0 @ # :runner: start() /workspace/index.html": {
+                "port": 8080
             },
-            "gi0.PINF.it/core/v0 @ # :runner: run() start": "http://localhost:8080/workspace/index.html",
+
+            "gi0.PINF.it/build/v0 @ # waitForAnyKey()": "",
 
 
-            "gi0.PINF.it/core/v0 @ # waitForAnyKey()": "",
-
-
-            "gi0.PINF.it/core/v0 @ # :runner: run() stop": "",
+            "gi0.PINF.it/build/v0 @ # :runner: stop() /workspace/index.html": "",
             "gi0.PINF.it/core/v0 @ # :server: run() stop": "",
 
             "gi0.PINF.it/core/v0 @ # unwatch()": ""
