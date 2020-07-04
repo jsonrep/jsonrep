@@ -20,6 +20,7 @@ exports.forConfig = async function (CONFIG, options) {
         throw new Error(`[jsonrep] 'dist' not set!`);
     }
     if (/\.(html?|js)$/.test(CONFIG.dist)) {
+        console.error('CONFIG', CONFIG);
         throw new Error(`[jsonrep] 'dist' property may not include a filename!`);
     }
     if (CONFIG.baseDir) {

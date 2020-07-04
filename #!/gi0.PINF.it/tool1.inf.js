@@ -15,10 +15,10 @@ exports['gi0.PINF.it/build/v0'] = async function (LIB, CLASSES) {
 
             const config = JSON.parse(JSON.stringify(build.config));
 
-            if (config.dist) throw new Error(`'dist' config property may not be set!`);
+            // if (config.dist) throw new Error(`'dist' config property may not be set!`);
 
             config.basedir = config.basedir || build.path;
-            config.dist = target.path;
+            config.dist = LIB.PATH.dirname(target.path);
 
             await BUILDER.forConfig(config, {
                 LIB: LIB,
